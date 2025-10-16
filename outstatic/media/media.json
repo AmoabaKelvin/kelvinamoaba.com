@@ -1,0 +1,17 @@
+{
+  "commit": "",
+  "generated": "Thu, 16 Oct 2025 23:43:56 GMT",
+  "media": [
+    {
+      "__outstatic": {
+        "commit": "",
+        "hash": "0",
+        "path": "public/profile.png"
+      },
+      "alt": "",
+      "filename": "profile.png",
+      "publishedAt": "2025-10-16T23:43:55.852Z",
+      "type": "image"
+    }
+  ]
+}

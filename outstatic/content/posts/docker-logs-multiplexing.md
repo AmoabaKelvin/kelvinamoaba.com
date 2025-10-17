@@ -80,7 +80,7 @@ Assuming your container outputs Hello to standard output, here is how docker wil
 [1, 00, 00, 00, 00, 00, 00, 05] [48 65 6c 6c 6f]
 ```
 
-where `[48 65 6c 6c 6f]` is the hex representation of the ASCII representation of the string "Hello". The `0x05` is the payload size and the `1` is the stream type, in this case, stdout.
+where `[48 65 6c 6c 6f]` is the hex representation of the ASCII representation of the string "Hello". The `05` is the payload size and the `1` is the stream type, in this case, stdout.
 
 ---
 

@@ -1,12 +1,4 @@
 {
   "title": "posts",
-  "type": "object",
-  "properties": {
-    "cover": {
-      "required": false,
-      "fieldType": "Image",
-      "dataType": "image",
-      "title": "cover"
-    }
-  }
+  "type": "object"
 }

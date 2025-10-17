@@ -21,7 +21,7 @@
     "eslint-config-next": "15.2.2",
     "geist": "^1.2.0",
     "gray-matter": "^4.0.3",
-    "lucide-react": "^0.302.0",
+    "lucide-react": "^0.546.0",
     "next": "15.2.2",
     "next-view-transitions": "^0.3.4",
     "outstatic": "^2.0.7",

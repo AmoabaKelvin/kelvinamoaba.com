@@ -31,7 +31,7 @@ From the simple eye view, you can see that there are a number of input streams t
 
 ### Decoding the Multiplexed Stream
 
-Docker uses a simple framing protocol. Each chunk of data gets prefixed with an 8-byte header. The first byte identifies which stream it came from (0 for stdin, 1 for stdout, 2 for stderr), and the next bytes specify how many bytes of data follow.
+Docker uses a simple **framing protocol**. Each chunk of data gets prefixed with an **8-byte header**. The first byte identifies which stream it came from (0 for stdin, 1 for stdout, 2 for stderr), bytes 1-3 are reserved (always 0x00) and the next bytes (4-7) contain the payload size.
 
 The header looks like this:
 
@@ -39,9 +39,9 @@ The header looks like this:
 [STREAM_TYPE] [0x00, 0x00, 0x00] [PAYLOAD_SIZE]
 ```
 
-Using the `payload_size`, we can directly fetch the exact content in the stream coming in.
+The `PAYLOAD_SIZE` allows the client to parse the exact content in the stream coming in without buffering or figuring out where one chunk ends and the another begins.
 
-This framing header lets the receiving end parse the stream unambiguously. The data stays intact and in order, but now it's carrying metadata about its origin. When you use commands like docker logs, you're actually reading from this multiplexed stream that Docker has stored. Docker can show you just stdout, just stderr, or both together because it knows which bytes came from which stream thanks to that multiplexing metadata.
+This framing header lets the receiving end parse the stream unambiguously. The data stays _intact and in order_, but now it's carrying metadata about its origin. When you use commands like `docker logs`, you're actually reading from this multiplexed stream that Docker has stored. Docker can show you just stdout, just stderr, or both together because it knows which bytes came from which stream thanks to that multiplexing metadata. This solves the problem of how to manage two different network streams and the whole complexity associated with that, you just focus on having a single stream to deal with.
 
 ### Breakdown of the 8-byte header
 
@@ -51,3 +51,5 @@ Bytes 1-3 : Reserved (always 0x00)
 Bytes 4-7 : Payload size (big-endian uint32)
 Bytes 8-n : Payload (the actual log data)
 ```
+
+This idea of multiplexing is not unique to Docker. It's a common pattern in systems engineering whenever there is a need to combine multiple logical channels into a single physical channel. HTTP/2 does this with web requests, SSH does this when you have multiple terminal sessions over one encrypted connection and so on.

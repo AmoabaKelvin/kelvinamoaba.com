@@ -2,6 +2,7 @@
 title: 'Logs Multiplexing in Docker'
 seoTitle: 'Logs Multiplexing in Docker'
 datePublished: Thu Oct 16 2025 10:00:00 GMT+0000 (Coordinated Universal Time)
+publishedAt: '2025-10-16T10:00:00.000Z'
 slug: docker-logs-multiplexing
 cover: ''
 tags: docker, logs, multiplexing

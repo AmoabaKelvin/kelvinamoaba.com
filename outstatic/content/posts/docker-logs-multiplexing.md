@@ -15,11 +15,11 @@ Logs multiplexing is the way that docker sends logs from containers to whatever 
 
 ### The Problem Docker Tried to Solve
 
-Whenever programs are being executed, there are 2 available streams on which they can channel results / outputs to, we have the standard output (`stdout`) and the standard error (`stderr`); there is standard error but that is mostly for receiving inputs into programs. Whenever you run the command like `docker logs <container>` the problem was now how docker is going to ensure that those outputs from the different streams arrive in the exact order they were being produced inside the container and also making sure that the different streams could be identified by the clients making the request to view those logs.
+Whenever programs are being executed, there are 2 available streams on which they can channel results / outputs to, we have the standard output (`stdout`) and the standard error (`stderr`); there is standard input (`stdin`) but that is mostly for receiving inputs into programs. Whenever you run the command like `docker logs <container>` the problem was now how docker is going to ensure that those outputs from the different streams arrive in the exact order they were being produced inside the container and also making sure that the different streams could be identified by the clients making the request to view those logs.
 
 The naive approach could be managing two different networks on which results from stdout could be passed on one and the results from stderr could also be passed on the other. But then that would mean managing two different network streams and the whole complexity associated with that. Assuming one network stream goes down, what happens? How do we keep track of the order that the outputs were produced, these among many more reasons are the reason for multiplexing.
 
-### Muliplexer
+### Multiplexer
 
 In electronics, a multiplexer looks like something like this.
 
@@ -51,5 +51,37 @@ Bytes 1-3 : Reserved (always 0x00)
 Bytes 4-7 : Payload size (big-endian uint32)
 Bytes 8-n : Payload (the actual log data)
 ```
+
+Here's a simple example of how you might parse this in Python when connecting to Docker's attach API:
+
+```python
+import struct
+
+def read_docker_stream(stream):
+    while True:
+        header = stream.read(8)
+        if not header:
+            break
+
+        stream_type, _, _, _, size = struct.unpack('>BBBBI', header)
+        payload = stream.read(size)
+
+        if stream_type == 1:
+            print(f"STDOUT: {payload.decode()}")
+        elif stream_type == 2:
+            print(f"STDERR: {payload.decode()}")
+```
+
+### What goes over the wire for Hello?
+
+Assuming your container outputs Hello to standard output, here is how docker will send it over the wire:
+
+```
+[1, 00, 00, 00, 00, 00, 00, 05] [48 65 6c 6c 6f]
+```
+
+where `[48 65 6c 6c 6f]` is the hex representation of the ASCII representation of the string "Hello". The `0x05` is the payload size and the `1` is the stream type, in this case, stdout.
+
+---
 
 This idea of multiplexing is not unique to Docker. It's a common pattern in systems engineering whenever there is a need to combine multiple logical channels into a single physical channel. HTTP/2 does this with web requests, SSH does this when you have multiple terminal sessions over one encrypted connection and so on.

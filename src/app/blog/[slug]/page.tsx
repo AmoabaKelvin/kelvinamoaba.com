@@ -78,7 +78,7 @@ const BlogDetailPage = async (props0: Props) => {
           alt={post.title}
         />
       )}
-      <div className="mt-10 space-y-10 max-w-3xl font-light leading-6 prose text-black/90 dark:prose-invert">
+      <div className="mt-10 space-y-10 max-w-3xl font-light leading-7 prose text-black/90 dark:prose-invert">
         <Markdown
           components={{
             code({ node, className, children, ...props }) {

@@ -68,7 +68,7 @@ const BlogDetailPage = async (props0: Props) => {
       <BackButton className="mt-10" />
       <div className="mt-10 text-xl font-bold md:text-3xl">{post.title}</div>
       <div className="mt-2 text-sm text-gray-500">
-        Kelvin Amoaba • {new Date(post.publishedAt).toLocaleDateString()}
+        Kelvin Amoaba • {new Date(post.datePublished as string).toLocaleDateString()}
       </div>
       {(post.cover as string) && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -165,7 +165,7 @@ export default BlogDetailPage;
 async function getPost(slug: string) {
   return getDocumentBySlug('posts', slug, [
     'title',
-    'publishedAt',
+    'datePublished',
     'slug',
     'author',
     'content',

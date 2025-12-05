@@ -1,10 +1,150 @@
 {
-  "commit": "1a04b58eff5941514be23b9ca6319cdbae6a0093",
-  "generated": "2025-06-15T01:23:07.809Z",
+  "commit": "",
+  "generated": "Fri, 05 Dec 2025 00:15:21 GMT",
   "metadata": [
     {
       "__outstatic": {
-        "commit": "1a04b58eff5941514be23b9ca6319cdbae6a0093",
+        "commit": "c31cfd469f96fd3736de537ae58c656f7c31257e",
+        "hash": "3793414107",
+        "path": "outstatic/content/posts/2023-in-review.md 23-47-58-593.md"
+      },
+      "collection": "posts",
+      "cover": "https://res.cloudinary.com/dphleco2s/image/upload/v1703933385/White_Sunset_Blog_Banner_iqzlpk.png",
+      "datePublished": "2023-12-30T01:05:07.341Z",
+      "seoTitle": "My 2023 in Review",
+      "slug": "2023-in-review",
+      "tags": "2023, review, year, goals, resolutions",
+      "title": "2023 in Review"
+    },
+    {
+      "__outstatic": {
+        "commit": "d0fc760ad737d56cf47453dd09cc5449c3bf46d9",
+        "hash": "2308839022",
+        "path": "outstatic/content/posts/2023-in-review.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://res.cloudinary.com/dphleco2s/image/upload/v1703933385/White_Sunset_Blog_Banner_iqzlpk.png",
+      "datePublished": "Sat Dec 30 2023 01:05:07 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "My 2023 in Review",
+      "slug": "2023-in-review",
+      "status": "published",
+      "tags": "2023, review, year, goals, resolutions",
+      "title": "2023 in Review"
+    },
+    {
+      "__outstatic": {
+        "commit": "0780741a3fcc534b3b48add179d8b56c90a1598c",
+        "hash": "4160625392",
+        "path": "outstatic/content/posts/custom-authentication-backend-in-django.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://res.cloudinary.com/practicaldev/image/fetch/s--jBFjsQ3E--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y79h0v6wtipnu4xdcciu.jpg",
+      "datePublished": "Fri Jul 18 2022 07:02:34 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "Custom Authentication Backend in Django",
+      "slug": "custom-authentication-backend-in-django",
+      "status": "published",
+      "tags": "tutorial, django, python, webdev",
+      "title": "Creating a Custom Authentication Backend in Django"
+    },
+    {
+      "__outstatic": {
+        "commit": "d7783c88a458f2f0ea2d9007500e88b44c724d00",
+        "hash": "253046685",
+        "path": "outstatic/content/posts/docker-logs-multiplexing.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "",
+      "datePublished": "Thu Oct 16 2025 10:00:00 GMT+0000 (Coordinated Universal Time)",
+      "publishedAt": "2025-10-16T10:00:00.000Z",
+      "seoTitle": "Logs Multiplexing in Docker",
+      "slug": "docker-logs-multiplexing",
+      "status": "published",
+      "tags": "docker, logs, multiplexing",
+      "title": "Logs Multiplexing in Docker"
+    },
+    {
+      "__outstatic": {
+        "commit": "34b9c5abce5d32482d002f8b9e6827e503e958fd",
+        "hash": "2642484435",
+        "path": "outstatic/content/posts/deep-dive-into-stacks-a-practical-guide-for-software-engineers.md"
+      },
+      "author": null,
+      "collection": "posts",
+      "cover": "https://cdn.hashnode.com/res/hashnode/image/stock/unsplash/wstYTyWtGac/upload/d1ae6fdfc834744111ba65a912501eb4.jpeg",
+      "cuid": "clorlftng00080al9bet2h31w",
+      "datePublished": "2023-11-09T19:40:19.000Z",
+      "publishedAt": "2025-06-14T23:02:28.899Z",
+      "slug": "deep-dive-into-stacks-a-practical-guide-for-software-engineers",
+      "status": "published",
+      "tags": "programming, data-structures, data-structures-and-algorithm-course",
+      "title": "Deep Dive into Stacks: A Practical Guide for Software Engineers"
+    },
+    {
+      "__outstatic": {
+        "commit": "e72f5a1265b0d20f80465113a528c4f1508cda41",
+        "hash": "1637907029",
+        "path": "outstatic/content/posts/building-a-simple-smtp-server.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://dynamic-og-image-generator.vercel.app/api/generate?title=Building+a+simple+mail+server%3A+Prologue&author=Kelvin+Amoaba&websiteUrl=https%3A%2F%2Fkelvinamoaba.com&avatar=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F97001695%3Fv%3D4&theme=github",
+      "datePublished": "Sat Jun 15 2024 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "Building a simple SMTP server",
+      "slug": "building-a-simple-smtp-server",
+      "status": "published",
+      "tags": "smtp, server, email, protocol, simple",
+      "title": "What does it mean to build a simple SMTP server?"
+    },
+    {
+      "__outstatic": {
+        "commit": "91e54952c234c53bfb7a0b1ecb4989bc857e848f",
+        "hash": "320099018",
+        "path": "outstatic/content/posts/a-5-step-approach-to-problem-solving-dsa.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://cdn.hashnode.com/res/hashnode/image/stock/unsplash/DnXqvmS0eXM/upload/878e2dab7224742cd552014716babee7.jpeg",
+      "cuid": "clp3pc0rq000l0ak2celtf039",
+      "datePublished": "Sat Nov 18 2023 07:02:34 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "A 5-Step Approach to Problem Solving (DSA)",
+      "slug": "a-5-step-approach-to-problem-solving-dsa",
+      "status": "published",
+      "tags": "tutorial, algorithms, data-structures, beginners",
+      "title": "A 5-Step Approach to Problem Solving (DSA)"
+    },
+    {
+      "__outstatic": {
+        "commit": "aea03b44c2c3bdb05cb7986837066eb271439af6",
+        "hash": "4245193212",
+        "path": "outstatic/content/posts/escape-analysis.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "datePublished": "Tue Feb 11 2025 01:05:07 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "Escape Analysis",
+      "slug": "escape-analysis",
+      "status": "published",
+      "tags": "escape analysis, compiler optimization, memory management, Go",
+      "title": "Escape Analysis"
+    },
+    {
+      "__outstatic": {
+        "commit": "bc5be7a5a39a7caad62e36cdc6abc5d5c1b49600",
         "hash": "2309443124",
         "path": "outstatic/content/posts/obscurity-is-your-biggest-enemy.md"
       },
@@ -21,6 +161,59 @@
       "status": "published",
       "tags": "career, job-search, life",
       "title": "Obscurity is your biggest enemy"
+    },
+    {
+      "__outstatic": {
+        "commit": "b147d507238e6459e2b67ad57b6d93fd5eff76be",
+        "hash": "167140841",
+        "path": "outstatic/content/posts/what-is-bigO.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://images.unsplash.com/photo-1587612049655-c1030366a74a?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png",
+      "datePublished": "Sun Dec 24 2023 21:26:07 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "What is Big O Notation?",
+      "slug": "what-is-bigO",
+      "status": "published",
+      "tags": "tutorial, algorithms, data-structures, beginners",
+      "title": "What is Big O Notation?"
+    },
+    {
+      "__outstatic": {
+        "commit": "d2fffd8526eea807bbc91424a6c813b94043eec6",
+        "hash": "3395335872",
+        "path": "outstatic/content/posts/paying-attention-to-details.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://images.unsplash.com/photo-1579019874729-ffca9e9fe11c?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "datePublished": "Sun Jan 07 2024 23:16:39 GMT+0000 (Coordinated Universal Time)",
+      "slug": "paying-attention-to-details",
+      "status": "published",
+      "tags": "frontend, web-development, programming, software-engineering",
+      "title": "Paying Attention to Details As a Developer"
+    },
+    {
+      "__outstatic": {
+        "commit": "e01dcf3c7423383718c2f23ccaeee3b8352f98ba",
+        "hash": "450115943",
+        "path": "outstatic/content/posts/monotonic-and-wall-clock-time.md"
+      },
+      "author": {
+        "picture": ""
+      },
+      "collection": "posts",
+      "cover": "https://images.unsplash.com/photo-1501139083538-0139583c060f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
+      "datePublished": "Sun Mar 16 2025 01:05:07 GMT+0000 (Coordinated Universal Time)",
+      "seoTitle": "Monotonic and Wall Clock Time",
+      "slug": "monotonic-and-wall-clock-time",
+      "status": "published",
+      "tags": "monotonic, wall clock, time, go",
+      "title": "Monotonic and Wall Clock Time"
     }
   ]
 }

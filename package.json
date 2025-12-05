@@ -24,7 +24,7 @@
     "lucide-react": "^0.546.0",
     "next": "15.2.2",
     "next-view-transitions": "^0.3.4",
-    "outstatic": "^2.0.7",
+    "outstatic": "^2.0.11",
     "postcss": "8.4.24",
     "react": "19.0.0",
     "react-dom": "19.0.0",

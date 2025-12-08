@@ -1,6 +1,6 @@
 {
-  "commit": "",
-  "generated": "Fri, 05 Dec 2025 00:43:07 GMT",
+  "commit": "1cf7b05b06a42add30448ac8c388a700e13d5d55",
+  "generated": "2025-12-08T22:12:37.600Z",
   "metadata": [
     {
       "__outstatic": {
@@ -231,6 +231,22 @@
       "status": "published",
       "tags": "frontend, web-development, programming, software-engineering",
       "title": "Paying Attention to Details As a Developer"
+    },
+    {
+      "__outstatic": {
+        "commit": "1cf7b05b06a42add30448ac8c388a700e13d5d55",
+        "hash": "3424711061",
+        "path": "outstatic/content/posts/what-happens-when-you-open-a-file.mdx"
+      },
+      "author": {
+        "name": "Kelvin Amoaba",
+        "picture": "https://avatars.githubusercontent.com/u/97001695?v=4"
+      },
+      "collection": "posts",
+      "publishedAt": "2025-12-08T22:12:29.654Z",
+      "slug": "what-happens-when-you-open-a-file",
+      "status": "draft",
+      "title": "What happens when you open a file?"
     }
   ]
 }

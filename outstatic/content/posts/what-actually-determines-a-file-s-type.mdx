@@ -1,0 +1,75 @@
+---
+title: "What actually determines a file's type?"
+publishedAt: "2025-12-13T04:46:49.724Z"
+status: "draft"
+author:
+  name: "Kelvin Amoaba"
+  picture: "https://avatars.githubusercontent.com/u/97001695?v=4"
+slug: "what-actually-determines-a-file-s-type"
+---
+
+Every file format has a specification, “an agreed-upon structure that defines how the bytes in that file are organized”. Just like we have standards for internet protocols, we have standards for file types. When an application opens a PDF or parses a PNG, it’s reading bytes according to that format’s predefined rules.
+
+We usually identify files by their extension: .zip, .txt, .jpg. But extensions are really just hints for humans and the operating system. They’re convenient labels, not the actual source of truth, which is why renaming photo.jpg to photo.png doesn’t convert the image.
+
+Extensions are just hints, the real determining of the type is done through “Magic Numbers”
+
+#### Magic Numbers
+
+*A magic number is a sequence of bytes, located at the beginning or specific offsets of a file that serves as a unique signature to identify the file format or type.*
+
+Each file format has the universally agreed upon magic number, this is what applications check anytime they need to or have to determine the file format of a file regardless of what the extension claims. 
+
+Eg, for PNG files, this magic number is `89 50 4E 47`, for zip files, it’s `50 4B 03 04`. Bitmap images start with `42 4D`, which is just `BM` in ASCII (short for “bitmap”).
+
+Here is an example that reads a file with a bmp extension, but actually digs into the bytes to confirm whether or not it’s a bitmap image
+
+```go
+package main
+
+import (
+    “bytes”
+    “fmt”
+    “io”
+    “log”
+    “os”
+)
+
+
+func main() {
+    f, err := os.Open(”sample.bmp”)
+    if err != nil {
+	log.Fatal(err)
+    }
+    defer f.Close()
+
+    // Read the first 2 bytes (The Magic Number)
+    header := make([]byte, 2)
+    if _, err := io.ReadFull(f, header); err != nil {
+        log.Fatal(err)
+    }
+
+    // BMP signature is 0x42, 0x4D
+    bmpSig := []byte{0x42, 0x4D}
+
+    if bytes.Equal(header, bmpSig) {
+        fmt.Println(”Valid BMP detected”)
+    } else {
+        fmt.Println(”Invalid file format”)
+    }
+}
+```
+
+The `file` command on Unix uses these signatures to identify files regardless of extension. After the signature, most formats include metadata describing the content, dimensions for images, sample rate for audio, author information for documents, etc.
+
+#### Categories of File Structures
+
+File formats generally fall into a few structural categories:
+
+- **Binary formats with rigid structure** (PNG, JPEG, MP3): every byte position has specific meaning according to the spec. Programs parse these by reading exact offsets.
+
+- **Text-based structured formats** (JSON, XML, HTML, CSV): human-readable text following grammar rules. Easier to debug but larger file sizes.
+
+- **Container formats** (ZIP, MP4, PDF): these are like filesystems within a file, containing multiple embedded files or streams. An MP4 might contain separate video, audio, and subtitle tracks. A DOCX is actually a ZIP containing XML files.
+
+Essentially, knowing how to move bytes around and going through specs, you can write your own parsers for lots of file types, I will demostrate this in another writing of a simple script to convert images to greyscale by modifying the bytes that make up the image. 

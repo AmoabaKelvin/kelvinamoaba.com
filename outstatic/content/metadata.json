@@ -1,6 +1,6 @@
 {
-  "commit": "1cf7b05b06a42add30448ac8c388a700e13d5d55",
-  "generated": "2025-12-08T22:12:37.600Z",
+  "commit": "5ef72778d85bd86e7920f9b9c67a79e506410a4c",
+  "generated": "2025-12-13T05:33:51.232Z",
   "metadata": [
     {
       "__outstatic": {
@@ -247,6 +247,22 @@
       "slug": "what-happens-when-you-open-a-file",
       "status": "draft",
       "title": "What happens when you open a file?"
+    },
+    {
+      "__outstatic": {
+        "commit": "5ef72778d85bd86e7920f9b9c67a79e506410a4c",
+        "hash": "3691237712",
+        "path": "outstatic/content/posts/what-actually-determines-a-file-s-type.mdx"
+      },
+      "author": {
+        "name": "Kelvin Amoaba",
+        "picture": "https://avatars.githubusercontent.com/u/97001695?v=4"
+      },
+      "collection": "posts",
+      "publishedAt": "2025-12-13T04:46:49.724Z",
+      "slug": "what-actually-determines-a-file-s-type",
+      "status": "draft",
+      "title": "What actually determines a file's type?"
     }
   ]
 }

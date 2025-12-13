@@ -1,11 +1,11 @@
 ---
 title: "What actually determines a file's type?"
-publishedAt: "2025-12-13T04:46:49.724Z"
-status: "draft"
+datePublished: '2025-12-13 04:46:49 GMT+0000 (Coordinated Universal Time)'
+status: 'published'
 author:
-  name: "Kelvin Amoaba"
-  picture: "https://avatars.githubusercontent.com/u/97001695?v=4"
-slug: "what-actually-determines-a-file-s-type"
+  name: 'Kelvin Amoaba'
+  picture: 'https://avatars.githubusercontent.com/u/97001695?v=4'
+slug: 'what-actually-determines-a-file-s-type'
 ---
 
 Every file format has a specification, “an agreed-upon structure that defines how the bytes in that file are organized”. Just like we have standards for internet protocols, we have standards for file types. When an application opens a PDF or parses a PNG, it’s reading bytes according to that format’s predefined rules.
@@ -16,9 +16,9 @@ Extensions are just hints, the real determining of the type is done through “M
 
 #### Magic Numbers
 
-*A magic number is a sequence of bytes, located at the beginning or specific offsets of a file that serves as a unique signature to identify the file format or type.*
+_A magic number is a sequence of bytes, located at the beginning or specific offsets of a file that serves as a unique signature to identify the file format or type._
 
-Each file format has the universally agreed upon magic number, this is what applications check anytime they need to or have to determine the file format of a file regardless of what the extension claims. 
+Each file format has the universally agreed upon magic number, this is what applications check anytime they need to or have to determine the file format of a file regardless of what the extension claims.
 
 Eg, for PNG files, this magic number is `89 50 4E 47`, for zip files, it’s `50 4B 03 04`. Bitmap images start with `42 4D`, which is just `BM` in ASCII (short for “bitmap”).
 
@@ -72,4 +72,4 @@ File formats generally fall into a few structural categories:
 
 - **Container formats** (ZIP, MP4, PDF): these are like filesystems within a file, containing multiple embedded files or streams. An MP4 might contain separate video, audio, and subtitle tracks. A DOCX is actually a ZIP containing XML files.
 
-Essentially, knowing how to move bytes around and going through specs, you can write your own parsers for lots of file types, I will demostrate this in another writing of a simple script to convert images to greyscale by modifying the bytes that make up the image. 
+Essentially, knowing how to move bytes around and going through specs, you can write your own parsers for lots of file types, I will demostrate this in another writing of a simple script to convert images to greyscale by modifying the bytes that make up the image.

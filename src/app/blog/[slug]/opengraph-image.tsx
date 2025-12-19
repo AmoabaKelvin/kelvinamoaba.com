@@ -1,5 +1,10 @@
 import { ImageResponse } from 'next/og';
-import { getDocumentBySlug } from 'outstatic/server';
+import { getDocumentBySlug, getDocumentSlugs } from 'outstatic/server';
+
+export async function generateStaticParams() {
+  const posts = getDocumentSlugs('posts');
+  return posts.map((slug) => ({ slug }));
+}
 
 export const alt = 'Blog Post';
 export const size = {

@@ -33,9 +33,6 @@ export async function generateMetadata(
 
   return {
     title: blogPost?.title,
-    openGraph: {
-      images: [blogPost?.cover as string],
-    },
     authors: [
       {
         name: 'Kelvin Amoaba',
@@ -78,7 +75,7 @@ const BlogDetailPage = async (props0: Props) => {
           alt={post.title}
         />
       )}
-      <div className="mt-10 space-y-10 max-w-3xl font-light leading-7 prose text-black/90 dark:prose-invert">
+      <div className="mt-10 space-y-10 max-w-3xl font-normal leading-7 prose text-black dark:prose-invert">
         <Markdown
           components={{
             code({ node, className, children, ...props }) {
@@ -98,19 +95,19 @@ const BlogDetailPage = async (props0: Props) => {
             },
             // change color of headings
             h1({ node, ...props }) {
-              return <h1 className="text-black/90" {...props} />;
+              return <h1 className="text-black font-semibold" {...props} />;
             },
             h2({ node, ...props }) {
-              return <h2 className="text-black/90" {...props} />;
+              return <h2 className="text-black font-semibold" {...props} />;
             },
             h3({ node, ...props }) {
-              return <h3 className="mb-0 text-black/90" {...props} />;
+              return <h3 className="mb-0 text-black font-semibold" {...props} />;
             },
             h4({ node, ...props }) {
-              return <h4 className="text-black/90" {...props} />;
+              return <h4 className="text-black font-medium" {...props} />;
             },
             h5({ node, ...props }) {
-              return <h5 className="text-black/90" {...props} />;
+              return <h5 className="text-black font-medium" {...props} />;
             },
             // change color of bold text
             strong({ node, ...props }) {
@@ -118,15 +115,15 @@ const BlogDetailPage = async (props0: Props) => {
             },
             // change color of italic text
             em({ node, ...props }) {
-              return <em className="text-black/90" {...props} />;
+              return <em className="text-black" {...props} />;
             },
 
             blockquote({ node, ...props }) {
-              return <blockquote className="text-black/90" {...props} />;
+              return <blockquote className="text-black/80 font-normal" {...props} />;
             },
             // change color of links
             a({ node, ...props }) {
-              return <a className="text-black/90" {...props} />;
+              return <a className="text-black font-medium underline underline-offset-2" {...props} />;
             },
 
             // remove background color in pre tags

@@ -145,12 +145,12 @@ export default async function Home() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <h3
-                    className="text-lg md:text-xl font-medium mb-2 leading-snug"
+                    className="text-xl md:text-[1.375rem] font-medium mb-2 leading-snug"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     {paper.title}
                   </h3>
-                  <p className="text-sm text-[var(--color-stone)] mb-3 leading-relaxed">
+                  <p className="text-[0.9375rem] text-[var(--color-stone)] mb-3 leading-relaxed">
                     {paper.abstract}
                   </p>
                   <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -191,7 +191,7 @@ export default async function Home() {
               )}
             >
               <div className="flex items-baseline gap-4">
-                <span className="text-xs text-[var(--color-stone)] tabular-nums flex-shrink-0 w-24">
+                <span className="text-[0.8125rem] text-[var(--color-stone)] tabular-nums flex-shrink-0 w-24">
                   {new Date(post.datePublished as string).toLocaleDateString(
                     'en-US',
                     {
@@ -201,7 +201,7 @@ export default async function Home() {
                     }
                   )}
                 </span>
-                <span className="text-[var(--color-ink)] group-hover:text-[var(--color-stone)] transition-colors">
+                <span className="text-[0.9375rem] text-[var(--color-ink)] group-hover:text-[var(--color-stone)] transition-colors">
                   {post.title}
                 </span>
               </div>
@@ -233,7 +233,7 @@ export default async function Home() {
                   className="block h-full"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-[var(--color-ink)]">
+                    <span className="text-[0.9375rem] font-medium text-[var(--color-ink)]">
                       {project.name}
                     </span>
                     <HiArrowUpRight
@@ -241,18 +241,18 @@ export default async function Home() {
                       size={14}
                     />
                   </div>
-                  <p className="text-sm text-[var(--color-stone)] leading-relaxed">
+                  <p className="text-[0.875rem] text-[var(--color-stone)] leading-relaxed">
                     {project.description}
                   </p>
                 </a>
               ) : (
                 <div className="h-full">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-[var(--color-stone)]">
+                    <span className="text-[0.9375rem] font-medium text-[var(--color-stone)]">
                       {project.name}
                     </span>
                   </div>
-                  <p className="text-sm text-[var(--color-stone)] leading-relaxed">
+                  <p className="text-[0.875rem] text-[var(--color-stone)] leading-relaxed">
                     {project.description}
                   </p>
                 </div>

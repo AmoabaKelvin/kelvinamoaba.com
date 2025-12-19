@@ -3,7 +3,13 @@ export const projects = [
     name: 'iShortn',
     link: 'https://ishortn.ink',
     description:
-      'A URL shortening service with a built-in analytics dashboard. It tracks link clicks, geographic data, and user behavior in real-time. Currently has over 7000 users and more than a million link clicks.',
+      'A URL shortening service with a built-in analytics dashboard. It tracks link clicks, geographic data, and user behavior in real-time. Currently has over 10,000 users and more than a million link clicks.',
+  },
+  {
+    name: 'Logdeck',
+    link: 'https://github.com/AmoabaKelvin/logdeck',
+    description:
+      'An open-source Docker container monitoring platform with live log streaming, full-text search, multi-host support, and interactive terminal access via WebSockets.',
   },
   {
     name: 'is-temp.com',
@@ -22,12 +28,6 @@ export const projects = [
     link: 'https://directt.to',
     description:
       'An open-source alternative to Google Dynamic Links — create powerful, trackable, and customizable short links.',
-  },
-  {
-    name: 'logtide',
-    link: '',
-    description:
-      'A beautiful, clean Docker logs viewer. Easily browse system logs, container output, and more—all in one unified interface.',
   },
   {
     name: 'zihni',

@@ -14,7 +14,7 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getDocumentBySlug('posts', slug, ['title']);
+  const post = await getDocumentBySlug('posts', slug, ['title']);
   const title = post?.title || 'Blog Post';
 
   return new ImageResponse(

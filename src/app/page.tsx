@@ -3,12 +3,13 @@ import { getDocuments } from 'outstatic/server';
 import { FaDev, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaHashnode, FaXTwitter } from 'react-icons/fa6';
 import { IoMailOpen } from 'react-icons/io5';
+import { HiArrowUpRight } from 'react-icons/hi2';
 
 import { cn } from '@/lib/utils';
 import { projects } from '@/projects';
+import { papers } from '@/papers';
 
 export default async function Home() {
-  // Get all posts and sort by datePublished (most recent first)
   const posts = getDocuments('posts', ['title', 'datePublished', 'slug']).sort(
     (a, b) => {
       const dateA = new Date(a.datePublished as string);
@@ -16,97 +17,250 @@ export default async function Home() {
       return dateB.getTime() - dateA.getTime();
     }
   );
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <main className="flex flex-col px-5 py-2 md:px-10">
-        <div className="flex flex-col gap-2 justify-center mt-20">
-          <p className="text-4xl font-extrabold">Kelvin Amoaba</p>
-          <p className="mt-1">software engineer</p>
-          <div>
-            <p className="text-sm text-gray-500">
-              system design • cloud • networking • backend • databases
-            </p>
-            <p className="text-sm text-gray-500">golang • compilers</p>
-          </div>
-          {/* social media icons, next to each other, gh, twitter, linkedin, hashnode, devto */}
-          <div className="flex gap-4 items-center mt-2">
-            <a href="https://github.com/AmoabaKelvin" target="_blank">
-              <FaGithub size={21} />
-            </a>
-            <a href="https://twitter.com/kelamoaba" target="_blank">
-              <FaXTwitter size={21} />
-            </a>
-            <a href="https://linkedin.com/in/kelvin-amoaba" target="_blank">
-              <FaLinkedin size={21} />
-            </a>
-            <a href="https://hashnode.com/@AmoabaKelvin" target="_blank">
-              <FaHashnode size={21} />
-            </a>
-            <a href="https://dev.to/amoabakelvin" target="_blank">
-              <FaDev size={21} />
-            </a>
-            <a href="mailto:kel.amoaba@gmail.com" target="_blank">
-              <IoMailOpen size={21} />
-            </a>
-          </div>
-          <div className="mx-auto my-10 w-20 h-1 border-t border-gray-400"></div>
+    <div className="mx-auto max-w-4xl px-6 md:px-10">
+      {/* Hero Section */}
+      <section className="pt-24 pb-20 md:pt-32 md:pb-28">
+        <div className="animate-fade-up stagger-1">
+          <h1
+            className="text-5xl md:text-7xl font-medium tracking-tight mb-6"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Kelvin Amoaba
+          </h1>
         </div>
 
-        {/* writings */}
-        <div className="flex flex-col gap-2 mt-10">
-          <p className="text-3xl font-bold">writings</p>
-          <div className="flex flex-col gap-4 mt-2">
-            {posts.map((post) => (
-              <div className="flex flex-col gap-1" key={post.title}>
-                <p className="text-sm">
-                  <span className="font-light text-gray-500">
-                    {new Date(post.datePublished as string).toLocaleDateString(
-                      'en-US',
-                      {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      }
-                    )}
-                    : {'  '}
-                  </span>
-                  <Link href={`/blog/${post.slug}`}>
-                    <span className="text-black hover:underline underline-offset-4 hover:cursor-pointer text-md">
-                      {post.title}
-                    </span>
-                  </Link>
-                </p>
-              </div>
+        <div className="animate-fade-up stagger-2">
+          <p className="text-lg md:text-xl text-[var(--color-stone)] font-light mb-8 max-w-xl leading-relaxed">
+            Software engineer building scalable systems and exploring the depths
+            of low-level architecture. Currently at{' '}
+            <a
+              href="https://vela.partners"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-ink)] hover-line"
+            >
+              Vela Partners
+            </a>
+            .
+          </p>
+        </div>
+
+        <div className="animate-fade-up stagger-3 mb-10">
+          <div className="flex flex-wrap gap-3 text-xs tracking-wide text-[var(--color-stone)]">
+            {[
+              'System Design',
+              'Cloud Infrastructure',
+              'Distributed Systems',
+              'Go',
+              'Compilers',
+            ].map((skill, i) => (
+              <span
+                key={skill}
+                className="px-3 py-1.5 border border-[var(--color-mist)] hover:border-[var(--color-stone)] transition-colors"
+              >
+                {skill}
+              </span>
             ))}
           </div>
         </div>
 
-        {/* projects */}
-        <div className="flex flex-col gap-2 mt-20">
-          <p className="text-3xl font-bold">projects</p>
-          <div className="flex flex-col gap-5 mt-2">
-            {projects.map((project) => (
-              // <ProjectCard project={project} key={project.name} />
-              <div className="flex flex-col gap-1" key={project.name}>
-                <p className="text-sm">
-                  <Link
-                    href={project.link}
-                    className={cn(
-                      'font-light text-gray-600 hover:underline underline-offset-4 hover:cursor-pointer',
-                      {
-                        'pointer-events-none': !project.link,
-                      }
-                    )}
+        <div className="animate-fade-up stagger-4">
+          <div className="flex gap-5 items-center">
+            <a
+              href="https://github.com/AmoabaKelvin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="GitHub"
+            >
+              <FaGithub size={18} />
+            </a>
+            <a
+              href="https://twitter.com/kelamoaba"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="Twitter"
+            >
+              <FaXTwitter size={18} />
+            </a>
+            <a
+              href="https://linkedin.com/in/kelvin-amoaba"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="LinkedIn"
+            >
+              <FaLinkedin size={18} />
+            </a>
+            <a
+              href="https://hashnode.com/@AmoabaKelvin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="Hashnode"
+            >
+              <FaHashnode size={18} />
+            </a>
+            <a
+              href="https://dev.to/amoabakelvin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="Dev.to"
+            >
+              <FaDev size={18} />
+            </a>
+            <a
+              href="mailto:kel.amoaba@gmail.com"
+              className="social-icon"
+              aria-label="Email"
+            >
+              <IoMailOpen size={18} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Papers Section */}
+      <section className="py-16 md:py-20">
+        <div className="animate-fade-up stagger-5 mb-10 pl-6">
+          <span className="section-heading">Research</span>
+        </div>
+
+        <div className="space-y-6">
+          {papers.map((paper, index) => (
+            <a
+              key={paper.arxivId}
+              href={paper.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                'paper-card block animate-fade-up',
+                `stagger-${Math.min(index + 6, 10)}`
+              )}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3
+                    className="text-lg md:text-xl font-medium mb-2 leading-snug"
+                    style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    {project.name}
-                  </Link>
-                  :<span className="ml-2 leading-6">{project.description}</span>
-                </p>
+                    {paper.title}
+                  </h3>
+                  <p className="text-sm text-[var(--color-stone)] mb-3 leading-relaxed">
+                    {paper.abstract}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {paper.tags.map((tag) => (
+                      <span key={tag} className="tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[var(--color-stone)]">
+                    {paper.authors.join(', ')} · {paper.venue} {paper.year}
+                  </p>
+                </div>
+                <HiArrowUpRight
+                  className="text-[var(--color-stone)] flex-shrink-0 mt-1"
+                  size={16}
+                />
               </div>
-            ))}
-          </div>
+            </a>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Writings Section */}
+      <section className="py-16 md:py-20">
+        <div className="animate-fade-up stagger-5 mb-10 pl-6">
+          <span className="section-heading">Writings</span>
+        </div>
+
+        <div className="space-y-1">
+          {posts.map((post, index) => (
+            <Link
+              href={`/blog/${post.slug}`}
+              key={post.slug}
+              className={cn(
+                'entry-item block group animate-fade-up',
+                `stagger-${Math.min(index + 6, 10)}`
+              )}
+            >
+              <div className="flex items-baseline gap-4">
+                <span className="text-xs text-[var(--color-stone)] tabular-nums flex-shrink-0 w-24">
+                  {new Date(post.datePublished as string).toLocaleDateString(
+                    'en-US',
+                    {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    }
+                  )}
+                </span>
+                <span className="text-[var(--color-ink)] group-hover:text-[var(--color-stone)] transition-colors">
+                  {post.title}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section className="py-16 md:py-20">
+        <div className="animate-fade-up stagger-5 mb-10 pl-6">
+          <span className="section-heading">Projects</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projects.map((project, index) => (
+            <div
+              key={project.name}
+              className={cn(
+                'group animate-fade-up p-5 border border-[var(--color-mist)] hover:border-[var(--color-ink)] transition-all duration-300',
+                `stagger-${Math.min(index + 6, 10)}`
+              )}
+            >
+              {project.link ? (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-full"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-[var(--color-ink)]">
+                      {project.name}
+                    </span>
+                    <HiArrowUpRight
+                      className="text-[var(--color-stone)] group-hover:text-[var(--color-ink)] transition-colors"
+                      size={14}
+                    />
+                  </div>
+                  <p className="text-sm text-[var(--color-stone)] leading-relaxed">
+                    {project.description}
+                  </p>
+                </a>
+              ) : (
+                <div className="h-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-[var(--color-stone)]">
+                      {project.name}
+                    </span>
+                  </div>
+                  <p className="text-sm text-[var(--color-stone)] leading-relaxed">
+                    {project.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

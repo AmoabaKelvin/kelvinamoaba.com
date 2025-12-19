@@ -3,20 +3,26 @@ import './globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
-import { Funnel_Display } from 'next/font/google';
+import { Link } from 'next-view-transitions';
+import { Cormorant_Garamond, Source_Sans_3 } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Kelvin Amoaba',
   description:
     'Building products that solve real-world problems and exploring the depths of low-level systems',
-  openGraph: {
-    images: ['https://i.imgur.com/mkixaLE.png'],
-  },
+  metadataBase: new URL('https://kelvinamoaba.com'),
 };
 
-const funnelDisplay = Funnel_Display({
+const displayFont = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-display',
+});
+
+const bodyFont = Source_Sans_3({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-body',
 });
 
 export default function RootLayout({
@@ -26,32 +32,47 @@ export default function RootLayout({
 }) {
   return (
     <ViewTransitions>
-      <html lang="en" className={funnelDisplay.className}>
+      <html
+        lang="en"
+        className={`${displayFont.variable} ${bodyFont.variable}`}
+        style={{ fontFamily: 'var(--font-body)' }}
+      >
         <body>
-          <div className="flex justify-between">
-            <div className="flex justify-center items-center m-4 w-10 h-10 border-2 border-black">
-              <p>KA</p>
+          {/* Header */}
+          <header className="fixed top-0 left-0 right-0 z-50 px-6 py-5 md:px-10 header-glass">
+            <div className="mx-auto max-w-4xl flex justify-between items-center">
+              <Link href="/" className="logo-mark">
+                <span>KA</span>
+              </Link>
+              <nav className="flex items-center gap-8">
+                <a
+                  href="https://drive.google.com/file/d/1CiE_n7PExjCYG1OO8W04CMZwwOK728LZ/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
+                >
+                  Resume
+                </a>
+              </nav>
             </div>
+          </header>
 
-            {/*           <div className="flex justify-center items-center px-3 m-4 h-10 border-2 border-white">
-            <Link href="https://drive.google.com/file/d/1YPp-Dc4izII1kKv0PbwoDk30pINhKKVT/view?usp=sharing">
-              Resume
-            </Link>
-          </div> */}
-          </div>
-
-          <main className="h-full min-h-screen">
+          <main className="h-full min-h-screen pt-20">
             {children}
             <Analytics />
           </main>
-          <footer
-            className="flex justify-center items-center mt-20 w-full h-10 text-sm text-black"
-            suppressHydrationWarning
-          >
-            <p>
-              © {new Date().getFullYear()} {'  '}
-              Kelvin Amoaba
-            </p>
+
+          {/* Footer */}
+          <footer className="py-12 px-6 md:px-10">
+            <div className="mx-auto max-w-4xl">
+              <div className="section-divider mb-8"></div>
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p className="footer-text" suppressHydrationWarning>
+                  {new Date().getFullYear()} Kelvin Amoaba
+                </p>
+                <p className="footer-text">Accra, Ghana</p>
+              </div>
+            </div>
           </footer>
         </body>
       </html>

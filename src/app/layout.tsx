@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
 import { Link } from 'next-view-transitions';
 import { Cormorant_Garamond, Source_Sans_3 } from 'next/font/google';
+import { QueryProvider } from '@/lib/providers/query-provider';
 
 export const metadata: Metadata = {
   title: 'Kelvin Amoaba',
@@ -45,6 +46,12 @@ export default function RootLayout({
                 <span>KA</span>
               </Link>
               <nav className="flex items-center gap-8">
+                <Link
+                  href="/guestbook"
+                  className="text-xs tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
+                >
+                  Guestbook
+                </Link>
                 <a
                   href="https://drive.google.com/file/d/1CiE_n7PExjCYG1OO8W04CMZwwOK728LZ/view?usp=sharing"
                   target="_blank"
@@ -58,7 +65,9 @@ export default function RootLayout({
           </header>
 
           <main className="h-full min-h-screen pt-20">
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
             <Analytics />
           </main>
 

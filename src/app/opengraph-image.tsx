@@ -88,31 +88,6 @@ export default async function Image() {
           >
             Software Engineer
           </div>
-
-          {/* Skills */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '16px',
-              marginTop: '24px',
-            }}
-          >
-            {['Systems', 'Cloud', 'Go', 'AI/ML'].map((skill) => (
-              <div
-                key={skill}
-                style={{
-                  padding: '8px 20px',
-                  border: '2px solid #000000',
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  color: '#000000',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                {skill}
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Bottom URL */}

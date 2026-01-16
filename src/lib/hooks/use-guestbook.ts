@@ -34,11 +34,12 @@ export function useGuestbookPosts() {
   });
 }
 
-export function useGuestbookEligibility() {
+export function useGuestbookEligibility(enabled: boolean = true) {
   return useQuery({
     queryKey: guestbookKeys.eligibility(),
     queryFn: checkEligibility,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled,
   });
 }
 

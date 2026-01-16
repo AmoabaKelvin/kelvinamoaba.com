@@ -10,15 +10,17 @@ import { SignDialog } from './sign-dialog';
 export function GuestbookHeader() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: session, isPending: isSessionLoading } = useSession();
+
+  // Only check eligibility after we confirm the user is authenticated
+  const isAuthenticated = !isSessionLoading && !!session?.user;
   const {
     data: eligibility,
     isLoading: isEligibilityLoading,
     isError: isEligibilityError,
     refetch: refetchEligibility,
-  } = useGuestbookEligibility();
+  } = useGuestbookEligibility(isAuthenticated);
 
-  const isLoading = isSessionLoading || isEligibilityLoading;
-  const isAuthenticated = !!session?.user;
+  const isLoading = isSessionLoading || (isAuthenticated && isEligibilityLoading);
   const canSign = eligibility?.eligible ?? false;
 
   return (

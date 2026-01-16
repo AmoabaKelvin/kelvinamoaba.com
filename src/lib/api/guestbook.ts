@@ -16,6 +16,7 @@ async function fetchApi<T>(
 ): Promise<T> {
   const response = await fetch(`/api/guestbook${endpoint}`, {
     ...options,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,

@@ -37,3 +37,7 @@ next-env.d.ts
 # IDEs and editors
 .idea/
 .vscode/
+# Environment variables
+.env
+.env.*
+!.env.example

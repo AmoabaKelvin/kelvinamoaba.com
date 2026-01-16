@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getSession } from '@/lib/auth-server';
 import {
   createPost,
@@ -55,6 +56,9 @@ export async function POST(request: NextRequest) {
 
     // Get the post with user data
     const postWithUser = await getPostWithUser(postId);
+
+    // Revalidate the guestbook page to bust the cache
+    revalidatePath('/guestbook');
 
     return NextResponse.json(postWithUser, { status: 201 });
   } catch (error) {

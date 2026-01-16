@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth-server';
 import { checkUserHasPost } from '@/lib/data/guestbook';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session = await getSession();
@@ -11,7 +13,7 @@ export async function GET() {
         { eligible: false, reason: 'Not authenticated' },
         {
           headers: {
-            'Cache-Control': 'private, max-age=30',
+            'Cache-Control': 'no-store',
           },
         }
       );
@@ -33,7 +35,7 @@ export async function GET() {
       },
       {
         headers: {
-          'Cache-Control': 'private, max-age=30',
+          'Cache-Control': 'no-store',
         },
       }
     );

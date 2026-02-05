@@ -15,16 +15,22 @@ export function slugify(text: string): string {
  * Extract headings from markdown content
  */
 export function extractHeadings(content: string): TOCHeading[] {
+  const contentWithoutCode = content.replace(/```[\s\S]*?```/g, '');
   const headingRegex = /^(#{2,4})\s+(.+)$/gm;
   const headings: TOCHeading[] = [];
+  const idCounts = new Map<string, number>();
   let match;
 
-  while ((match = headingRegex.exec(content)) !== null) {
+  while ((match = headingRegex.exec(contentWithoutCode)) !== null) {
     const level = match[1].length as 2 | 3 | 4;
     const text = match[2].trim();
-    const id = slugify(text);
+    const baseId = slugify(text) || 'heading';
 
-    headings.push({ id, text, level });
+    const count = idCounts.get(baseId) || 0;
+    idCounts.set(baseId, count + 1);
+    const uniqueId = count === 0 ? baseId : `${baseId}-${count}`;
+
+    headings.push({ id: uniqueId, text, level });
   }
 
   return headings;

@@ -5,6 +5,8 @@ import { getDocumentBySlug, getDocumentSlugs } from 'outstatic/server';
 import Markdown from 'react-markdown';
 
 import CodeSection from '@/app/blog/[slug]/code-section';
+import { TableOfContents } from '@/components/table-of-contents';
+import { extractHeadings, slugify } from '@/lib/extract-headings';
 
 import BackButton from './back-button';
 
@@ -60,8 +62,11 @@ const BlogDetailPage = async (props0: Props) => {
     return notFound();
   }
 
+  const headings = extractHeadings(post.content);
+
   return (
-    <div className="px-5 mx-auto max-w-3xl">
+    <div className="relative px-5 mx-auto max-w-3xl">
+      <TableOfContents headings={headings} />
       <BackButton className="mt-10" />
       <div className="mt-10 text-xl font-bold md:text-3xl">{post.title}</div>
       <div className="mt-2 text-sm text-gray-500">
@@ -97,14 +102,20 @@ const BlogDetailPage = async (props0: Props) => {
             h1({ node, ...props }) {
               return <h1 className="text-black font-semibold" {...props} />;
             },
-            h2({ node, ...props }) {
-              return <h2 className="text-black font-semibold" {...props} />;
+            h2({ node, children, ...props }) {
+              const text = String(children);
+              const id = slugify(text);
+              return <h2 id={id} className="text-black font-semibold scroll-mt-20" {...props}>{children}</h2>;
             },
-            h3({ node, ...props }) {
-              return <h3 className="mb-0 text-black font-semibold" {...props} />;
+            h3({ node, children, ...props }) {
+              const text = String(children);
+              const id = slugify(text);
+              return <h3 id={id} className="mb-0 text-black font-semibold scroll-mt-20" {...props}>{children}</h3>;
             },
-            h4({ node, ...props }) {
-              return <h4 className="text-black font-medium" {...props} />;
+            h4({ node, children, ...props }) {
+              const text = String(children);
+              const id = slugify(text);
+              return <h4 id={id} className="text-black font-medium scroll-mt-20" {...props}>{children}</h4>;
             },
             h5({ node, ...props }) {
               return <h5 className="text-black font-medium" {...props} />;

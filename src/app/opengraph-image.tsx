@@ -1,6 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
-
-export const runtime = 'edge';
 
 export const alt = 'Kelvin Amoaba';
 export const size = {
@@ -10,6 +10,10 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
+  const fontData = readFileSync(
+    join(process.cwd(), 'src/app/fonts/BerkeleyMono.ttf')
+  );
+
   return new ImageResponse(
     (
       <div
@@ -18,95 +22,83 @@ export default async function Image() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#ffffff',
-          fontFamily: 'system-ui, sans-serif',
+          backgroundColor: '#f5f5f4',
+          padding: '40px',
+          fontFamily: 'Berkeley Mono',
         }}
       >
-        {/* Top accent line */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '6px',
-            backgroundColor: '#000000',
-          }}
-        />
+        {/* Lighter continuous lines that extend past the corners */}
+        {/* Top horizontal line */}
+        <div style={{ position: 'absolute', top: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        {/* Bottom horizontal line */}
+        <div style={{ position: 'absolute', bottom: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        {/* Left vertical line */}
+        <div style={{ position: 'absolute', top: 20, left: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
+        {/* Right vertical line */}
+        <div style={{ position: 'absolute', top: 20, right: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
 
-        {/* Content */}
+        {/* Bold L-shaped corner marks */}
+        {/* Top Left */}
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Top Right */}
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Bottom Left */}
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Bottom Right */}
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+
+        {/* Content area */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '24px',
+            justifyContent: 'flex-end',
+            flex: 1,
+            padding: '60px 100px 90px 100px',
           }}
         >
-          {/* Logo mark */}
+          {/* Category label */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '80px',
-              height: '80px',
-              border: '3px solid #000000',
-              fontSize: '28px',
-              fontWeight: 700,
+              fontSize: 20,
+              fontWeight: 400,
+              color: '#2563eb',
+              textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              marginBottom: '16px',
-              color: '#000000',
+              marginBottom: 20,
             }}
           >
-            KA
+            ENGINEER
           </div>
 
-          {/* Name */}
+          {/* Title */}
           <div
             style={{
-              fontSize: '72px',
-              fontWeight: 700,
-              color: '#000000',
-              letterSpacing: '-0.02em',
+              fontSize: 72,
+              fontWeight: 400,
+              color: '#1a1a1a',
+              lineHeight: 1.1,
             }}
           >
             Kelvin Amoaba
           </div>
-
-          {/* Tagline */}
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: 500,
-              color: '#333333',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Software Engineer
-          </div>
-        </div>
-
-        {/* Bottom URL */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '40px',
-            fontSize: '20px',
-            fontWeight: 500,
-            color: '#555555',
-            letterSpacing: '0.1em',
-          }}
-        >
-          kelvinamoaba.com
         </div>
       </div>
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: 'Berkeley Mono',
+          data: fontData,
+          style: 'normal',
+          weight: 400,
+        },
+      ],
     }
   );
 }

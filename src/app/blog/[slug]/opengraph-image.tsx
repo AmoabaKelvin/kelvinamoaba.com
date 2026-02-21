@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import { getDocumentBySlug, getDocumentSlugs } from 'outstatic/server';
 
@@ -22,6 +24,10 @@ export default async function Image({
   const post = await getDocumentBySlug('posts', slug, ['title']);
   const title = post?.title || 'Blog Post';
 
+  const fontData = readFileSync(
+    join(process.cwd(), 'src/app/fonts/BerkeleyMono.ttf')
+  );
+
   return new ImageResponse(
     (
       <div
@@ -30,140 +36,86 @@ export default async function Image({
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#ffffff',
-          fontFamily: 'system-ui, sans-serif',
-          padding: '60px 80px',
+          backgroundColor: '#f5f5f4',
+          padding: '40px',
+          fontFamily: 'Berkeley Mono',
         }}
       >
-        {/* Top accent line */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '6px',
-            backgroundColor: '#111111',
-          }}
-        />
+        {/* Lighter continuous lines that extend past the corners */}
+        {/* Top horizontal line */}
+        <div style={{ position: 'absolute', top: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        {/* Bottom horizontal line */}
+        <div style={{ position: 'absolute', bottom: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        {/* Left vertical line */}
+        <div style={{ position: 'absolute', top: 20, left: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
+        {/* Right vertical line */}
+        <div style={{ position: 'absolute', top: 20, right: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
 
-        {/* Header with logo */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: '48px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '48px',
-              height: '48px',
-              border: '2px solid #000000',
-              fontSize: '16px',
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              color: '#000000',
-            }}
-          >
-            KA
-          </div>
-          <span
-            style={{
-              fontSize: '18px',
-              color: '#333333',
-              fontWeight: 500,
-              letterSpacing: '0.05em',
-            }}
-          >
-            kelvinamoaba.com
-          </span>
-        </div>
+        {/* Bold L-shaped corner marks */}
+        {/* Top Left */}
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Top Right */}
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Bottom Left */}
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        {/* Bottom Right */}
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
 
-        {/* Main content area */}
+        {/* Content area */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'flex-end',
             flex: 1,
-            justifyContent: 'center',
+            padding: '60px 100px 90px 100px',
           }}
         >
-          {/* Title */}
-          <div
-            style={{
-              fontSize: '56px',
-              fontWeight: 700,
-              color: '#000000',
-              lineHeight: 1.2,
-              letterSpacing: '-0.02em',
-              maxWidth: '900px',
-            }}
-          >
-            {title}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: 'auto',
-            paddingTop: '40px',
-            borderTop: '1px solid #e5e5e5',
-          }}
-        >
+          {/* Category label */}
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
+              alignItems: 'center',
+              fontSize: 20,
+              fontWeight: 400,
+              marginBottom: 20,
             }}
           >
-            <span
-              style={{
-                fontSize: '24px',
-                fontWeight: 600,
-                color: '#000000',
-              }}
-            >
-              Kelvin Amoaba
-            </span>
-            <span
-              style={{
-                fontSize: '18px',
-                fontWeight: 500,
-                color: '#444444',
-              }}
-            >
-              Software Engineer
-            </span>
+            <span style={{ color: '#2563eb' }}>NOTES</span>
+            <span style={{ color: '#aaa', margin: '0 12px' }}>•</span>
+            <span style={{ color: '#aaa' }}>KELVIN AMOABA</span>
           </div>
 
+          {/* Title */}
           <div
             style={{
-              padding: '12px 24px',
-              border: '2px solid #000000',
-              fontSize: '16px',
-              fontWeight: 600,
-              color: '#000000',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
+              fontSize: 64,
+              fontWeight: 400,
+              color: '#1a1a1a',
+              lineHeight: 1.1,
+              maxWidth: '1000px',
+              marginLeft: -4,
             }}
           >
-            Blog
+            {title}
           </div>
         </div>
       </div>
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: 'Berkeley Mono',
+          data: fontData,
+          style: 'normal',
+          weight: 400,
+        },
+      ],
     }
   );
 }

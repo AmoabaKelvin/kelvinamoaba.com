@@ -1,5 +1,11 @@
 export const projects = [
   {
+    name: 'RiftCheck',
+    link: 'https://riftcheck.dev',
+    description:
+      'AI-powered API contract change detection for GitHub repositories. Monitors every commit and PR for breaking changes across REST, GraphQL, and gRPC, and notifies the right teams instantly.',
+  },
+  {
     name: 'iShortn',
     link: 'https://ishortn.ink',
     description:

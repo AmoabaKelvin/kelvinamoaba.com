@@ -1,0 +1,41 @@
+---
+title: 'What actually is an API?'
+datePublished: '2026-04-06T18:00:00.000Z'
+status: 'published'
+author:
+  name: 'Kelvin Amoaba'
+  picture: 'https://avatars.githubusercontent.com/u/97001695?v=4'
+slug: 'what-actually-is-an-api'
+---
+
+Many of us use the term "API" for countless things. If you come from a web programming background, you probably think of APIs as a way to talk to backend services over the internet. I know I did, so when I kept hearing about "FileSystem APIs," "macOS APIs," "hardware APIs," I was confused. It took me a while to realize I was thinking about it too narrowly.
+
+## Core Idea
+
+An API, is basically is an interface between two pieces of softwares that acts as a contract for the exchange of data and information. It basically means that if you give me some piece of data structured in a certain way, I will give you back a response that is also structured this way. The entirety of the rest of the conceptual meanings we have surrounding APIs is just a matter of what those two pieces of softwares are and where they live. The sole purpose of having a programming interface is one of the key things in the field of engineering, which is: "To hide complexity and show a clean interface, ie. abstraction"
+
+## It's everywhere
+
+Think of it, whenever you want to read a file programmatically, you call `open()` and then `read()`. Those are APIs that the operating system makes available to you. As a caller, you don't need to know how the OS actually interacts with the disk, you just use the interface.
+
+Similarly, say on a mobile device, Apple and Google have done complex engineering to build software that controls camera hardware. As an app developer, you just call a function to take a photo or start a video. You don't need to understand the sensor hardware. The camera API abstracts all of that away.
+
+Web APIs, are the same concept again — just across a network. Instead of calling a function in the same process, you're sending an HTTP request to another machine. But the principle is identical: here's what you send me, here's what I send back, don't worry about what happens in between.
+
+So the common thread across all of these **is abstraction and contract**. An API lets someone use a capability without understanding its internals, and it promises a stable interface so that the thing on the other side can change without breaking the caller.
+
+## Types of APIs
+
+APIs can be grouped into two main groups, they are the public and private APIs. One important thing to understand here: this isn't about whether something is exposed on the public internet. It's about **who is authorized to use it**.
+
+**Public APIs** are those that can be used by anyone on the internet, typically after obtaining some sort of authorization (eg, an api key, oauth token...). Github API is an example of a public API, anyone can sign up and start making requests.
+
+**Private APIs** however, are those that are not available to everyone on the internet, but scoped to just the organization that built them. That means that you can find out say the various endpoints to private APIs. In the case of Web APIs, you might be able to discover the endpoints a mobile application communicates with (through MITM methods or network sniffing), however that doesn't make that API public, albeit everything is visible, it's still private in the sense that **only the authorized application / services made by the organization can access it**
+
+**Partner APIs** sit in the middle. These are exposed to specific external parties that have a business relationship with the API provider, but not to the general public. Think of a payment processor offering special endpoints to large merchants, or a logistics company giving integration access to select retail partners.
+
+### Apple APIs
+
+This distinction shows up clearly in Apple's ecosystem. Some iOS and macOS APIs exist and are technically discoverable, but Apple does not allow third-party developers to use them. If you use a private Apple API in your app, it will be rejected from the App Store. These APIs are also intentionally left undocumented.
+
+So the thinking around them should not be **whether or not you can find them but whether you can actually access them.**

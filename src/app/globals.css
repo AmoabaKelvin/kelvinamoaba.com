@@ -267,6 +267,91 @@ a {
   overflow: hidden;
 }
 
+/* MDX code blocks (rehype-pretty-code + Shiki) */
+/* The figure is the visual container; pre and figcaption sit flush inside it. */
+.prose figure[data-rehype-pretty-code-figure] {
+  margin: 1.5rem 0;
+  border: 1px solid var(--color-mist);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fafaf9;
+}
+
+.prose figure[data-rehype-pretty-code-figure] figcaption[data-rehype-pretty-code-title] {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  background: var(--color-mist);
+  padding: 0.5rem 1rem;
+  margin: 0;
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.prose figure[data-rehype-pretty-code-figure] pre[data-language] {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.prose pre[data-language] code {
+  display: grid;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: inherit;
+  counter-reset: line;
+}
+
+.prose pre[data-language] code [data-line] {
+  padding: 0 0.25rem;
+  border-left: 2px solid transparent;
+}
+
+.prose pre[data-language] code [data-line].highlighted {
+  background: rgba(0, 0, 0, 0.04);
+  border-left-color: var(--color-ink);
+}
+
+.prose pre[data-language] code [data-highlighted-chars] {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.prose :not(pre) > code {
+  background: #ededed;
+  border: 1px solid #d4d4d4;
+  padding: 0.0625rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.875em;
+  font-weight: 400;
+  color: var(--color-ink);
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: '';
+}
+
+/* Heading anchor links from rehype-autolink-headings */
+.prose .heading-anchor {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.prose .heading-anchor:hover {
+  text-decoration: none;
+}
+
 /* Selection styling */
 ::selection {
   background: var(--color-ink);

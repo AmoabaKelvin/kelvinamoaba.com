@@ -2,12 +2,8 @@
 title: 'Creating a Custom Authentication Backend in Django'
 seoTitle: 'Custom Authentication Backend in Django'
 datePublished: Fri Jul 18 2022 07:02:34 GMT+0000 (Coordinated Universal Time)
-slug: custom-authentication-backend-in-django
 cover: https://res.cloudinary.com/practicaldev/image/fetch/s--jBFjsQ3E--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y79h0v6wtipnu4xdcciu.jpg
-tags: tutorial, django, python, webdev
-status: 'published'
-author:
-  picture: ''
+tags: ["tutorial", "django", "python", "webdev"]
 ---
 
 You may have noticed that the built in authentication system in Django has quite some few limitations. For example, it only allows your website's users to only log in using their username and password. But in modern day websites, you might want to enable your users to be able to log in to your site using either their username or email address. If your website is for a company, you can even implement an authentication backend to make users log in using lets say a secret key.
@@ -38,7 +34,7 @@ The account app should have the following directory structure.
 Next, create a new file called `authentication.py` in the account app.
 In `authentication.py`, we add the following code:
 
-```python
+```python title="account/authentication.py"
 from django.contrib.auth.models import User
 class EmailAuthBackend:
     """
@@ -85,7 +81,7 @@ Thats it, we are done with our custom authentication backend. Phew.
 But now, users will still not be able to log in using their email address. This is because, we have not told django to add our authentication backend to the list of authentication backends available. To do that we need to edit our `settings.py` file.
 Add the following to it.
 
-```python
+```python title="settings.py"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # This is the default that allows us to log in via username
     'account.authentication.EmailAuthBackend'

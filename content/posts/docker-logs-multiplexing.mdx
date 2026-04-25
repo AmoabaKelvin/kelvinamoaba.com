@@ -3,12 +3,8 @@ title: 'Logs Multiplexing in Docker'
 seoTitle: 'Logs Multiplexing in Docker'
 datePublished: Thu Oct 16 2025 10:00:00 GMT+0000 (Coordinated Universal Time)
 publishedAt: '2025-10-16T10:00:00.000Z'
-slug: docker-logs-multiplexing
 cover: ''
-tags: docker, logs, multiplexing
-status: 'published'
-author:
-  picture: ''
+tags: ["docker", "logs", "multiplexing"]
 ---
 
 Logs multiplexing is the way that docker sends logs from containers to whatever client might be requesting for those logs. Logs multiplexing is when the various data from the output streams of the process being run in the container is combined into one stream and passed to clients.
@@ -45,12 +41,12 @@ This framing header lets the receiving end parse the stream unambiguously. The d
 
 ### Breakdown of the 8-byte header
 
-```shell
-Byte 0 : Stream type (0 = stdin, 1 = stdout, 2 = stderr)
-Bytes 1-3 : Reserved (always 0x00)
-Bytes 4-7 : Payload size (big-endian uint32)
-Bytes 8-n : Payload (the actual log data)
-```
+| Bytes | Field        | Notes                                |
+| ----- | ------------ | ------------------------------------ |
+| 0     | Stream type  | `0` stdin, `1` stdout, `2` stderr    |
+| 1–3   | Reserved     | always `0x00`                        |
+| 4–7   | Payload size | big-endian `uint32`                  |
+| 8–n   | Payload      | the actual log data                  |
 
 Here's a simple example of how you might parse this in Python when connecting to Docker's attach API:
 

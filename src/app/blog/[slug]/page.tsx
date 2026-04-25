@@ -1,150 +1,68 @@
-import { Metadata, ResolvingMetadata } from 'next';
+import { allPosts } from 'content-collections';
+import { MDXContent } from '@content-collections/mdx/react';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
-import { getDocumentBySlug, getDocumentSlugs } from 'outstatic/server';
-import Markdown from 'react-markdown';
 
-import CodeSection from '@/app/blog/[slug]/code-section';
+import { mdxComponents } from '@/components/mdx/mdx-components';
 import { TableOfContents } from '@/components/table-of-contents';
-import { extractHeadings, slugify } from '@/lib/extract-headings';
+import type { TOCHeading } from '@/lib/extract-headings';
 
 import BackButton from './back-button';
 
 export const revalidate = false;
 export const dynamic = 'force-static';
 
-export async function generateStaticParams() {
-  const posts = getDocumentSlugs('posts');
-  return posts.map((slug) => ({ slug }));
+export function generateStaticParams() {
+  return allPosts.map((post) => ({ slug: post.slug }));
 }
 
 interface Props {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata(
-  props: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const params = await props.params;
-  const blogSlug = params.slug;
+function findPost(slug: string) {
+  return allPosts.find((p) => p.slug === slug);
+}
 
-  const blogPost = await getPost(blogSlug);
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { slug } = await props.params;
+  const post = findPost(slug);
+  if (!post) return {};
 
   return {
-    title: blogPost?.title,
-    authors: [
-      {
-        name: 'Kelvin Amoaba',
-        url: 'https://kelvinamoaba.com',
-      },
-    ],
-    keywords: [...((blogPost?.tags as string[]) || [])],
+    title: post.seoTitle ?? post.title,
+    authors: [{ name: 'Kelvin Amoaba', url: 'https://kelvinamoaba.com' }],
+    keywords: post.tags,
     creator: 'Kelvin Amoaba',
-    description: blogPost?.content
-      .replace(/<[^>]*>/g, '')
-      // remove #, ##, ###, etc
-      .replace(/#+\s/g, '')
-      .replace(/\n/g, ' ')
-      .replace(/\s+/g, ' ')
-      .substring(0, 200),
+    description: undefined,
   };
 }
 
-const BlogDetailPage = async (props0: Props) => {
-  const { slug } = await props0.params;
-
-  const post = await getPost(slug);
-
-  if (!post) {
-    return notFound();
-  }
-
-  const headings = extractHeadings(post.content);
+const BlogDetailPage = async (props: Props) => {
+  const { slug } = await props.params;
+  const post = findPost(slug);
+  if (!post) return notFound();
 
   return (
     <div className="relative px-5 mx-auto max-w-3xl">
-      <TableOfContents headings={headings} />
+      <TableOfContents headings={post.headings as TOCHeading[]} />
       <BackButton className="mt-10" />
       <div className="mt-10 text-xl font-bold md:text-3xl">{post.title}</div>
       <div className="mt-2 text-sm text-gray-500">
-        Kelvin Amoaba • {new Date(post.datePublished as string).toLocaleDateString()}
+        Kelvin Amoaba •{' '}
+        {new Date(post.datePublished).toLocaleDateString()}
       </div>
-      {(post.cover as string) && (
+      {post.cover && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={post.cover as string}
+          src={post.cover}
           className="mt-10 rounded-md"
           alt={post.title}
         />
       )}
-      <div className="mt-10 space-y-10 max-w-3xl font-normal leading-7 prose text-black dark:prose-invert">
-        <Markdown
-          components={{
-            code({ node, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '');
-              return match ? (
-                <div className="overflow-hidden w-full rounded-md">
-                  <CodeSection
-                    code={String(children).replace(/\n$/, '')}
-                    language={match[1]}
-                  />
-                </div>
-              ) : (
-                <code className={className + ' text-black'} {...props}>
-                  {children}
-                </code>
-              );
-            },
-            // change color of headings
-            h1({ node, ...props }) {
-              return <h1 className="text-black font-semibold" {...props} />;
-            },
-            h2({ node, children, ...props }) {
-              const text = String(children);
-              const id = slugify(text);
-              return <h2 id={id} className="text-black font-semibold scroll-mt-20" {...props}>{children}</h2>;
-            },
-            h3({ node, children, ...props }) {
-              const text = String(children);
-              const id = slugify(text);
-              return <h3 id={id} className="mb-0 text-black font-semibold scroll-mt-20" {...props}>{children}</h3>;
-            },
-            h4({ node, children, ...props }) {
-              const text = String(children);
-              const id = slugify(text);
-              return <h4 id={id} className="text-black font-medium scroll-mt-20" {...props}>{children}</h4>;
-            },
-            h5({ node, ...props }) {
-              return <h5 className="text-black font-medium" {...props} />;
-            },
-            // change color of bold text
-            strong({ node, ...props }) {
-              return <strong className="font-bold text-black" {...props} />;
-            },
-            // change color of italic text
-            em({ node, ...props }) {
-              return <em className="text-black" {...props} />;
-            },
-
-            blockquote({ node, ...props }) {
-              return <blockquote className="text-black/80 font-normal" {...props} />;
-            },
-            // change color of links
-            a({ node, ...props }) {
-              return <a className="text-black font-medium underline underline-offset-2" {...props} />;
-            },
-
-            // remove background color in pre tags
-            pre({ node, ...props }) {
-              return <pre className="p-0 bg-transparent" {...props} />;
-            },
-          }}
-        >
-          {post.content}
-        </Markdown>
+      <article className="mt-10 space-y-6 max-w-3xl font-normal leading-7 prose text-black dark:prose-invert">
+        <MDXContent code={post.mdx} components={mdxComponents} />
 
         <Script
           src="https://giscus.app/client.js"
@@ -163,21 +81,9 @@ const BlogDetailPage = async (props0: Props) => {
           data-loading="lazy"
           async
         />
-      </div>
+      </article>
     </div>
   );
 };
 
 export default BlogDetailPage;
-
-async function getPost(slug: string) {
-  return getDocumentBySlug('posts', slug, [
-    'title',
-    'datePublished',
-    'slug',
-    'author',
-    'content',
-    'cover',
-    'tags',
-  ]);
-}

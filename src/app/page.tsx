@@ -1,5 +1,5 @@
+import { allPosts } from 'content-collections';
 import { Link } from 'next-view-transitions';
-import { getDocuments } from 'outstatic/server';
 import { FaDev, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaHashnode, FaXTwitter } from 'react-icons/fa6';
 import { IoMailOpen } from 'react-icons/io5';
@@ -10,12 +10,8 @@ import { projects } from '@/projects';
 import { papers } from '@/papers';
 
 export default async function Home() {
-  const posts = getDocuments('posts', ['title', 'datePublished', 'slug']).sort(
-    (a, b) => {
-      const dateA = new Date(a.datePublished as string);
-      const dateB = new Date(b.datePublished as string);
-      return dateB.getTime() - dateA.getTime();
-    }
+  const posts = [...allPosts].sort(
+    (a, b) => b.datePublished.getTime() - a.datePublished.getTime()
   );
 
   return (
@@ -192,14 +188,11 @@ export default async function Home() {
             >
               <div className="flex items-baseline gap-4">
                 <span className="text-[0.8125rem] text-[var(--color-stone)] tabular-nums flex-shrink-0 w-24">
-                  {new Date(post.datePublished as string).toLocaleDateString(
-                    'en-US',
-                    {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    }
-                  )}
+                  {post.datePublished.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </span>
                 <span className="text-[0.9375rem] text-[var(--color-ink)] group-hover:text-[var(--color-stone)] transition-colors">
                   {post.title}

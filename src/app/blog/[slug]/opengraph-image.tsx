@@ -1,11 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { allPosts } from 'content-collections';
 import { ImageResponse } from 'next/og';
-import { getDocumentBySlug, getDocumentSlugs } from 'outstatic/server';
 
-export async function generateStaticParams() {
-  const posts = getDocumentSlugs('posts');
-  return posts.map((slug) => ({ slug }));
+export function generateStaticParams() {
+  return allPosts.map((post) => ({ slug: post.slug }));
 }
 
 export const alt = 'Blog Post';
@@ -21,7 +20,7 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await getDocumentBySlug('posts', slug, ['title']);
+  const post = allPosts.find((p) => p.slug === slug);
   const title = post?.title || 'Blog Post';
 
   const fontData = readFileSync(

@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+# content-collections generated output
+/.content-collections/
+
 # production
 /build
 

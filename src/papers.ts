@@ -1,5 +1,26 @@
 export const papers = [
   {
+    title: 'CoFEE: Reasoning Control for LLM-Based Feature Discovery',
+    authors: [
+      'Maximilian Westermann',
+      'Ben Griffin',
+      'Aaron Ontoyin Yin',
+      'Zakari Salifu',
+      'Yagiz Ihlamur',
+      'Kelvin Amoaba',
+      'Joseph Ternasky',
+      'Fuat Alican',
+      'Yigit Ihlamur',
+    ],
+    venue: 'arXiv',
+    year: 2026,
+    arxivId: '2604.21584',
+    link: 'https://arxiv.org/abs/2604.21584',
+    abstract:
+      'A framework for automating feature discovery from unstructured data using LLMs with cognitive constraints, inducing reasoning behaviors like backward chaining from outcomes and verification against data leakage criteria. Achieves 15.2% higher success rate, 29% fewer features generated, and 53.3% cost reduction over vanilla LLM approaches.',
+    tags: ['Artificial Intelligence', 'LLM', 'Feature Discovery', 'Machine Learning'],
+  },
+  {
     title: 'VCBench: Benchmarking LLMs in Venture Capital',
     authors: [
       'Rick Chen',

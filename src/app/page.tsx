@@ -8,6 +8,7 @@ import { HiArrowUpRight } from 'react-icons/hi2';
 import { cn } from '@/lib/utils';
 import { projects } from '@/projects';
 import { papers } from '@/papers';
+import { videos } from '@/videos';
 
 export default async function Home() {
   const posts = [...allPosts].sort(
@@ -158,6 +159,46 @@ export default async function Home() {
                   </div>
                   <p className="text-xs text-[var(--color-stone)]">
                     {paper.authors.join(', ')} · {paper.venue} {paper.year}
+                  </p>
+                </div>
+                <HiArrowUpRight
+                  className="text-[var(--color-stone)] flex-shrink-0 mt-1"
+                  size={16}
+                />
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Teaching Section */}
+      <section className="py-16 md:py-20">
+        <div className="animate-fade-up stagger-5 mb-10 pl-6">
+          <span className="section-heading">Teaching</span>
+        </div>
+
+        <div className="space-y-6">
+          {videos.map((video, index) => (
+            <a
+              key={video.title}
+              href={video.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                'paper-card block animate-fade-up',
+                `stagger-${Math.min(index + 6, 10)}`
+              )}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3
+                    className="text-xl md:text-[1.375rem] font-medium mb-2 leading-snug"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    {video.title}
+                  </h3>
+                  <p className="text-[0.9375rem] text-[var(--color-stone)] leading-relaxed">
+                    {video.description}
                   </p>
                 </div>
                 <HiArrowUpRight

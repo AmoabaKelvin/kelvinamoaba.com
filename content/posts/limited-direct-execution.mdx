@@ -14,13 +14,13 @@ To prevent programs from taking over the system, the OS implements two modes of 
 - user mode
 - kernel mode
 
-Programs we install and execute all the time on our computers are always run in User Mode and the operating system's pieces of code are always executed in Kernel Mode. In the User Mode the programs are limited as to what they can perform. They can't directly access various hardware devices, such as storage, and memory. Access to them are privileged, only doable by the OS.
+Programs we install and execute all the time on our computers are always run in User Mode and the operating system's pieces of code are always executed in Kernel Mode. In the User Mode the programs are limited as to what they can perform. They can't directly access various hardware devices, such as storage, and memory. Access to them is privileged, only doable by the OS.
 
-Now a new problem arises, in our programs, we sometimes want to do things like reading files, or writing things into a socket connection. The crux of this problem is how we can do that when we are always limited in what we can do with **user mode** executions. Answer for this is in traps.
+Now a new problem arises: in our programs, we sometimes want to do things like reading files, or writing things into a socket connection. The crux of this problem is how we can do that when we are always limited in what we can do with **user mode** executions. The answer lies in traps.
 
 ## Traps
 
-Traps are a way for processes running in user space to request for things they don't have access to. Whenever a program wants to get something, say a read a file or write to a network, it executes a trap into the OS kernel code to now perform the request the user space program wants. This means that the operating system must be aware of what we want to be performed. Whenever a program wants to trap, they must indicate exactly what it is that they want, if there are any arguments, they would have to provide it so that the system can just pick things up from there. Example, to write to say a file, the program must tell the operating system the operation they want to perform, and the arguments for a write would be the files they want to write to, and also the content of those files.
+Traps are a way for processes running in user space to request for things they don't have access to. Whenever a program wants to get something, say read a file or write to a network, it executes a trap into the OS kernel code to now perform the request the user space program wants. This means that the operating system must be aware of what we want to be performed. Whenever a program wants to trap, they must indicate exactly what it is that they want, if there are any arguments, they would have to provide it so that the system can just pick things up from there. Example, to write to say a file, the program must tell the operating system the operation they want to perform, and the arguments for a write would be the files they want to write to, and also the content of those files.
 
 ## What happens when we trap
 
@@ -42,7 +42,7 @@ Before we move on to answering the next question, it's worth answering the quest
 
 ## Problem 2: Regaining control of the CPU
 
-Earlier we said that programs would run directly on the CPU. Once the program code is running on the CPU that means that the operating system code is not running (at least for single core processors), now the problem is, how then do we go ahead to regain control of the CPU, to do things like switching the currently running program, or to just terminate a program that has gone rogue.
+Earlier we said that programs would run directly on the CPU. Once the program code is running on the CPU that means that the operating system code is not running (at least for single core processors), now the problem is, how then do we regain control of the CPU, to do things like switching the currently running program, or to just terminate a program that has gone rogue.
 
 Earlier operating systems relied on a technique called the `Cooperative Approach`. In this approach, the operating system expected to regain control when the process made a system call and, as a result, trapped into the kernel. There was a special system call, the `yield`, which was implemented so processes could call it to give power back to the OS. But relying on a process to give away control was more or less like not having control at all in the first place, because if a process never made a system call or never called yield and was stuck in an infinite loop, there was no way to recover control of the CPU. That was the flaw in this approach: if a process never gave up the CPU (through bugs or malware), the only option was to reboot the system.
 
@@ -52,6 +52,6 @@ The timer is a physical microchip on the motherboard set to count down at a stea
 
 When the system boots up, the kernel programs the hardware timer chip to configure the interval between interrupts. This is known as the tick rate. Before the timer interrupts can work correctly, the operating system would have to tell the CPU where to jump to when these interrupts occur. It writes its memory address into a specific slot reserved for the system clock in the trap table.
 
-In the end, Limited Direct Execution is like prepping a room before releasing a child to roam freely, you lock dangerous places and cabinets before allowing the kid to roam freely. The kid in our case is the processes that will be running on the CPU.
+In the end, Limited Direct Execution is like prepping a room before releasing a child to roam freely: you lock the dangerous places and cabinets first. The kid in our case is the processes that will be running on the CPU.
 
-In the next post we'll look at what actually happens during a context switch — how the OS saves and restores registers to swap one process for another — and then at how it decides which process to run next.
+In the next post we'll look at what actually happens during a context switch: how the OS saves and restores registers to swap one process for another, and then at how it decides which process to run next.

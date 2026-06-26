@@ -1,0 +1,59 @@
+---
+kicker: SYSTEMS
+title: 'Limited Direct Execution'
+datePublished: '2026-06-26T12:00:00.000Z'
+tags: ['operating systems', 'limited direct execution', 'systems']
+---
+
+In operating systems we usually want to make two things happen. Whenever we are running programs, we want to always make sure the programs are running very fast but still giving the operating system the keys to the entire system. To make the programs run fast, what we do is to run its compiled code directly on the CPU without any further abstractions. Second, how does the OS ever claim the CPU back, because once something is running on the CPU, it basically means that the OS code is not running.
+
+## Limited Direct Execution
+
+To prevent programs from taking over the system, the OS implements two modes of usage:
+
+- user mode
+- kernel mode
+
+Programs we install and execute all the time on our computers are always run in User Mode and the operating system's pieces of code are always executed in Kernel Mode. In the User Mode the programs are limited as to what they can perform. They can't directly access various hardware devices, such as storage, and memory. Access to them are privileged, only doable by the OS.
+
+Now a new problem arises, in our programs, we sometimes want to do things like reading files, or writing things into a socket connection. The crux of this problem is how we can do that when we are always limited in what we can do with **user mode** executions. Answer for this is in traps.
+
+## Traps
+
+Traps are a way for processes running in user space to request for things they don't have access to. Whenever a program wants to get something, say a read a file or write to a network, it executes a trap into the OS kernel code to now perform the request the user space program wants. Whenever we trap we want the OS to perform something on our behalf, this means that the operating system must be aware of what we want to be performed. Whenever a program wants to trap, they must indicate exactly what it is that they want, if there are any arguments, they would have to provide it so that the system can just pick things up from there. Example, to write to say a file, the program must tell the operating system the operation they want to perform, and the arguments for a write would be the files they want to write to, and also the content of those files.
+
+## What happens when we trap
+
+Whenever a trap occurs and we switch to kernel mode, the operating system checks its trap table to figure out the handler to handle this particular trap. A trap table is a vector of the various OS-configured defaults that should handle various things that occur during the lifecycle of a process. Each type of trap event that occurs is assigned a unique number known as trap number. The CPU uses this number as an index to look up the entry in the trap table. The table entry contains the exact memory address of the **Interrupt Service Routine (ISR)** or **trap handler**—the specific kernel code designed to handle that exact event.
+
+The system-call number and any arguments are placed in special registers before the trap executes. It's worth being clear that this is a _different_ number from the trap-table index above. The trap-table index just tells the hardware "this is a system call" and sends control to the single system-call handler. That handler then reads the system-call number out of the register to figure out _which_ call you actually wanted, i.e. read, write, open, and so on. (I will write more about this in another post, since it deserves its own).
+
+Before the trap handler is executed, the user's current state of the program is saved so we can resume later. Once that's done, the trap handler runs, performs the requested service and writes back its response in special registers that the program can read from once it's resumed.
+
+In order to go back to the program that was running, the system executes a special instruction called a `return-from-trap`. What this does is to prepare the program into running it back in the **user space** again. Return from trap lowers the program’s privilege level to user mode and restores the program registers to the values they had before so we can resume from exactly where we left off.
+
+## Creating of the trap table
+
+Trap tables are set up by the operating system at boot time, and the kernel tells the processor where the handlers live. This is what makes the whole thing safe: when a program traps, control transfers to one of these _predetermined_ handlers and not to an address the program supplies. So a process can ask the OS to do something on its behalf, but it can never point the CPU at arbitrary kernel code of its choosing. The entry points were fixed at boot.
+
+Given this, the first problem we are trying to solve is now figured out, in the sense that we run the codes exactly as they are directly on the CPU, but we don't give it the ability to do things that are outside of its scope. We limit what it can do at each point in time and once it needs to do something higher, the operating system does it on its behalf.
+
+Before we move on to answering the next question, it's worth answering the question **why don't we just make the processes do I/O directly**. Well, imagine a process could just read into the storage blocks on your system, that would mean they would bypass all abstractions on top (filesystem) and can directly reach in for certain things. This would mean that things like permission checks will not work because processes can read blocks directly and as such will result in no permission checks. That would also mean processes could jump into reading memory addresses that they do not control. Just imagine the things that could happen if there was no such permission levels.
+
+## Problem 2: Regaining control of the CPU
+
+Earlier we said that programs would run directly on the CPU. Once the program code is running on the CPU that means that the operating system code is not running (at least for single core processors), now the problem is, how then do we go ahead to regain control of the CPU, to do things like switching the currently running program, or to just terminate a program that has gone rogue.
+
+Earlier operating systems relied on a technique called `Cooperative Approach`. In this approach, the operating system expected to regain control when the process makes a system call and as a result, traps into the kernel. With the cooperative approach, there was a special system call which is the `yield` which was implemented so processes could call that in order to give the power back to the OS. But relying on a process to give away control, it's more or less like you not having control at all in the first place because assuming a process never does a system call or never calls yield and is in an infinite loop. How then do we go ahead to recover control for the CPU? That was the flaw in this approach, assuming a process never gave up the CPU (either through bugs or being a malware), how then would the system recover, the only option would be to reboot the system.
+
+Thinking about this problem, operating system developers figured out that the best solution for this was to rely on the hardware to suspend programs after a couple of time in order to bring in the kernel code to be executed. This was achieved using the timer interrupts. During boot, a timer is configured to tick every x amount of time, and once that is done, the currently running process is paused and then control is given back to the kernel, the kernel would now have the chance to either continue making the already running program continue or might want to switch to another program through a context switch.
+
+This approach relied on both the hardware and the software to work together to make it possible.
+
+The timer is a physical microchip on the motherboard set to count down at a steady electrical frequency. When the countdown hits zero, the chip sends an electrical pulse to the CPU. No matter what the CPU is currently doing (even running an infinite user loop), the hardware instantly pauses execution, saves just enough state to be able to resume later, switches to kernel mode, and jumps to the **Timer Interrupt Handler** via the trap table.
+
+When the system boots up, the kernel programs the hardware timer chip to dictate how often an interrupt should occur. This is known as the tick rate. Before all of these can work well, the operating system would have to tell the CPU where to jump to when these interrupts occur. It writes its memory address into a specific slot reserved for the system clock in the trap table.
+
+In the end, Limited Direct Execution is like prepping a room before releasing a child to roam freely, you lock dangerous places and cabinets before allowing the kid to roam freely. The kid in our case is the processes that will be running on the CPU.
+
+In the next post we'll look at what actually happens during a context switch — how the OS saves and restores registers to swap one process for another — and then at how it decides which process to run next.

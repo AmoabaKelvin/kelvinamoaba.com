@@ -50,6 +50,7 @@ const posts = defineCollection({
       z.date()
     ),
     tags: tagsSchema,
+    kicker: z.string().optional(),
     cover: z.string().optional().default(''),
     status: z.enum(['published', 'draft']).optional().default('published'),
     seoTitle: z.string().optional(),
@@ -83,10 +84,20 @@ const posts = defineCollection({
         ? directory.split('/').pop()!
         : fileName.replace(/\.mdx$/, '');
 
+    // Estimate reading time (~200 wpm), ignoring code blocks and inline code.
+    const words = doc.content
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/`[^`]*`/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean).length;
+    const readingTime = Math.max(1, Math.round(words / 200));
+
     return {
       title: doc.title,
       datePublished: doc.datePublished,
       tags: doc.tags,
+      kicker: doc.kicker,
+      readingTime,
       cover: doc.cover,
       status: doc.status,
       seoTitle: doc.seoTitle,

@@ -55,7 +55,8 @@ const BlogDetailPage = async (props: Props) => {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
-        })}
+        })}{' '}
+        · {post.readingTime} min read
       </div>
       {post.cover && (
         // eslint-disable-next-line @next/next/no-img-element

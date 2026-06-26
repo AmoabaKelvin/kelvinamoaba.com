@@ -1,10 +1,13 @@
 import './globals.css';
 
 import { Analytics } from '@vercel/analytics/react';
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
 import { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
 import { Link } from 'next-view-transitions';
-import { Cormorant_Garamond, Source_Sans_3 } from 'next/font/google';
+
+import { ThemeToggle } from '@/components/theme-toggle';
 import { QueryProvider } from '@/lib/providers/query-provider';
 
 export const metadata: Metadata = {
@@ -14,17 +17,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://kelvinamoaba.com'),
 };
 
-const displayFont = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-display',
-});
-
-const bodyFont = Source_Sans_3({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-body',
-});
+// Sets the theme class before first paint to prevent a flash.
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&m)){document.documentElement.classList.add('dark')}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -35,49 +29,48 @@ export default function RootLayout({
     <ViewTransitions>
       <html
         lang="en"
-        className={`${displayFont.variable} ${bodyFont.variable}`}
-        style={{ fontFamily: 'var(--font-body)' }}
+        className={`${GeistSans.variable} ${GeistMono.variable}`}
+        suppressHydrationWarning
       >
+        <head>
+          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        </head>
         <body>
           {/* Header */}
-          <header className="fixed top-0 left-0 right-0 z-50 px-6 py-5 md:px-10 header-glass">
+          <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-10 header-glass">
             <div className="mx-auto max-w-4xl flex justify-between items-center">
-              <Link href="/" className="logo-mark">
+              <Link href="/" className="logo-mark" aria-label="Home">
                 <span>KA</span>
               </Link>
-              <nav className="flex items-center gap-8">
-                <Link
-                  href="/guestbook"
-                  className="text-xs tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
-                >
+              <nav className="flex items-center gap-6">
+                <Link href="/guestbook" className="nav-link">
                   Guestbook
                 </Link>
                 <a
                   href="https://drive.google.com/file/d/1CiE_n7PExjCYG1OO8W04CMZwwOK728LZ/view?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs tracking-widest uppercase text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
+                  className="nav-link"
                 >
                   Resume
                 </a>
+                <ThemeToggle />
               </nav>
             </div>
           </header>
 
-          <main className="h-full min-h-screen pt-20">
-            <QueryProvider>
-              {children}
-            </QueryProvider>
+          <main className="h-full min-h-screen pt-16">
+            <QueryProvider>{children}</QueryProvider>
             <Analytics />
           </main>
 
           {/* Footer */}
           <footer className="py-12 px-6 md:px-10">
             <div className="mx-auto max-w-4xl">
-              <div className="section-divider mb-8"></div>
+              <div className="ds-divider mb-8"></div>
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <p className="footer-text" suppressHydrationWarning>
-                  {new Date().getFullYear()} Kelvin Amoaba
+                  © {new Date().getFullYear()} Kelvin Amoaba
                 </p>
                 <p className="footer-text">Accra, Ghana</p>
               </div>

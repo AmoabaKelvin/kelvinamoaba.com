@@ -14,12 +14,9 @@ import {
   type SignGuestbookInput,
 } from '../api/guestbook';
 import type { GuestbookPost } from '../data/guestbook';
+import { guestbookKeys } from '../guestbook-keys';
 
-export const guestbookKeys = {
-  all: ['guestbook'] as const,
-  postsList: () => [...guestbookKeys.all, 'posts'] as const,
-  eligibility: () => [...guestbookKeys.all, 'eligibility'] as const,
-};
+export { guestbookKeys };
 
 export function useGuestbookPosts() {
   return useInfiniteQuery({

@@ -18,7 +18,7 @@ export function PostCard({ post, index = 0 }: PostCardProps) {
 
   return (
     <article
-      className="group relative p-5 border border-[var(--color-mist)] bg-[var(--color-paper)] transition-all duration-300 hover:border-[var(--color-ink)] hover:translate-y-[-2px] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] animate-fade-up"
+      className="ds-card ds-card-interactive group animate-fade-up p-5"
       style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
     >
       <div className="flex items-start gap-4">
@@ -28,33 +28,33 @@ export function PostCard({ post, index = 0 }: PostCardProps) {
             alt={displayName}
             width={40}
             height={40}
-            className="rounded-full grayscale group-hover:grayscale-0 transition-all duration-300"
+            className="rounded-full grayscale transition-all duration-300 group-hover:grayscale-0"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-[var(--color-mist)] flex items-center justify-center">
-            <span className="text-xs font-medium text-[var(--color-stone)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--ds-gray-100)]">
+            <span className="text-xs font-medium text-[var(--fg-muted)]">
               {displayName.charAt(0).toUpperCase()}
             </span>
           </div>
         )}
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-[0.9375rem] font-medium text-[var(--color-ink)] truncate">
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-baseline gap-2">
+            <span className="truncate text-[0.9375rem] font-medium text-[var(--fg)]">
               {displayName}
             </span>
             {post.user.username && (
-              <span className="text-xs text-[var(--color-stone)]">
+              <span className="ds-mono text-xs text-[var(--fg-muted)]">
                 @{post.user.username}
               </span>
             )}
           </div>
 
-          <p className="text-[0.875rem] text-[var(--color-ink)] leading-relaxed whitespace-pre-wrap break-words mb-3">
+          <p className="mb-3 whitespace-pre-wrap break-words text-[0.875rem] leading-relaxed text-[var(--fg-secondary)]">
             {post.message}
           </p>
 
-          <time className="text-xs tracking-wide text-[var(--color-stone)] tabular-nums">
+          <time className="ds-mono text-xs tabular-nums text-[var(--fg-muted)]">
             {formattedDate}
           </time>
         </div>

@@ -22,34 +22,34 @@ export default async function Image() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#f5f5f4',
+          backgroundColor: '#ffffff',
           padding: '40px',
           fontFamily: 'Berkeley Mono',
         }}
       >
         {/* Lighter continuous lines that extend past the corners */}
         {/* Top horizontal line */}
-        <div style={{ position: 'absolute', top: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        <div style={{ position: 'absolute', top: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ebebeb' }} />
         {/* Bottom horizontal line */}
-        <div style={{ position: 'absolute', bottom: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ddd' }} />
+        <div style={{ position: 'absolute', bottom: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ebebeb' }} />
         {/* Left vertical line */}
-        <div style={{ position: 'absolute', top: 20, left: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
+        <div style={{ position: 'absolute', top: 20, left: 50, width: 1, height: 590, backgroundColor: '#ebebeb' }} />
         {/* Right vertical line */}
-        <div style={{ position: 'absolute', top: 20, right: 50, width: 1, height: 590, backgroundColor: '#ddd' }} />
+        <div style={{ position: 'absolute', top: 20, right: 50, width: 1, height: 590, backgroundColor: '#ebebeb' }} />
 
         {/* Bold L-shaped corner marks */}
         {/* Top Left */}
-        <div style={{ position: 'absolute', top: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
-        <div style={{ position: 'absolute', top: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
+        <div style={{ position: 'absolute', top: 50, left: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
         {/* Top Right */}
-        <div style={{ position: 'absolute', top: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
-        <div style={{ position: 'absolute', top: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
+        <div style={{ position: 'absolute', top: 50, right: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
         {/* Bottom Left */}
-        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
-        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
+        <div style={{ position: 'absolute', bottom: 50, left: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
         {/* Bottom Right */}
-        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 60, height: 2, backgroundColor: '#aaa' }} />
-        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 2, height: 60, backgroundColor: '#aaa' }} />
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
+        <div style={{ position: 'absolute', bottom: 50, right: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
 
         {/* Content area */}
         <div
@@ -71,9 +71,9 @@ export default async function Image() {
               marginBottom: 20,
             }}
           >
-            <span style={{ color: '#2563eb' }}>GUESTBOOK</span>
-            <span style={{ color: '#aaa', margin: '0 12px' }}>•</span>
-            <span style={{ color: '#aaa' }}>KELVIN AMOABA</span>
+            <span style={{ color: '#006bff' }}>GUESTBOOK</span>
+            <span style={{ color: '#8f8f8f', margin: '0 12px' }}>•</span>
+            <span style={{ color: '#8f8f8f' }}>KELVIN AMOABA</span>
           </div>
 
           {/* Title */}
@@ -81,7 +81,7 @@ export default async function Image() {
             style={{
               fontSize: 64,
               fontWeight: 400,
-              color: '#1a1a1a',
+              color: '#171717',
               lineHeight: 1.1,
               marginLeft: -4,
             }}

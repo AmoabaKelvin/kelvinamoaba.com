@@ -28,7 +28,7 @@ export function PostsList() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-16">
-        <div className="flex items-center gap-3 text-[var(--color-stone)]">
+        <div className="flex items-center gap-3 text-[var(--fg-muted)]">
           <span className="w-1 h-1 bg-current rounded-full animate-pulse" />
           <span
             className="w-1 h-1 bg-current rounded-full animate-pulse"
@@ -45,8 +45,8 @@ export function PostsList() {
 
   if (isError) {
     return (
-      <div className="text-center py-16">
-        <p className="text-[var(--color-stone)] text-[0.9375rem]">
+      <div className="py-16 text-center">
+        <p className="text-[0.9375rem] text-[var(--fg-muted)]">
           Unable to load messages. Please try again.
         </p>
       </div>
@@ -57,14 +57,11 @@ export function PostsList() {
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-16 border border-dashed border-[var(--color-mist)]">
-        <p
-          className="text-2xl md:text-3xl text-[var(--color-stone)] mb-2"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
+      <div className="rounded-[var(--ds-radius-lg)] border border-dashed border-[var(--border-strong)] py-16 text-center">
+        <p className="ds-heading-3 mb-2 text-[var(--fg-secondary)]">
           No messages yet
         </p>
-        <p className="text-[0.875rem] text-[var(--color-stone)]">
+        <p className="text-[0.875rem] text-[var(--fg-muted)]">
           Be the first to leave your mark
         </p>
       </div>
@@ -82,7 +79,7 @@ export function PostsList() {
       {hasNextPage && (
         <div ref={ref} className="flex justify-center py-8">
           {isFetchingNextPage && (
-            <div className="flex items-center gap-3 text-[var(--color-stone)]">
+            <div className="flex items-center gap-3 text-[var(--fg-muted)]">
               <span className="w-1 h-1 bg-current rounded-full animate-pulse" />
               <span
                 className="w-1 h-1 bg-current rounded-full animate-pulse"

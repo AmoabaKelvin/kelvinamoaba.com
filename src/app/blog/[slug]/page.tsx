@@ -45,23 +45,27 @@ const BlogDetailPage = async (props: Props) => {
   if (!post) return notFound();
 
   return (
-    <div className="relative px-5 mx-auto max-w-3xl">
+    <div className="relative px-6 mx-auto max-w-3xl">
       <TableOfContents headings={post.headings as TOCHeading[]} />
       <BackButton className="mt-10" />
-      <div className="mt-10 text-xl font-bold md:text-3xl">{post.title}</div>
-      <div className="mt-2 text-sm text-gray-500">
-        Kelvin Amoaba •{' '}
-        {new Date(post.datePublished).toLocaleDateString()}
+      <h1 className="ds-heading-1 mt-8 text-[var(--fg)]">{post.title}</h1>
+      <div className="ds-mono mt-3 text-sm text-[var(--fg-muted)]">
+        Kelvin Amoaba ·{' '}
+        {new Date(post.datePublished).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
       </div>
       {post.cover && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={post.cover}
-          className="mt-10 rounded-md"
+          className="mt-8 rounded-[var(--ds-radius-lg)] border border-[var(--border)]"
           alt={post.title}
         />
       )}
-      <article className="mt-10 space-y-6 max-w-3xl font-normal leading-7 prose text-black dark:prose-invert">
+      <article className="mt-10 max-w-3xl leading-7 prose">
         <MDXContent code={post.mdx} components={mdxComponents} />
 
         <Script
@@ -75,7 +79,7 @@ const BlogDetailPage = async (props: Props) => {
           data-reactions-enabled="1"
           data-emit-metadata="0"
           data-input-position="top"
-          data-theme="dark"
+          data-theme="preferred_color_scheme"
           data-lang="en"
           crossOrigin="anonymous"
           data-loading="lazy"

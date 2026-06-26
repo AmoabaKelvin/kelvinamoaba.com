@@ -69,10 +69,14 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                 href={`#${id}`}
                 onClick={(e) => handleClick(e, id)}
                 className={`
-                  block py-3 text-sm transition-colors duration-200
+                  block py-2.5 text-sm transition-colors duration-200
                   ${level === 3 ? 'pl-4' : level === 4 ? 'pl-8' : ''}
-                  ${!isLast ? 'border-b border-gray-200' : ''}
-                  ${isActive ? 'text-black font-semibold' : 'text-gray-400 hover:text-gray-600'}
+                  ${!isLast ? 'border-b border-[var(--border)]' : ''}
+                  ${
+                    isActive
+                      ? 'text-[var(--fg)] font-medium'
+                      : 'text-[var(--fg-faint)] hover:text-[var(--fg-secondary)]'
+                  }
                 `}
               >
                 {text}

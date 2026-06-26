@@ -1,28 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { allPosts } from 'content-collections';
 import { ImageResponse } from 'next/og';
 
-export function generateStaticParams() {
-  return allPosts.map((post) => ({ slug: post.slug }));
-}
-
-export const alt = 'Blog Post';
+export const alt = 'Writing | Kelvin Amoaba';
 export const size = {
   width: 1200,
   height: 630,
 };
 export const contentType = 'image/png';
 
-export default async function Image({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = allPosts.find((p) => p.slug === slug);
-  const title = post?.title || 'Blog Post';
-
+export default async function Image() {
   const fontData = readFileSync(
     join(process.cwd(), 'src/app/fonts/BerkeleyMono.ttf')
   );
@@ -40,31 +27,20 @@ export default async function Image({
           fontFamily: 'Berkeley Mono',
         }}
       >
-        {/* Lighter continuous lines that extend past the corners */}
-        {/* Top horizontal line */}
         <div style={{ position: 'absolute', top: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ebebeb' }} />
-        {/* Bottom horizontal line */}
         <div style={{ position: 'absolute', bottom: 50, left: 20, width: 1160, height: 1, backgroundColor: '#ebebeb' }} />
-        {/* Left vertical line */}
         <div style={{ position: 'absolute', top: 20, left: 50, width: 1, height: 590, backgroundColor: '#ebebeb' }} />
-        {/* Right vertical line */}
         <div style={{ position: 'absolute', top: 20, right: 50, width: 1, height: 590, backgroundColor: '#ebebeb' }} />
 
-        {/* Bold L-shaped corner marks */}
-        {/* Top Left */}
         <div style={{ position: 'absolute', top: 50, left: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
         <div style={{ position: 'absolute', top: 50, left: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
-        {/* Top Right */}
         <div style={{ position: 'absolute', top: 50, right: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
         <div style={{ position: 'absolute', top: 50, right: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
-        {/* Bottom Left */}
         <div style={{ position: 'absolute', bottom: 50, left: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
         <div style={{ position: 'absolute', bottom: 50, left: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
-        {/* Bottom Right */}
         <div style={{ position: 'absolute', bottom: 50, right: 50, width: 60, height: 2, backgroundColor: '#d4d4d4' }} />
         <div style={{ position: 'absolute', bottom: 50, right: 50, width: 2, height: 60, backgroundColor: '#d4d4d4' }} />
 
-        {/* Content area */}
         <div
           style={{
             display: 'flex',
@@ -74,7 +50,6 @@ export default async function Image({
             padding: '60px 100px 90px 100px',
           }}
         >
-          {/* Category label */}
           <div
             style={{
               display: 'flex',
@@ -84,23 +59,20 @@ export default async function Image({
               marginBottom: 20,
             }}
           >
-            <span style={{ color: '#006bff' }}>NOTES</span>
+            <span style={{ color: '#006bff' }}>WRITING</span>
             <span style={{ color: '#8f8f8f', margin: '0 12px' }}>•</span>
             <span style={{ color: '#8f8f8f' }}>KELVIN AMOABA</span>
           </div>
 
-          {/* Title */}
           <div
             style={{
-              fontSize: 64,
+              fontSize: 72,
               fontWeight: 400,
               color: '#171717',
               lineHeight: 1.1,
-              maxWidth: '1000px',
-              marginLeft: -4,
             }}
           >
-            {title}
+            Writing
           </div>
         </div>
       </div>

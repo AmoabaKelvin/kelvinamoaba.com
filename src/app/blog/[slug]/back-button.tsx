@@ -1,14 +1,15 @@
 'use client';
 
-import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
+import { HiArrowLeft } from 'react-icons/hi2';
 
 const BackButton = ({ className }: { className?: string }) => {
   const router = useRouter();
 
   return (
-    <span
-      className={`flex items-center ${className}`}
+    <button
+      type="button"
+      className={`inline-flex items-center gap-2 text-sm text-[var(--fg-muted)] transition-colors hover:text-[var(--fg)] ${className ?? ''}`}
       onClick={() => {
         if (window.history.length > 1) {
           router.back();
@@ -17,11 +18,9 @@ const BackButton = ({ className }: { className?: string }) => {
         }
       }}
     >
-      <FaArrowLeft />
-      <span className="ml-2 text-black hover:underline underline-offset-4 hover:cursor-pointer">
-        back
-      </span>
-    </span>
+      <HiArrowLeft className="h-4 w-4" />
+      Back
+    </button>
   );
 };
 

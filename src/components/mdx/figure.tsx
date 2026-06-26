@@ -10,9 +10,13 @@ export function Figure({
 }) {
   return (
     <figure className="my-8">
-      <img src={src} alt={alt} className="w-full" />
+      <img
+        src={src}
+        alt={alt}
+        className="w-full rounded-[var(--ds-radius-lg)] border border-[var(--border)]"
+      />
       {caption && (
-        <figcaption className="mt-3 text-[0.85rem] text-[var(--color-stone)] text-center italic">
+        <figcaption className="mt-3 text-center text-[0.85rem] text-[var(--fg-muted)]">
           {caption}
         </figcaption>
       )}

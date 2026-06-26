@@ -14,9 +14,9 @@ export function SignInButton() {
   return (
     <button
       onClick={handleSignIn}
-      className="group flex items-center gap-3 px-6 py-3 bg-[var(--color-ink)] text-[var(--color-paper)] text-[0.8125rem] tracking-wide uppercase transition-all duration-300 hover:bg-[var(--color-stone)]"
+      className="ds-button ds-button-primary"
     >
-      <FaGithub className="w-4 h-4 transition-transform group-hover:scale-110" />
+      <FaGithub className="h-4 w-4" />
       Sign in with GitHub
     </button>
   );

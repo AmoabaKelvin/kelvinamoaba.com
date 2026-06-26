@@ -1,4 +1,12 @@
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 import { Suspense } from 'react';
+
+import { getGuestbookPosts } from '@/lib/data/guestbook';
+import { guestbookKeys } from '@/lib/guestbook-keys';
 import { PostsList } from './posts-list';
 import { GuestbookHeader } from './guestbook-header';
 
@@ -14,32 +22,49 @@ export default function GuestbookPage() {
 
       {/* Posts Section */}
       <section className="pb-20">
-        <div className="animate-fade-up stagger-3 mb-10 pl-6">
-          <span className="section-heading">Messages</span>
+        <div className="animate-fade-up stagger-3 mb-8 flex items-center gap-4">
+          <span className="ds-label">Messages</span>
+          <span className="h-px flex-1 bg-[var(--border)]" />
         </div>
 
         <Suspense fallback={<GuestbookSkeleton />}>
-          <PostsList />
+          <GuestbookPosts />
         </Suspense>
       </section>
     </div>
   );
 }
 
+// Server component: fetches the first page directly from the DB and dehydrates
+// it into the React Query cache so the list renders in the server HTML. Infinite
+// scroll and optimistic sign continue client-side against the same cache key.
+async function GuestbookPosts() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: guestbookKeys.postsList(),
+    queryFn: ({ pageParam }) => getGuestbookPosts(pageParam),
+    initialPageParam: 0,
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PostsList />
+    </HydrationBoundary>
+  );
+}
+
 function GuestbookSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {[...Array(4)].map((_, i) => (
-        <div
-          key={i}
-          className="p-5 border border-[var(--color-mist)] animate-pulse"
-        >
+        <div key={i} className="ds-card animate-pulse p-5">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-[var(--color-mist)] rounded-full" />
+            <div className="h-10 w-10 rounded-full bg-[var(--ds-gray-100)]" />
             <div className="flex-1 space-y-3">
-              <div className="h-4 bg-[var(--color-mist)] rounded w-1/4" />
-              <div className="h-3 bg-[var(--color-mist)] rounded w-3/4" />
-              <div className="h-3 bg-[var(--color-mist)] rounded w-1/2" />
+              <div className="h-4 w-1/4 rounded bg-[var(--ds-gray-100)]" />
+              <div className="h-3 w-3/4 rounded bg-[var(--ds-gray-100)]" />
+              <div className="h-3 w-1/2 rounded bg-[var(--ds-gray-100)]" />
             </div>
           </div>
         </div>

@@ -25,34 +25,27 @@ export function GuestbookHeader() {
 
   return (
     <div>
-      <div className="animate-fade-up stagger-1">
-        <h1
-          className="text-5xl md:text-7xl font-medium tracking-tight mb-6"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          Guestbook
-        </h1>
-      </div>
+      <h1 className="ds-heading-hero animate-fade-up stagger-1 mb-6">
+        Guestbook
+      </h1>
 
-      <div className="animate-fade-up stagger-2">
-        <p className="text-lg md:text-xl text-[var(--color-stone)] font-light mb-8 max-w-xl leading-relaxed">
-          Leave your mark. Sign the guestbook and let me know you stopped by.
-        </p>
-      </div>
+      <p className="ds-copy animate-fade-up stagger-2 mb-8 max-w-xl text-lg">
+        Leave your mark. Sign the guestbook and let me know you stopped by.
+      </p>
 
       <div className="animate-fade-up stagger-3">
         {isLoading ? (
-          <div className="h-12 w-48 bg-[var(--color-mist)] animate-pulse" />
+          <div className="h-10 w-48 animate-pulse rounded-[var(--ds-radius)] bg-[var(--ds-gray-100)]" />
         ) : isAuthenticated ? (
           <div className="flex flex-wrap items-center gap-4">
             {isEligibilityError ? (
               <div className="flex items-center gap-3">
-                <p className="text-[0.875rem] text-red-600">
+                <p className="text-[0.875rem] text-[var(--ds-red-600)]">
                   Error checking eligibility
                 </p>
                 <button
                   onClick={() => refetchEligibility()}
-                  className="text-[0.8125rem] text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors underline"
+                  className="text-[0.8125rem] text-[var(--fg-muted)] underline transition-colors hover:text-[var(--fg)]"
                 >
                   Retry
                 </button>
@@ -60,7 +53,7 @@ export function GuestbookHeader() {
             ) : canSign ? (
               <SignDialog onOpenChange={setIsDialogOpen} />
             ) : (
-              <p className="text-[0.875rem] text-[var(--color-stone)] italic">
+              <p className="text-[0.875rem] text-[var(--fg-muted)]">
                 {eligibility?.reason === 'Already signed'
                   ? "You've already left your mark"
                   : eligibility?.reason || "You've already left your mark"}

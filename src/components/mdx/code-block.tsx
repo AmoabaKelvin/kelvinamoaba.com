@@ -22,7 +22,7 @@ export function CodeBlock({ children, ...props }: Props) {
         type="button"
         onClick={onCopy}
         aria-label="Copy code"
-        className="absolute top-3 right-3 z-10 px-2 py-1 text-[0.65rem] tracking-widest uppercase text-[var(--color-stone)] bg-[var(--color-paper)] border border-[var(--color-mist)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-ink)] hover:border-[var(--color-ink)] transition"
+        className="ds-mono absolute top-3 right-3 z-10 rounded-[var(--ds-radius)] border border-[var(--border)] bg-[var(--bg)] px-2 py-1 text-[0.7rem] text-[var(--fg-muted)] opacity-0 transition group-hover:opacity-100 hover:border-[var(--border-strong)] hover:text-[var(--fg)]"
       >
         {copied ? 'Copied' : 'Copy'}
       </button>

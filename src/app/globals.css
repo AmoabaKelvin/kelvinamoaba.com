@@ -2,39 +2,127 @@
 
 @plugin '@tailwindcss/typography';
 
+/* Class-based dark mode: utilities and tokens key off the `.dark` class. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-  --background-image-gradient-conic: conic-gradient(
-    from 180deg at 50% 50%,
-    var(--tw-gradient-stops)
-  );
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', SFMono-Regular,
+    Menlo, monospace;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+/* ------------------------------------------------------------------ *
+ * Geist design tokens
+ * ------------------------------------------------------------------ */
+:root {
+  /* Surfaces */
+  --ds-background-100: #ffffff;
+  --ds-background-200: #fafafa;
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+  /* Gray scale — 100 (faintest) → 1000 (strongest contrast) */
+  --ds-gray-100: #f2f2f2;
+  --ds-gray-200: #ebebeb;
+  --ds-gray-300: #e3e3e3;
+  --ds-gray-400: #cfcfcf;
+  --ds-gray-500: #b0b0b0;
+  --ds-gray-600: #8f8f8f;
+  --ds-gray-700: #757575;
+  --ds-gray-800: #5c5c5c;
+  --ds-gray-900: #454545;
+  --ds-gray-1000: #171717;
+
+  /* Translucent grays for borders/fills over arbitrary surfaces */
+  --ds-gray-alpha-100: rgba(0, 0, 0, 0.04);
+  --ds-gray-alpha-200: rgba(0, 0, 0, 0.07);
+  --ds-gray-alpha-400: rgba(0, 0, 0, 0.12);
+
+  /* Accent (blue) */
+  --ds-blue-100: #f0f7ff;
+  --ds-blue-200: #e0f0ff;
+  --ds-blue-500: #3291ff;
+  --ds-blue-600: #1a7fff;
+  --ds-blue-700: #006bff;
+  --ds-blue-800: #0058d6;
+
+  /* Status */
+  --ds-red-600: #e5484d;
+  --ds-amber-100: #fff6de;
+  --ds-amber-500: #f5a623;
+
+  /* Semantic aliases */
+  --bg: var(--ds-background-100);
+  --bg-subtle: var(--ds-background-200);
+  --fg: var(--ds-gray-1000);
+  --fg-secondary: var(--ds-gray-900);
+  --fg-muted: var(--ds-gray-700);
+  --fg-faint: var(--ds-gray-600);
+  --border: var(--ds-gray-200);
+  --border-strong: var(--ds-gray-400);
+  --accent: var(--ds-blue-700);
+  --accent-hover: var(--ds-blue-800);
+  --focus-ring: var(--ds-blue-700);
+
+  /* Radii */
+  --ds-radius: 6px;
+  --ds-radius-lg: 12px;
+  --ds-radius-full: 9999px;
+
+  /* Elevation */
+  --ds-shadow-small: 0 2px 2px rgba(0, 0, 0, 0.04);
+  --ds-shadow-medium: 0 1px 1px rgba(0, 0, 0, 0.02),
+    0 4px 8px -4px rgba(0, 0, 0, 0.04), 0 16px 24px -8px rgba(0, 0, 0, 0.06);
+  --ds-shadow-large: 0 1px 1px rgba(0, 0, 0, 0.02),
+    0 8px 16px -4px rgba(0, 0, 0, 0.04), 0 24px 32px -8px rgba(0, 0, 0, 0.06);
+
+  /* Motion */
+  --ds-ease: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.dark {
+  --ds-background-100: #0a0a0a;
+  --ds-background-200: #000000;
+
+  --ds-gray-100: #1a1a1a;
+  --ds-gray-200: #2e2e2e;
+  --ds-gray-300: #383838;
+  --ds-gray-400: #484848;
+  --ds-gray-500: #5e5e5e;
+  --ds-gray-600: #707070;
+  --ds-gray-700: #7d7d7d;
+  --ds-gray-800: #a0a0a0;
+  --ds-gray-900: #b5b5b5;
+  --ds-gray-1000: #ededed;
+
+  --ds-gray-alpha-100: rgba(255, 255, 255, 0.05);
+  --ds-gray-alpha-200: rgba(255, 255, 255, 0.09);
+  --ds-gray-alpha-400: rgba(255, 255, 255, 0.16);
+
+  --ds-blue-700: #3b9bff;
+  --ds-blue-800: #2a86ff;
+
+  --accent: var(--ds-blue-700);
+  --accent-hover: var(--ds-blue-800);
+  --focus-ring: #52a8ff;
+
+  --ds-shadow-small: 0 2px 2px rgba(0, 0, 0, 0.2);
+  --ds-shadow-medium: 0 4px 8px -4px rgba(0, 0, 0, 0.3),
+    0 16px 24px -8px rgba(0, 0, 0, 0.4);
+  --ds-shadow-large: 0 8px 16px -4px rgba(0, 0, 0, 0.4),
+    0 24px 32px -8px rgba(0, 0, 0, 0.5);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--border);
   }
-}
-
-:root {
-  --color-ink: #111111;
-  --color-paper: #ffffff;
-  --color-stone: #555555;
-  --color-mist: #e5e5e5;
-  --color-accent: #000000;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -43,66 +131,308 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  background-color: var(--bg);
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 main {
   flex-grow: 1;
 }
 
-/* Section divider styling */
-.section-divider {
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Tabular numerals for data/dates */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ *
+ * Typography scale (Geist)
+ * ------------------------------------------------------------------ */
+.ds-heading-hero {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+}
+
+.ds-heading-1 {
+  font-weight: 600;
+  letter-spacing: -0.032em;
+  line-height: 1.1;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.ds-heading-2 {
+  font-weight: 600;
+  letter-spacing: -0.024em;
+  line-height: 1.2;
+  font-size: 1.5rem;
+}
+
+.ds-heading-3 {
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  line-height: 1.3;
+  font-size: 1.25rem;
+}
+
+/* Eyebrow / section label — mono, used to rank sections */
+.ds-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ds-copy {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--fg-secondary);
+}
+
+.ds-mono {
+  font-family: var(--font-mono);
+}
+
+/* ------------------------------------------------------------------ *
+ * Links
+ * ------------------------------------------------------------------ */
+.ds-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s var(--ds-ease);
+}
+
+.ds-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Components
+ * ------------------------------------------------------------------ */
+.ds-card {
   position: relative;
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-lg);
+  transition: border-color 0.15s var(--ds-ease),
+    box-shadow 0.15s var(--ds-ease), background-color 0.15s var(--ds-ease);
+}
+
+a.ds-card:hover,
+.ds-card-interactive:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--ds-shadow-medium);
+}
+
+/* Badge — mono pill used for skills / tags */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--fg-secondary);
+  background: var(--ds-gray-100);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius);
+  transition: color 0.15s var(--ds-ease),
+    background-color 0.15s var(--ds-ease), border-color 0.15s var(--ds-ease);
+}
+
+a:hover > .ds-badge,
+.ds-badge-interactive:hover {
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+/* Buttons */
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 0.875rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--ds-radius);
+  cursor: pointer;
+  transition: background-color 0.15s var(--ds-ease),
+    border-color 0.15s var(--ds-ease), color 0.15s var(--ds-ease),
+    opacity 0.15s var(--ds-ease);
+}
+
+.ds-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ds-button-primary {
+  background: var(--ds-gray-1000);
+  color: var(--ds-background-100);
+  border: 1px solid var(--ds-gray-1000);
+}
+
+.ds-button-primary:hover:not(:disabled) {
+  background: var(--ds-gray-800);
+  border-color: var(--ds-gray-800);
+}
+
+.ds-button-secondary {
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+}
+
+.ds-button-secondary:hover:not(:disabled) {
+  background: var(--ds-gray-100);
+}
+
+.ds-button-small {
+  height: 32px;
+  font-size: 0.8125rem;
+  padding: 0 0.75rem;
+}
+
+/* Focus ring — two-layer (offset gap + accent ring) */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus-ring);
+  border-radius: var(--ds-radius);
+}
+
+/* Hairline divider */
+.ds-divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--color-mist) 20%,
-    var(--color-mist) 80%,
-    transparent 100%
-  );
+  background: var(--border);
 }
 
-/* Refined link interactions */
-a {
-  transition: all 0.3s var(--ease-out-expo);
-}
-
-/* Section headings with subtle left accent */
-.section-heading {
+/* Animated underline (used for inline emphasis links) */
+.hover-line {
   position: relative;
-  display: inline-block;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--color-stone);
+  display: inline;
+  color: var(--fg);
 }
 
-.section-heading::before {
+.hover-line::after {
   content: '';
   position: absolute;
-  left: -1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.75rem;
+  bottom: -2px;
+  left: 0;
+  width: 0;
   height: 1px;
-  background-color: var(--color-stone);
+  background-color: currentColor;
+  transition: width 0.25s var(--ds-ease);
 }
 
-/* Entry animations */
+.hover-line:hover::after {
+  width: 100%;
+}
+
+/* Social icon */
+.social-icon {
+  color: var(--fg-muted);
+  transition: color 0.15s var(--ds-ease), transform 0.15s var(--ds-ease);
+}
+
+.social-icon:hover {
+  color: var(--fg);
+  transform: translateY(-2px);
+}
+
+/* List entry row (writings) */
+.entry-item {
+  display: block;
+  padding: 0.75rem 0.75rem;
+  margin: 0 -0.75rem;
+  border-radius: var(--ds-radius);
+  transition: background-color 0.15s var(--ds-ease);
+}
+
+.entry-item:hover {
+  background: var(--ds-gray-100);
+}
+
+/* Header */
+.header-glass {
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--ds-radius);
+  transition: background-color 0.15s var(--ds-ease),
+    color 0.15s var(--ds-ease);
+}
+
+.logo-mark:hover {
+  background: var(--ds-gray-1000);
+  color: var(--ds-background-100);
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+  transition: color 0.15s var(--ds-ease);
+}
+
+.nav-link:hover {
+  color: var(--fg);
+}
+
+.footer-text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ * ------------------------------------------------------------------ */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -120,172 +450,107 @@ a {
 }
 
 .animate-fade-up {
-  animation: fadeUp 0.8s var(--ease-out-expo) forwards;
+  animation: fadeUp 0.5s var(--ds-ease) forwards;
   opacity: 0;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s var(--ease-out-expo) forwards;
+  animation: fadeIn 0.3s var(--ds-ease) forwards;
   opacity: 0;
 }
 
-/* Stagger animation delays */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.1s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.2s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.3s; }
-.stagger-7 { animation-delay: 0.35s; }
-.stagger-8 { animation-delay: 0.4s; }
-.stagger-9 { animation-delay: 0.45s; }
-.stagger-10 { animation-delay: 0.5s; }
+.stagger-1 { animation-delay: 0.04s; }
+.stagger-2 { animation-delay: 0.08s; }
+.stagger-3 { animation-delay: 0.12s; }
+.stagger-4 { animation-delay: 0.16s; }
+.stagger-5 { animation-delay: 0.2s; }
+.stagger-6 { animation-delay: 0.24s; }
+.stagger-7 { animation-delay: 0.28s; }
+.stagger-8 { animation-delay: 0.32s; }
+.stagger-9 { animation-delay: 0.36s; }
+.stagger-10 { animation-delay: 0.4s; }
 
-/* Hover underline effect */
-.hover-line {
-  position: relative;
-  display: inline;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-fade-up,
+  .animate-fade-in {
+    opacity: 1;
+  }
 }
 
-.hover-line::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background-color: var(--color-ink);
-  transition: width 0.4s var(--ease-out-expo);
+/* ------------------------------------------------------------------ *
+ * Prose / MDX
+ * ------------------------------------------------------------------ */
+.prose {
+  --tw-prose-body: var(--fg-secondary);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-links: var(--accent);
+  --tw-prose-quotes: var(--fg-secondary);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-bullets: var(--fg-faint);
+  --tw-prose-counters: var(--fg-muted);
+  --tw-prose-hr: var(--border);
+  --tw-prose-captions: var(--fg-muted);
+  color: var(--fg-secondary);
 }
 
-.hover-line:hover::after {
-  width: 100%;
-}
-
-/* Social icon hover */
-.social-icon {
-  transition: all 0.3s var(--ease-out-expo);
-  opacity: 0.6;
-}
-
-.social-icon:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-/* Project/Writing entry hover */
-.entry-item {
-  transition: all 0.3s var(--ease-out-expo);
-  padding: 0.75rem 0;
-  border-bottom: 1px solid transparent;
-}
-
-.entry-item:hover {
-  padding-left: 0.5rem;
-  border-bottom-color: var(--color-mist);
-}
-
-/* Paper card styling */
-.paper-card {
-  position: relative;
-  padding: 1.5rem;
-  background: var(--color-paper);
-  border: 1px solid var(--color-mist);
-  transition: all 0.4s var(--ease-out-expo);
-}
-
-.paper-card:hover {
-  border-color: var(--color-ink);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-}
-
-/* Tag styling */
-.tag {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  background: var(--color-mist);
-  color: var(--color-stone);
-  transition: all 0.3s var(--ease-out-expo);
-}
-
-.tag:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
-}
-
-/* Header */
-.header-glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* Header logo */
-.logo-mark {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 0.75rem;
+.prose a {
+  color: var(--accent);
+  text-decoration: none;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  border: 1px solid var(--color-ink);
-  transition: all 0.4s var(--ease-out-expo);
+  transition: color 0.15s var(--ds-ease);
 }
 
-.logo-mark:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
+.prose a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-/* Footer styling */
-.footer-text {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-stone);
+/* Inline code */
+.prose :not(pre) > code {
+  background: var(--ds-gray-100);
+  border: 1px solid var(--border);
+  padding: 0.0625rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-weight: 400;
+  font-family: var(--font-mono);
+  color: var(--fg);
 }
 
-/* Giscus comments */
-.giscus {
-  margin-top: 4rem;
-  margin-bottom: 2rem;
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: '';
 }
 
-.giscus-frame {
-  @apply max-w-3xl;
-  margin: 0 auto;
-  border: 0;
-  border-radius: 0;
-  overflow: hidden;
-}
-
-/* MDX code blocks (rehype-pretty-code + Shiki) */
-/* The figure is the visual container; pre and figcaption sit flush inside it. */
+/* Code blocks (rehype-pretty-code + Shiki, dual theme) */
 .prose figure[data-rehype-pretty-code-figure] {
   margin: 1.5rem 0;
-  border: 1px solid var(--color-mist);
-  border-radius: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-lg);
   overflow: hidden;
-  background: #fafaf9;
+  background: var(--bg-subtle);
 }
 
-.prose figure[data-rehype-pretty-code-figure] figcaption[data-rehype-pretty-code-title] {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-stone);
-  background: var(--color-mist);
+.prose
+  figure[data-rehype-pretty-code-figure]
+  figcaption[data-rehype-pretty-code-title] {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: var(--fg-muted);
+  background: var(--ds-gray-100);
   padding: 0.5rem 1rem;
   margin: 0;
-  border-bottom: 1px solid var(--color-mist);
+  border-bottom: 1px solid var(--border);
 }
 
 .prose figure[data-rehype-pretty-code-figure] pre[data-language] {
@@ -305,8 +570,7 @@ a {
   background: transparent;
   padding: 0;
   font-size: inherit;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  color: inherit;
+  font-family: var(--font-mono);
   counter-reset: line;
 }
 
@@ -315,33 +579,30 @@ a {
   border-left: 2px solid transparent;
 }
 
+/* Dual-theme syntax highlighting: swap shiki vars on .dark.
+   (Avoids the [data-theme*=' '] selector, which Next's CSS minifier
+   cannot parse.) */
+.prose pre[data-language] code,
+.prose pre[data-language] code span {
+  color: var(--shiki-light);
+}
+
+.dark .prose pre[data-language] code,
+.dark .prose pre[data-language] code span {
+  color: var(--shiki-dark);
+}
+
 .prose pre[data-language] code [data-line].highlighted {
-  background: rgba(0, 0, 0, 0.04);
-  border-left-color: var(--color-ink);
+  background: var(--ds-gray-alpha-100);
+  border-left-color: var(--accent);
 }
 
 .prose pre[data-language] code [data-highlighted-chars] {
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--ds-gray-alpha-200);
   border-radius: 2px;
   padding: 0 2px;
 }
 
-.prose :not(pre) > code {
-  background: #ededed;
-  border: 1px solid #d4d4d4;
-  padding: 0.0625rem 0.375rem;
-  border-radius: 3px;
-  font-size: 0.875em;
-  font-weight: 400;
-  color: var(--color-ink);
-}
-
-.prose :not(pre) > code::before,
-.prose :not(pre) > code::after {
-  content: '';
-}
-
-/* Heading anchor links from rehype-autolink-headings */
 .prose .heading-anchor {
   color: inherit;
   text-decoration: none;
@@ -352,15 +613,26 @@ a {
   text-decoration: none;
 }
 
-/* Selection styling */
-::selection {
-  background: var(--color-ink);
-  color: var(--color-paper);
+/* Giscus comments */
+.giscus {
+  margin-top: 4rem;
+  margin-bottom: 2rem;
 }
 
-/* Scrollbar styling */
+.giscus-frame {
+  @apply max-w-3xl;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Scrollbar
+ * ------------------------------------------------------------------ */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -368,10 +640,10 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-mist);
-  border-radius: 3px;
+  background: var(--border-strong);
+  border-radius: var(--ds-radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-stone);
+  background: var(--fg-faint);
 }

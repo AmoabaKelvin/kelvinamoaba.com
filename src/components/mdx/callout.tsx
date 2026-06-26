@@ -1,9 +1,9 @@
 type Variant = 'note' | 'warn' | 'info';
 
 const styles: Record<Variant, string> = {
-  note: 'border-[var(--color-mist)] bg-[var(--color-paper)]',
-  warn: 'border-amber-300 bg-amber-50',
-  info: 'border-sky-300 bg-sky-50',
+  note: 'border-[var(--border)] bg-[var(--bg-subtle)]',
+  warn: 'border-[var(--ds-amber-500)] bg-[var(--ds-gray-100)]',
+  info: 'border-[var(--accent)] bg-[var(--ds-gray-100)]',
 };
 
 const labels: Record<Variant, string> = {
@@ -23,12 +23,14 @@ export function Callout({
 }) {
   return (
     <aside
-      className={`my-6 border-l-2 px-5 py-4 text-[0.95rem] leading-7 ${styles[variant]}`}
+      className={`my-6 rounded-[var(--ds-radius-lg)] border-l-2 px-5 py-4 text-[0.95rem] leading-7 ${styles[variant]}`}
     >
-      <div className="text-[0.7rem] tracking-widest uppercase text-[var(--color-stone)] mb-2">
+      <div className="ds-mono mb-2 text-xs uppercase tracking-wide text-[var(--fg-muted)]">
         {title ?? labels[variant]}
       </div>
-      <div className="[&>p:last-child]:mb-0 [&>p]:mb-3">{children}</div>
+      <div className="text-[var(--fg-secondary)] [&>p:last-child]:mb-0 [&>p]:mb-3">
+        {children}
+      </div>
     </aside>
   );
 }

@@ -54,7 +54,10 @@ export function SignaturePad({
       if (!ctx || !canvas) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#111111';
+      ctx.fillStyle =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--fg')
+          .trim() || '#171717';
 
       const allLines = [...linesToDraw, current].filter((l) => l.length > 0);
 
@@ -205,7 +208,7 @@ export function SignaturePad({
             <button
               type="button"
               onClick={handleUndo}
-              className="text-xs text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
+              className="ds-mono text-xs text-[var(--fg-muted)] transition-colors hover:text-[var(--fg)]"
             >
               Undo
             </button>
@@ -213,7 +216,7 @@ export function SignaturePad({
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs text-[var(--color-stone)] hover:text-[var(--color-ink)] transition-colors"
+            className="ds-mono text-xs text-[var(--fg-muted)] transition-colors hover:text-[var(--fg)]"
           >
             Clear
           </button>

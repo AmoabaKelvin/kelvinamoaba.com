@@ -27,6 +27,20 @@ function extractHeadings(source: string): TOCHeading[] {
   return out;
 }
 
+// First ~160 chars of prose, for meta descriptions when frontmatter has none.
+function extractExcerpt(source: string): string {
+  const text = source
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/^#{1,6}\s+.*$/gm, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length <= 160) return text;
+  return text.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+}
+
 const tagsSchema = z
   .union([z.string(), z.array(z.string())])
   .optional()
@@ -54,6 +68,7 @@ const posts = defineCollection({
     cover: z.string().optional().default(''),
     status: z.enum(['published', 'draft']).optional().default('published'),
     seoTitle: z.string().optional(),
+    description: z.string().optional(),
     content: z.string(),
   }),
   transform: async (doc, ctx) => {
@@ -101,6 +116,7 @@ const posts = defineCollection({
       cover: doc.cover,
       status: doc.status,
       seoTitle: doc.seoTitle,
+      excerpt: doc.description ?? extractExcerpt(doc.content),
       slug,
       filePath,
       headings: extractHeadings(doc.content),

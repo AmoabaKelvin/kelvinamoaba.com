@@ -11,10 +11,26 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { QueryProvider } from '@/lib/providers/query-provider';
 
 export const metadata: Metadata = {
-  title: 'Kelvin Amoaba',
-  description:
-    'Building products that solve real-world problems and exploring the depths of low-level systems',
   metadataBase: new URL('https://kelvinamoaba.com'),
+  title: {
+    default: 'Kelvin Amoaba — Software Engineer',
+    template: '%s | Kelvin Amoaba',
+  },
+  description:
+    'Kelvin Amoaba is a software engineer building products that solve real-world problems and exploring the depths of low-level systems. Writing on Go, operating systems, and distributed systems.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Kelvin Amoaba',
+    locale: 'en_US',
+    url: 'https://kelvinamoaba.com',
+    title: 'Kelvin Amoaba — Software Engineer',
+    description:
+      'Software engineer building products that solve real-world problems and exploring the depths of low-level systems.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@kelamoaba',
+  },
 };
 
 // Sets the theme class before first paint to prevent a flash.

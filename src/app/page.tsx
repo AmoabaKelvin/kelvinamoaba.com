@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { Link } from 'next-view-transitions';
 import { FaDev, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaHashnode, FaXTwitter } from 'react-icons/fa6';
@@ -36,6 +37,36 @@ const socials = [
   { href: 'mailto:kel.amoaba@gmail.com', label: 'Email', Icon: IoMailOpen },
 ];
 
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Kelvin Amoaba',
+  url: 'https://kelvinamoaba.com',
+  jobTitle: 'Software Engineer',
+  email: 'mailto:kel.amoaba@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Accra',
+    addressCountry: 'GH',
+  },
+  knowsAbout: skills,
+  sameAs: socials
+    .map((s) => s.href)
+    .filter((href) => href.startsWith('https://')),
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Kelvin Amoaba',
+  url: 'https://kelvinamoaba.com',
+  author: { '@type': 'Person', name: 'Kelvin Amoaba' },
+};
+
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-8">
@@ -50,6 +81,12 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 md:px-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([personJsonLd, websiteJsonLd]),
+        }}
+      />
       {/* Hero */}
       <section className="pt-24 pb-16 md:pt-28 md:pb-20">
         <h1 className="ds-heading-hero animate-fade-up stagger-1 mb-6">

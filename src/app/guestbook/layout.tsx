@@ -1,10 +1,12 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Guestbook | Kelvin Amoaba',
+  title: 'Guestbook',
   description: 'Let me know you passed by. Sign my guestbook and leave your mark.',
+  alternates: { canonical: '/guestbook' },
   openGraph: {
     title: 'Guestbook | Kelvin Amoaba',
+    url: '/guestbook',
     description: 'Let me know you passed by. Sign my guestbook and leave your mark.',
   },
 };

@@ -30,12 +30,31 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const post = findPost(slug);
   if (!post) return {};
 
+  const title = post.seoTitle ?? post.title;
+
   return {
-    title: post.seoTitle ?? post.title,
+    title,
+    description: post.excerpt,
     authors: [{ name: 'Kelvin Amoaba', url: 'https://kelvinamoaba.com' }],
     keywords: post.tags,
     creator: 'Kelvin Amoaba',
-    description: undefined,
+    alternates: { canonical: `/blog/${post.slug}` },
+    robots: post.status === 'draft' ? { index: false, follow: false } : undefined,
+    openGraph: {
+      type: 'article',
+      title,
+      description: post.excerpt,
+      url: `/blog/${post.slug}`,
+      publishedTime: post.datePublished.toISOString(),
+      authors: ['Kelvin Amoaba'],
+      tags: post.tags,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      creator: '@kelamoaba',
+      title,
+      description: post.excerpt,
+    },
   };
 }
 
@@ -44,8 +63,30 @@ const BlogDetailPage = async (props: Props) => {
   const post = findPost(slug);
   if (!post) return notFound();
 
+  const url = `https://kelvinamoaba.com/blog/${post.slug}`;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.datePublished.toISOString(),
+    url,
+    mainEntityOfPage: url,
+    image: post.cover || `${url}/opengraph-image`,
+    keywords: post.tags.join(', '),
+    author: {
+      '@type': 'Person',
+      name: 'Kelvin Amoaba',
+      url: 'https://kelvinamoaba.com',
+    },
+  };
+
   return (
     <div className="relative px-6 mx-auto max-w-3xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <TableOfContents headings={post.headings as TOCHeading[]} />
       <BackButton className="mt-10" />
       <h1 className="ds-heading-1 mt-8 text-[var(--fg)]">{post.title}</h1>

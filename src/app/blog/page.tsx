@@ -4,11 +4,13 @@ import { PostRow } from '@/components/post-row';
 import { getSortedPosts, groupByYear } from '@/lib/posts';
 
 export const metadata: Metadata = {
-  title: 'Writing | Kelvin Amoaba',
+  title: 'Writing',
   description:
     'Essays and deep dives on systems, Go, algorithms, and the craft of building software.',
+  alternates: { canonical: '/blog' },
   openGraph: {
     title: 'Writing | Kelvin Amoaba',
+    url: '/blog',
     description:
       'Essays and deep dives on systems, Go, algorithms, and the craft of building software.',
   },

@@ -163,7 +163,7 @@ function Composer({
           autoFocus={autoFocus}
           rows={3}
           maxLength={2000}
-          className="w-full resize-y rounded-[var(--ds-radius-lg)] border border-[var(--border)] bg-transparent px-3.5 py-2.5 text-sm leading-relaxed text-[var(--fg)] placeholder:text-[var(--fg-faint)] focus:border-[var(--fg-muted)] focus:outline-none"
+          className="w-full resize-y rounded-[var(--ds-radius-lg)] border border-[var(--border)] bg-transparent px-3.5 py-2.5 text-base leading-relaxed text-[var(--fg)] placeholder:text-[var(--fg-faint)] focus:border-[var(--fg-muted)] focus:outline-none md:text-sm"
         />
         <div className="mt-2 flex items-center justify-end gap-3">
           {body.length > 1800 && (
@@ -266,7 +266,7 @@ function CommentItem({
                 autoFocus
                 rows={3}
                 maxLength={2000}
-                className="w-full resize-y rounded-[var(--ds-radius-lg)] border border-[var(--border)] bg-transparent px-3.5 py-2.5 text-sm leading-relaxed text-[var(--fg)] focus:border-[var(--fg-muted)] focus:outline-none"
+                className="w-full resize-y rounded-[var(--ds-radius-lg)] border border-[var(--border)] bg-transparent px-3.5 py-2.5 text-base leading-relaxed text-[var(--fg)] focus:border-[var(--fg-muted)] focus:outline-none md:text-sm"
               />
               <div className="mt-2 flex items-center justify-end gap-3">
                 <button

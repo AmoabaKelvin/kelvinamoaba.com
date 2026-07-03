@@ -3,12 +3,25 @@ import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 
 // Shared "03 · concentric · cream" Open Graph template.
-const fonts = ([400, 500, 600] as const).map((w) => ({
-  name: 'Geist',
-  data: readFileSync(join(process.cwd(), `src/app/fonts/Geist-${w}.ttf`)),
-  weight: w,
-  style: 'normal' as const,
-}));
+// Fonts are loaded lazily: importing this module must never touch the
+// filesystem, because Next imports opengraph-image modules (which import
+// this) while resolving metadata for dynamically rendered pages, inside
+// serverless functions where the font files may not exist.
+// outputFileTracingIncludes in next.config.js bundles the fonts for the
+// routes that actually render images.
+let fontsCache:
+  | { name: string; data: Buffer; weight: 400 | 500 | 600; style: 'normal' }[]
+  | null = null;
+
+function getFonts() {
+  fontsCache ??= ([400, 500, 600] as const).map((w) => ({
+    name: 'Geist',
+    data: readFileSync(join(process.cwd(), `src/app/fonts/Geist-${w}.ttf`)),
+    weight: w,
+    style: 'normal' as const,
+  }));
+  return fontsCache;
+}
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = 'image/png';
@@ -158,6 +171,6 @@ export function renderOG({
         </div>
       </div>
     ),
-    { ...ogSize, fonts }
+    { ...ogSize, fonts: getFonts() }
   );
 }

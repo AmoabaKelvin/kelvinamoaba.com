@@ -2,8 +2,9 @@ import { allPosts } from 'content-collections';
 import { MDXContent } from '@content-collections/mdx/react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
 
+import { PostBody } from '@/components/blog/post-body';
+import { PostEngagement } from '@/components/blog/post-engagement';
 import { mdxComponents } from '@/components/mdx/mdx-components';
 import { TableOfContents } from '@/components/table-of-contents';
 import type { TOCHeading } from '@/lib/extract-headings';
@@ -108,26 +109,16 @@ const BlogDetailPage = async (props: Props) => {
         />
       )}
       <article className="mt-10 max-w-3xl leading-7 prose">
-        <MDXContent code={post.mdx} components={mdxComponents} />
-
-        <Script
-          src="https://giscus.app/client.js"
-          data-repo="AmoabaKelvin/blog"
-          data-repo-id="R_kgDOK9FHvA"
-          data-category="Announcements"
-          data-category-id="DIC_kwDOK9FHvM4Cb-MF"
-          data-mapping="url"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="top"
-          data-theme="preferred_color_scheme"
-          data-lang="en"
-          crossOrigin="anonymous"
-          data-loading="lazy"
-          async
-        />
+        {post.interactive ? (
+          <PostBody code={post.mdx} />
+        ) : (
+          <MDXContent code={post.mdx} components={mdxComponents} />
+        )}
       </article>
+
+      <div className="pb-20">
+        <PostEngagement slug={post.slug} />
+      </div>
     </div>
   );
 };

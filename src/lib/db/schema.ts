@@ -1,4 +1,11 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+  type AnySQLiteColumn,
+} from 'drizzle-orm/sqlite-core';
 
 // User table - managed by Better Auth
 export const user = sqliteTable('user', {
@@ -68,7 +75,64 @@ export const post = sqliteTable('post', {
   signature: text('signature'),
 });
 
+// Blog comment table - one level of threading via parentId
+export const blogComment = sqliteTable(
+  'blog_comment',
+  {
+    id: text('id').primaryKey(),
+    postSlug: text('postSlug').notNull(),
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id),
+    parentId: text('parentId').references(
+      (): AnySQLiteColumn => blogComment.id
+    ),
+    body: text('body').notNull(),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+    editedAt: integer('editedAt', { mode: 'timestamp' }),
+    // Soft delete keeps replies attached to a "[deleted]" placeholder
+    deletedAt: integer('deletedAt', { mode: 'timestamp' }),
+  },
+  (t) => [index('blog_comment_slug_idx').on(t.postSlug)]
+);
+
+// Blog reaction table - anonymous, deduped per browser token
+export const blogReaction = sqliteTable(
+  'blog_reaction',
+  {
+    id: text('id').primaryKey(),
+    postSlug: text('postSlug').notNull(),
+    emoji: text('emoji').notNull(),
+    anonToken: text('anonToken').notNull(),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+  },
+  (t) => [
+    uniqueIndex('blog_reaction_dedup_idx').on(t.postSlug, t.emoji, t.anonToken),
+    index('blog_reaction_slug_idx').on(t.postSlug),
+  ]
+);
+
+// Studio draft table - posts in progress, authored from /studio
+export const blogDraft = sqliteTable('blog_draft', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull().default(''),
+  slug: text('slug').notNull().default(''),
+  kicker: text('kicker').notNull().default(''),
+  tags: text('tags').notNull().default(''),
+  cover: text('cover').notNull().default(''),
+  description: text('description').notNull().default(''),
+  seoTitle: text('seoTitle').notNull().default(''),
+  content: text('content').notNull().default(''),
+  createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull(),
+  publishedAt: integer('publishedAt', { mode: 'timestamp' }),
+  publishedSha: text('publishedSha'),
+});
+
 // Type exports
 export type User = typeof user.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type Post = typeof post.$inferSelect;
+export type BlogComment = typeof blogComment.$inferSelect;
+export type BlogReaction = typeof blogReaction.$inferSelect;
+export type BlogDraft = typeof blogDraft.$inferSelect;

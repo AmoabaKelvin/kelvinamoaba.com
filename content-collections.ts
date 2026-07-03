@@ -1,11 +1,9 @@
 import { defineCollection, defineConfig } from '@content-collections/core';
 import { compileMDX } from '@content-collections/mdx';
 import GithubSlugger from 'github-slugger';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
-import remarkGfm from 'remark-gfm';
 import { z } from 'zod';
+
+import { rehypePlugins, remarkPlugins } from './src/lib/mdx-plugins';
 
 export type TOCHeading = {
   id: string;
@@ -73,24 +71,8 @@ const posts = defineCollection({
   }),
   transform: async (doc, ctx) => {
     const mdx = await compileMDX(ctx, doc, {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [
-        rehypeSlug,
-        [
-          rehypePrettyCode,
-          {
-            theme: { light: 'github-light', dark: 'github-dark' },
-            keepBackground: false,
-          },
-        ],
-        [
-          rehypeAutolinkHeadings,
-          {
-            behavior: 'wrap',
-            properties: { className: ['heading-anchor'] },
-          },
-        ],
-      ],
+      remarkPlugins,
+      rehypePlugins,
     });
 
     const { filePath, fileName, directory } = doc._meta;
@@ -98,6 +80,13 @@ const posts = defineCollection({
       fileName === 'index.mdx'
         ? directory.split('/').pop()!
         : fileName.replace(/\.mdx$/, '');
+
+    // Posts that define inline MDX components (top-level import/export,
+    // outside code fences) must render inside a client boundary so hooks
+    // work; plain posts stay fully server-rendered.
+    const interactive = /^(import|export)\s/m.test(
+      doc.content.replace(/```[\s\S]*?```/g, '')
+    );
 
     // Estimate reading time (~200 wpm), ignoring code blocks and inline code.
     const words = doc.content
@@ -117,6 +106,7 @@ const posts = defineCollection({
       status: doc.status,
       seoTitle: doc.seoTitle,
       excerpt: doc.description ?? extractExcerpt(doc.content),
+      interactive,
       slug,
       filePath,
       headings: extractHeadings(doc.content),

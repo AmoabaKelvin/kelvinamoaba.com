@@ -5,7 +5,8 @@ import { EditorView, minimalSetup } from 'codemirror';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { languages } from '@codemirror/language-data';
-import { placeholder } from '@codemirror/view';
+import { EditorSelection } from '@codemirror/state';
+import { keymap, placeholder } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 
 const editorTheme = EditorView.theme({
@@ -26,6 +27,10 @@ const editorTheme = EditorView.theme({
   '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
     backgroundColor: 'var(--ds-gray-200) !important',
   },
+  // The global ::selection rule inverts text to var(--bg), which is unreadable
+  // on the gray selection layer drawSelection paints. Keep each token's color.
+  '.cm-line::selection': { color: 'currentColor' },
+  '.cm-line ::selection': { color: 'currentColor' },
   '.cm-cursor': { borderLeftColor: 'var(--fg)' },
   '.cm-placeholder': { color: 'var(--fg-faint)' },
 });
@@ -41,6 +46,79 @@ const mdHighlight = HighlightStyle.define([
   { tag: tags.meta, color: 'var(--fg-faint)' },
   { tag: tags.processingInstruction, color: 'var(--fg-faint)' },
   { tag: tags.labelName, color: 'var(--accent)' },
+]);
+
+// Wrap the selection in an inline marker (**, _, `), or unwrap it when the
+// marker is already there. With no selection, inserts a pair and puts the
+// cursor between the markers.
+function toggleWrap(marker: string) {
+  return (view: EditorView): boolean => {
+    view.dispatch(
+      view.state.changeByRange((range) => {
+        const { from, to } = range;
+        const before = view.state.sliceDoc(
+          Math.max(0, from - marker.length),
+          from
+        );
+        const after = view.state.sliceDoc(to, to + marker.length);
+        if (before === marker && after === marker) {
+          return {
+            changes: [
+              { from: from - marker.length, to: from },
+              { from: to, to: to + marker.length },
+            ],
+            range: EditorSelection.range(from - marker.length, to - marker.length),
+          };
+        }
+        const selected = view.state.sliceDoc(from, to);
+        if (
+          selected.length >= marker.length * 2 &&
+          selected.startsWith(marker) &&
+          selected.endsWith(marker)
+        ) {
+          return {
+            changes: [
+              { from, to: from + marker.length },
+              { from: to - marker.length, to },
+            ],
+            range: EditorSelection.range(from, to - marker.length * 2),
+          };
+        }
+        return {
+          changes: [
+            { from, insert: marker },
+            { from: to, insert: marker },
+          ],
+          range: EditorSelection.range(from + marker.length, to + marker.length),
+        };
+      })
+    );
+    return true;
+  };
+}
+
+// Turn the selection into [selection](url) with the url placeholder selected.
+function insertLink(view: EditorView): boolean {
+  view.dispatch(
+    view.state.changeByRange((range) => {
+      const text = view.state.sliceDoc(range.from, range.to);
+      return {
+        changes: { from: range.from, to: range.to, insert: `[${text}](url)` },
+        range: EditorSelection.range(
+          range.from + text.length + 3,
+          range.from + text.length + 6
+        ),
+      };
+    })
+  );
+  return true;
+}
+
+const formatKeymap = keymap.of([
+  { key: 'Mod-b', run: toggleWrap('**') },
+  { key: 'Mod-i', run: toggleWrap('_') },
+  { key: 'Mod-e', run: toggleWrap('`') },
+  { key: 'Mod-k', run: insertLink },
 ]);
 
 const IMAGE_TYPES = new Set([
@@ -80,6 +158,7 @@ export function MDXEditor({
     const view = new EditorView({
       doc: initialValue,
       extensions: [
+        formatKeymap,
         minimalSetup,
         markdown({ base: markdownLanguage, codeLanguages: languages }),
         EditorView.lineWrapping,

@@ -3,15 +3,17 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { EditorView } from 'codemirror';
 import GithubSlugger from 'github-slugger';
+import { nanoid } from 'nanoid';
 import { Link } from 'next-view-transitions';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HiArrowLeft, HiChevronDown, HiPlus } from 'react-icons/hi2';
+import { HiArrowLeft, HiChevronDown, HiPhoto, HiPlus } from 'react-icons/hi2';
 
 import {
   compilePreview,
   getDraft,
   patchDraft,
   publishDraft,
+  uploadImage,
   type StudioDraftPatch,
 } from '@/lib/api/studio';
 import { cn } from '@/lib/utils';
@@ -59,6 +61,16 @@ function slugify(title: string): string {
   return new GithubSlugger().slug(title);
 }
 
+// Locate the placeholder by text: the user may have kept typing during the
+// upload, so a remembered offset would be stale. Skip if it was deleted.
+function replaceToken(view: EditorView, token: string, replacement: string) {
+  const from = view.state.doc.toString().indexOf(token);
+  if (from === -1) return;
+  view.dispatch({
+    changes: { from, to: from + token.length, insert: replacement },
+  });
+}
+
 function FieldInput({
   label,
   value,
@@ -103,12 +115,14 @@ export function Editor({ id }: { id: string }) {
   const [view, setView] = useState<'write' | 'preview'>('write');
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [previewCode, setPreviewCode] = useState<string | null>(null);
   const [compileError, setCompileError] = useState<string | null>(null);
   const [previewPending, setPreviewPending] = useState(false);
 
   const editorViewRef = useRef<EditorView | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const slugTouchedRef = useRef(false);
   const initializedRef = useRef(false);
   const paletteRef = useRef<HTMLDivElement>(null);
@@ -161,6 +175,12 @@ export function Editor({ id }: { id: string }) {
   const saveRef = useRef(save);
   saveRef.current = save;
 
+  // Latest values for async callbacks (image uploads) that outlive a render.
+  const fieldsRef = useRef(fields);
+  fieldsRef.current = fields;
+  const contentRef = useRef(content);
+  contentRef.current = content;
+
   const scheduleSave = useCallback((patch: StudioDraftPatch) => {
     setSaveState('dirty');
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -208,6 +228,44 @@ export function Editor({ id }: { id: string }) {
     if (!v) return;
     v.dispatch(v.state.replaceSelection('\n' + snippet));
     v.focus();
+  };
+
+  // Live-editor dispatches fire the updateListener, so autosave picks up both
+  // the placeholder and the final markdown. When the CodeMirror view has been
+  // destroyed mid-upload (switching to Preview unmounts it), patch React state
+  // directly so the result still reaches the saved draft.
+  const patchContent = (fn: (current: string) => string) => {
+    const current = contentRef.current ?? '';
+    const next = fn(current);
+    if (next === current) return;
+    contentRef.current = next;
+    setContent(next);
+    if (fieldsRef.current) scheduleSave({ ...fieldsRef.current, content: next });
+  };
+
+  const settleUpload = (token: string, replacement: string) => {
+    // Re-read the ref: the view that inserted the token may be gone by now.
+    const v = editorViewRef.current;
+    if (v) replaceToken(v, token, replacement);
+    else patchContent((c) => c.replace(token, replacement));
+  };
+
+  const uploadImages = async (files: File[]) => {
+    if (!editorViewRef.current) return;
+    setUploadError(null);
+    for (const file of files) {
+      const token = `![uploading ${nanoid(6)}…]()`;
+      const v = editorViewRef.current;
+      if (v) v.dispatch(v.state.replaceSelection(token + '\n'));
+      else patchContent((c) => c + token + '\n');
+      try {
+        const { path } = await uploadImage(file);
+        settleUpload(token, `![](${path})`);
+      } catch (e) {
+        settleUpload(token, '');
+        setUploadError(e instanceof Error ? e.message : 'Upload failed');
+      }
+    }
   };
 
   // --- Publish ---
@@ -286,6 +344,29 @@ export function Editor({ id }: { id: string }) {
           </button>
         </div>
 
+        {/* Image upload */}
+        <button
+          onClick={() => {
+            setView('write');
+            fileInputRef.current?.click();
+          }}
+          className="ds-button ds-button-secondary ds-button-small"
+        >
+          <HiPhoto className="h-3.5 w-3.5" />
+          Image
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          className="hidden"
+          onChange={(e) => {
+            const files = Array.from(e.target.files ?? []);
+            e.target.value = '';
+            if (files.length > 0) uploadImages(files);
+          }}
+        />
+
         {/* Component palette */}
         <div className="relative" ref={paletteRef}>
           <button
@@ -333,6 +414,11 @@ export function Editor({ id }: { id: string }) {
           <p className="ds-mono text-xs text-red-500">
             {(publish.error as Error).message}
           </p>
+        </div>
+      )}
+      {uploadError && (
+        <div className="mb-4 rounded-[var(--ds-radius)] border border-red-300 px-3 py-2">
+          <p className="ds-mono text-xs text-red-500">{uploadError}</p>
         </div>
       )}
       {publish.isSuccess && (
@@ -392,9 +478,12 @@ export function Editor({ id }: { id: string }) {
           <div className="border-t border-[var(--border)]">
             <MDXEditor
               key={id}
-              initialValue={draft?.content ?? ''}
+              // Current state, not the fetched draft: the editor remounts
+              // after Preview and must not revert to pre-toggle content.
+              initialValue={content ?? draft?.content ?? ''}
               onChange={handleContentChange}
               onViewReady={(v) => (editorViewRef.current = v)}
+              onImageFiles={uploadImages}
             />
           </div>
         </>

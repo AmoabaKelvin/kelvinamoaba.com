@@ -81,3 +81,20 @@ export async function publishDraft(
     body: JSON.stringify({ id }),
   });
 }
+
+// Multipart upload; the browser must set the Content-Type boundary itself,
+// so this bypasses fetchApi's forced application/json header.
+export async function uploadImage(file: File): Promise<{ path: string }> {
+  const body = new FormData();
+  body.append('file', file);
+  const response = await fetch('/api/studio/upload', {
+    method: 'POST',
+    credentials: 'include',
+    body,
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Upload failed');
+  }
+  return response.json();
+}

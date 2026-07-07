@@ -1,5 +1,11 @@
 export const projects = [
   {
+    name: 'Lookout',
+    link: 'https://github.com/AmoabaKelvin/lookout',
+    description:
+      'A zero-dependency monitoring agent for Linux servers, written in Go. Reads metrics directly from /proc and evaluates alert rules in-process — with hysteresis thresholds, disk-fill prediction, and a dead-man\'s switch — shipping as a single static binary under systemd instead of a full Prometheus stack.',
+  },
+  {
     name: 'RiftCheck',
     link: 'https://riftcheck.dev',
     description:

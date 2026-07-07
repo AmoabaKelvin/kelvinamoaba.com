@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Writing',
   description:
     'Essays and deep dives on systems, Go, algorithms, and the craft of building software.',
-  alternates: { canonical: '/blog' },
+  alternates: { canonical: '/blog', types: { 'application/rss+xml': '/rss.xml' } },
   openGraph: {
     title: 'Writing | Kelvin Amoaba',
     url: '/blog',

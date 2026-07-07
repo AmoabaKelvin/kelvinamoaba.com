@@ -12,6 +12,9 @@ import { QueryProvider } from '@/lib/providers/query-provider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kelvinamoaba.com'),
+  alternates: {
+    types: { 'application/rss+xml': '/rss.xml' },
+  },
   title: {
     default: 'Kelvin Amoaba — Software Engineer',
     template: '%s | Kelvin Amoaba',

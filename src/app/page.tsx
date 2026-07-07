@@ -38,7 +38,7 @@ const socials = [
 ];
 
 export const metadata: Metadata = {
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/', types: { 'application/rss+xml': '/rss.xml' } },
 };
 
 const personJsonLd = {

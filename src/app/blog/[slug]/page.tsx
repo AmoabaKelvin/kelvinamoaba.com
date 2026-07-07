@@ -42,7 +42,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     authors: [{ name: 'Kelvin Amoaba', url: 'https://kelvinamoaba.com' }],
     keywords: post.tags,
     creator: 'Kelvin Amoaba',
-    alternates: { canonical: `/blog/${post.slug}` },
+    alternates: { canonical: `/blog/${post.slug}`, types: { 'application/rss+xml': '/rss.xml' } },
     robots: post.status === 'draft' ? { index: false, follow: false } : undefined,
     openGraph: {
       type: 'article',

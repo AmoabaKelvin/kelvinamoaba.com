@@ -25,7 +25,12 @@ export type ReactionsResponse = {
   reacted: string[];
 };
 
+export type ViewsResponse = {
+  counts: Record<string, number>;
+};
+
 export const blogEngagementKeys = {
   comments: (slug: string) => ['blog', 'comments', slug] as const,
   reactions: (slug: string) => ['blog', 'reactions', slug] as const,
+  views: () => ['blog', 'views'] as const,
 };

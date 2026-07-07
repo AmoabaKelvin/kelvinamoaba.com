@@ -8,6 +8,8 @@ import {
   addComment,
   getComments,
   getReactions,
+  getViews,
+  recordView,
   removeComment,
   toggleReaction,
   updateComment,
@@ -87,6 +89,39 @@ export function useToggleReaction(slug: string, token: string | null) {
       }
     },
   });
+}
+
+export function useViews() {
+  return useQuery({
+    queryKey: blogEngagementKeys.views(),
+    queryFn: getViews,
+    staleTime: 60 * 1000,
+  });
+}
+
+const viewedKey = (slug: string) => `blog-viewed:${slug}`;
+
+// Fire-and-forget: one view per browser session per slug.
+export function useRecordView(slug: string) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(viewedKey(slug))) return;
+      // Set the guard before the request so StrictMode's double
+      // effect run in development does not double-count.
+      sessionStorage.setItem(viewedKey(slug), '1');
+    } catch {
+      return; // sessionStorage unavailable; skip counting
+    }
+    recordView(slug)
+      .then(() =>
+        queryClient.invalidateQueries({
+          queryKey: blogEngagementKeys.views(),
+        })
+      )
+      .catch(() => {});
+  }, [slug, queryClient]);
 }
 
 export function useComments(slug: string) {

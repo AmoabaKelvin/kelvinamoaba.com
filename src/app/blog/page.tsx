@@ -43,7 +43,7 @@ export default function WritingIndex() {
               </span>
               <div className="min-w-0 flex-1">
                 {posts.map((post) => (
-                  <PostRow key={post.slug} post={post} />
+                  <PostRow key={post.slug} post={post} showViews />
                 ))}
               </div>
             </div>

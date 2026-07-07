@@ -3,7 +3,7 @@ import 'server-only';
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { db } from '../db';
-import { blogComment, blogReaction, user } from '../db/schema';
+import { blogComment, blogReaction, blogView, user } from '../db/schema';
 
 import {
   ADMIN_USERNAME,
@@ -244,4 +244,24 @@ export async function toggleReaction(input: {
     createdAt: new Date(),
   });
   return { reacted: true };
+}
+
+export async function getAllViewCounts(): Promise<Record<string, number>> {
+  const rows = await db
+    .select({ postSlug: blogView.postSlug, count: blogView.count })
+    .from(blogView);
+
+  const counts: Record<string, number> = {};
+  for (const row of rows) counts[row.postSlug] = row.count;
+  return counts;
+}
+
+export async function recordView(slug: string): Promise<void> {
+  await db
+    .insert(blogView)
+    .values({ postSlug: slug, count: 1 })
+    .onConflictDoUpdate({
+      target: blogView.postSlug,
+      set: { count: sql`${blogView.count} + 1` },
+    });
 }

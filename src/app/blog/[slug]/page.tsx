@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 
 import { PostBody } from '@/components/blog/post-body';
 import { PostEngagement } from '@/components/blog/post-engagement';
+import { PostViews } from '@/components/blog/post-views';
 import { mdxComponents } from '@/components/mdx/mdx-components';
 import { TableOfContents } from '@/components/table-of-contents';
 import type { TOCHeading } from '@/lib/extract-headings';
@@ -99,6 +100,7 @@ const BlogDetailPage = async (props: Props) => {
           day: 'numeric',
         })}{' '}
         · {post.readingTime} min read
+        <PostViews slug={post.slug} />
       </div>
       {post.cover && (
         // eslint-disable-next-line @next/next/no-img-element

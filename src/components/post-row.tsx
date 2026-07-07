@@ -1,8 +1,15 @@
 import { Link } from 'next-view-transitions';
 
+import { ViewCount } from '@/components/blog/post-views';
 import { formatPostDate, type Post } from '@/lib/posts';
 
-export function PostRow({ post }: { post: Post }) {
+export function PostRow({
+  post,
+  showViews = false,
+}: {
+  post: Post;
+  showViews?: boolean;
+}) {
   return (
     <Link href={`/blog/${post.slug}`} className="entry-item group">
       <div className="flex items-baseline gap-4">
@@ -12,6 +19,7 @@ export function PostRow({ post }: { post: Post }) {
         <span className="flex-1 text-[0.9375rem] text-[var(--fg)] transition-colors group-hover:text-[var(--accent)]">
           {post.title}
         </span>
+        {showViews && <ViewCount slug={post.slug} />}
       </div>
     </Link>
   );

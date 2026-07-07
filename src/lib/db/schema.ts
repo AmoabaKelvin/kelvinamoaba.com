@@ -112,6 +112,12 @@ export const blogReaction = sqliteTable(
   ]
 );
 
+// Blog view counter - one row per post, incremented per browser session
+export const blogView = sqliteTable('blog_view', {
+  postSlug: text('postSlug').primaryKey(),
+  count: integer('count').notNull().default(0),
+});
+
 // Studio draft table - posts in progress, authored from /studio
 export const blogDraft = sqliteTable('blog_draft', {
   id: text('id').primaryKey(),
@@ -135,4 +141,5 @@ export type Session = typeof session.$inferSelect;
 export type Post = typeof post.$inferSelect;
 export type BlogComment = typeof blogComment.$inferSelect;
 export type BlogReaction = typeof blogReaction.$inferSelect;
+export type BlogView = typeof blogView.$inferSelect;
 export type BlogDraft = typeof blogDraft.$inferSelect;

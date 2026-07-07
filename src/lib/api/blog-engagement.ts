@@ -2,6 +2,7 @@ import type {
   CommentWithUser,
   ReactionEmoji,
   ReactionsResponse,
+  ViewsResponse,
 } from '../blog-engagement-shared';
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -77,5 +78,16 @@ export async function toggleReaction(input: {
   return fetchApi<{ reacted: boolean }>('/reactions', {
     method: 'POST',
     body: JSON.stringify(input),
+  });
+}
+
+export async function getViews(): Promise<ViewsResponse> {
+  return fetchApi<ViewsResponse>('/views');
+}
+
+export async function recordView(slug: string): Promise<void> {
+  await fetchApi('/views', {
+    method: 'POST',
+    body: JSON.stringify({ slug }),
   });
 }

@@ -11,6 +11,7 @@ import { HiArrowLeft, HiChevronDown, HiPhoto, HiPlus } from 'react-icons/hi2';
 import {
   compilePreview,
   getDraft,
+  getPreviewLink,
   patchDraft,
   publishDraft,
   uploadImage,
@@ -116,6 +117,8 @@ export function Editor({ id }: { id: string }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const [linkState, setLinkState] = useState<'idle' | 'copied' | 'error'>('idle');
 
   const [previewCode, setPreviewCode] = useState<string | null>(null);
   const [compileError, setCompileError] = useState<string | null>(null);
@@ -268,6 +271,17 @@ export function Editor({ id }: { id: string }) {
     }
   };
 
+  const copyPreviewLink = async () => {
+    try {
+      const { url } = await getPreviewLink(id);
+      await navigator.clipboard.writeText(url);
+      setLinkState('copied');
+    } catch {
+      setLinkState('error');
+    }
+    setTimeout(() => setLinkState('idle'), 1500);
+  };
+
   // --- Publish ---
   const publish = useMutation({ mutationFn: () => publishDraft(id) });
 
@@ -395,6 +409,17 @@ export function Editor({ id }: { id: string }) {
             </div>
           )}
         </div>
+
+        <button
+          onClick={copyPreviewLink}
+          className="ds-button ds-button-secondary ds-button-small"
+        >
+          {linkState === 'copied'
+            ? 'Copied'
+            : linkState === 'error'
+              ? 'Copy failed'
+              : 'Copy preview link'}
+        </button>
 
         <button
           onClick={() => publish.mutate()}

@@ -73,6 +73,10 @@ export async function compilePreview(
   });
 }
 
+export async function getPreviewLink(id: string): Promise<{ url: string }> {
+  return fetchApi<{ url: string }>(`/drafts/${id}/preview-link`);
+}
+
 export async function publishDraft(
   id: string
 ): Promise<{ commitUrl: string; path: string }> {

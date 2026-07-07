@@ -78,6 +78,9 @@
 
   /* Motion */
   --ds-ease: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  /* Non-overshooting ease for color transitions; --ds-ease bounces past
+     the target, which reads as flicker on background/color fades. */
+  --ds-ease-color: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .dark {
@@ -373,7 +376,7 @@ a:hover > .ds-badge,
   padding: 0.75rem 0.75rem;
   margin: 0 -0.75rem;
   border-radius: var(--ds-radius);
-  transition: background-color 0.15s var(--ds-ease);
+  transition: background-color 0.15s var(--ds-ease-color);
 }
 
 .entry-item:hover {

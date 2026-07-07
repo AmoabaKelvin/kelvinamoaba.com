@@ -7,8 +7,10 @@ import { PostBody } from '@/components/blog/post-body';
 import { PostEngagement } from '@/components/blog/post-engagement';
 import { PostViews } from '@/components/blog/post-views';
 import { mdxComponents } from '@/components/mdx/mdx-components';
+import { PostRow } from '@/components/post-row';
 import { TableOfContents } from '@/components/table-of-contents';
 import type { TOCHeading } from '@/lib/extract-headings';
+import { getRelatedPosts } from '@/lib/posts';
 
 import BackButton from './back-button';
 
@@ -65,6 +67,7 @@ const BlogDetailPage = async (props: Props) => {
   const post = findPost(slug);
   if (!post) return notFound();
 
+  const related = getRelatedPosts(post);
   const url = `https://kelvinamoaba.com/blog/${post.slug}`;
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -117,6 +120,18 @@ const BlogDetailPage = async (props: Props) => {
           <MDXContent code={post.mdx} components={mdxComponents} />
         )}
       </article>
+
+      {related.length >= 2 && (
+        <section className="mt-14">
+          <div className="mb-8 flex items-center gap-4">
+            <span className="ds-label">Read next</span>
+            <span className="h-px flex-1 bg-[var(--border)]" />
+          </div>
+          {related.map((p) => (
+            <PostRow key={p.slug} post={p} />
+          ))}
+        </section>
+      )}
 
       <div className="pb-20">
         <PostEngagement slug={post.slug} />

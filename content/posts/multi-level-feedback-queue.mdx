@@ -1,0 +1,63 @@
+---
+kicker: "systems"
+title: "Multi Level Feedback Queue"
+description: "A walk through the Multi-Level Feedback Queue"
+datePublished: "2026-07-07T16:13:38.981Z"
+tags: ["systems"]
+---
+
+The Multi Level Feedback Queue and its descendants has shaped how modern cpu scheduling works. It was first described by Corbato sometime 1962. 
+
+The whole idea behind it is figuring out how to design a system such that although it knows nothing about a process (how long it will take to finish running it), it will still be able to optimize its scheduling decisions based on the characteristics of the jobs that it is currently running.
+
+**Earlier algorithms used to assume that they know how long it will take a process to run, such scheduling algorithms like SJF (shortest job first) and STCF (shortest time to completion first) algorithms.** SJF and STCF were optimized heavily for turnaround time, to have that, you must know ahead of time how long a process / job will take to complete which is very very impractical.
+
+
+What MLFQ algorithm tries to do is optimize for **both turnaround time and response time** although it does not know ahead of time how long a job will take.
+
+
+## How does MLFQ work?
+In MLFQ, we maintain a number of queues, each given a priority. Whenever the scheduler wants to run a job, it picks it up from the highest priority queue. Whenever a new job comes into the system or is ready to be run, the job is placed in the highest priority queue, that's an assumption that MLFQ works with, that every job is short and interactive. During the lifetime of the job, the nature of it causes it to move along the various priorities, slowly dropping to the lowest priority queue. 
+
+![Queues](/images/posts/cleanshot-2026-07-07-at-15-09-11-2x-poS2SdEp.png)
+
+From the image above, P1 and P2 will be executed by the scheduler with round robin and they will run before P3 because P3 is in a queue that has lower priority. 
+
+## How do we change priority during the lifetime of a job?
+
+Whenever a job arrives, it gets placed on the highest priority queue and hence gets the chance to run ASAP. If a job immediately gives up the CPU before the time slice for that queue is used up, it maintains its priority else it drops to the queue below (which has a different time slice)
+
+Should there be 2 jobs on the same priority level, Round Robin is used to run both. Thus with these ideas, the initial rules for now are:
+
+1. If `Priority(A) > Priority(B)`: A runs
+2. If `Priority(A) = Priority(B)`: RR is used
+3. When a job enters it is immediately scheduled on the highest priority queue
+4. If a job uses its entire time slice, its priority is reduced (drops to the next queue)
+5. If a job gives up the CPU before its time slice is up, by making a blocking I/O call or yielding to the cpu, it maintains the same priority
+
+These rules hold and work though, but there's a huge concern for jobs that are long running. Should there be a long running job, it will use up all its time slices in the high priority queue and continously drop until it gets to the lowest proirity queue. Now assuming a long steady stream of short jobs come into the queues, they will have the highest priority and will continue to run all the time, giving no CPU time for the process that is now in the lowest tier queue to run. ie. the process is now **starved** of the CPU.
+
+![cpu starvation](/images/posts/cleanshot-2026-07-07-at-15-43-10-2x-bO3XhB4A.png)
+
+In starvation, long running jobs never get the chance to get time to use the CPU if short burst jobs continue to come in. Also assuming our long running job even becomes interactive at a point, the system still wont give it a chance to move to a higher queue because it has exhausted all its opportunities to stay there.
+
+
+## Solution: Priority Boost
+
+The solution to the problems mentioned above is **Priority Boost**. What we do is to have a certain time T, after which we always bump all jobs we have into the highest priority queue, regardless of the current queues they are in. Those that are truly long running will bubble down again to the lowest priority queue. The boost interval is a tunable parameter, its not fixed. 
+
+So in such a scenario should a previously long running job become interactive after the boost has happened, it will not drop all the way to the lowest priority queue.
+
+## Flaws in the current design
+Knowing that long running processes might end up in the lowest priority queue, and also knowing that a process maintains high priority status if it relinquishes the CPU before its time slice, someone might write an intelligent program that actually games the CPU into thinking a long running job is an interactive one. How will that be done? That will be done by performing a needless I/O operation to something you don't care about before the system your time slice runs out. By doing this every slice, a CPU-bound job masquerades as an interactive one and monopolizes the high-priority queues
+
+The fix is **better time accounting**. Instead of measuring time per individual slice, **the scheduler tracks a job's total CPU time used within a queue, accumulated across all its bursts no matter how many times it yields for I/O**. Once a job exhausts its allotment at that level, it's demoted. 
+
+
+MLFQ has many variants, and the reason is that its behavior is governed by a few tunable knobs: **how many queues there are**, **how long each queue's time slice is** (higher queues often get shorter slices for responsiveness, lower queues longer ones for throughput), and **how often the priority boost fires** (the interval T). Different systems dial these differently for their workloads.
+
+Putting every refinement together, our final rule set is:
+1. If `Priority(A) > Priority(B)`, A runs; if equal, Round Robin.
+2. New jobs enter at the highest priority.
+3. Once a job uses up its queue's total time allotment (across however many I/O bursts), it's demoted, no gaming.
+4. After some interval T, boost all jobs back to the top queue.

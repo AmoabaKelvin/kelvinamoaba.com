@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { and, asc, eq, isNull, sql } from 'drizzle-orm';
+import { and, asc, eq, gt, isNull, or, sql } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { db } from '../db';
 import { blogComment, blogReaction, blogView, user } from '../db/schema';
@@ -85,6 +85,19 @@ export async function createComment(input: {
   return id;
 }
 
+export async function countRecentComments(
+  userId: string,
+  since: Date
+): Promise<number> {
+  const rows = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(blogComment)
+    .where(
+      and(eq(blogComment.userId, userId), gt(blogComment.createdAt, since))
+    );
+  return rows[0]?.count ?? 0;
+}
+
 export async function getCommentWithUser(
   id: string
 ): Promise<CommentWithUser | null> {
@@ -121,6 +134,47 @@ export async function getCommentWithUser(
       image: row.userImage,
       username: row.userUsername,
     },
+  };
+}
+
+export type ThreadRecipients = {
+  rootUserId: string;
+  rootDeleted: boolean;
+  // Every distinct author in the thread, root included.
+  participants: { userId: string; username: string | null; email: string }[];
+};
+
+export async function getThreadRecipients(
+  rootId: string
+): Promise<ThreadRecipients | null> {
+  const rows = await db
+    .select({
+      commentId: blogComment.id,
+      deletedAt: blogComment.deletedAt,
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+    })
+    .from(blogComment)
+    .innerJoin(user, eq(blogComment.userId, user.id))
+    .where(or(eq(blogComment.id, rootId), eq(blogComment.parentId, rootId)));
+
+  const root = rows.find((r) => r.commentId === rootId);
+  if (!root) return null;
+
+  const byUserId = new Map<string, ThreadRecipients['participants'][number]>();
+  for (const r of rows) {
+    byUserId.set(r.userId, {
+      userId: r.userId,
+      username: r.username,
+      email: r.email,
+    });
+  }
+
+  return {
+    rootUserId: root.userId,
+    rootDeleted: root.deletedAt !== null,
+    participants: Array.from(byUserId.values()),
   };
 }
 

@@ -407,7 +407,7 @@ export function Comments({ slug }: { slug: string }) {
   const count = (comments ?? []).filter((c) => !c.deleted).length;
 
   return (
-    <section aria-label="Comments">
+    <section id="comments" aria-label="Comments">
       <div className="mb-6 flex items-center gap-4">
         <span className="ds-label">
           Comments{count > 0 ? ` (${count})` : ''}

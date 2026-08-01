@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 import { Link } from 'next-view-transitions';
 
-import { formatPostDate, getSortedPosts } from '@/lib/posts';
+import { ContributionGraph } from '@/components/contribution-graph';
+import { PostRow } from '@/components/post-row';
+import { getSortedPosts } from '@/lib/posts';
 import { papers } from '@/papers';
 import { projects } from '@/projects';
 import { videos } from '@/videos';
@@ -18,8 +20,6 @@ const socials = [
   { href: 'https://github.com/AmoabaKelvin', label: 'GitHub' },
   { href: 'https://twitter.com/kelamoaba', label: 'Twitter' },
   { href: 'https://linkedin.com/in/kelvin-amoaba', label: 'LinkedIn' },
-  { href: 'https://hashnode.com/@AmoabaKelvin', label: 'Hashnode' },
-  { href: 'https://dev.to/amoabakelvin', label: 'Dev.to' },
   { href: 'mailto:kel.amoaba@gmail.com', label: 'Email' },
 ];
 
@@ -173,17 +173,7 @@ export default function Home() {
         <ul role="list" className="mt-8 space-y-4">
           {posts.map((post) => (
             <li key={post.slug}>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="group flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4"
-              >
-                <span className="w-28 shrink-0 font-mono text-sm text-[var(--fg-faint)] tabular-nums">
-                  {formatPostDate(post.datePublished)}
-                </span>
-                <span className="min-w-0 text-base/7 text-[var(--fg)] group-hover:underline group-hover:decoration-[var(--border-strong)] group-hover:underline-offset-4 sm:text-sm/6">
-                  {post.title}
-                </span>
-              </Link>
+              <PostRow post={post} />
             </li>
           ))}
         </ul>
@@ -224,6 +214,8 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <ContributionGraph />
     </div>
   );
 }

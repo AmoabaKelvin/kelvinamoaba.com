@@ -22,7 +22,7 @@ export function ViewCount({ slug }: { slug: string }) {
   const count = data?.counts[slug];
   if (!count) return null;
   return (
-    <span className="ds-mono ml-4 flex-shrink-0 text-xs tabular-nums text-[var(--fg-faint)]">
+    <span className="shrink-0 font-mono text-xs tabular-nums text-[var(--fg-faint)]">
       {count.toLocaleString()}
     </span>
   );

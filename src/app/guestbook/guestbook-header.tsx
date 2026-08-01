@@ -25,15 +25,15 @@ export function GuestbookHeader() {
 
   return (
     <div>
-      <h1 className="ds-heading-hero animate-fade-up stagger-1 mb-6">
+      <h1 className="text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
         Guestbook
       </h1>
 
-      <p className="ds-copy animate-fade-up stagger-2 mb-8 max-w-xl text-lg">
+      <p className="mt-6 mb-8 max-w-[56ch] text-base/7 text-pretty text-[var(--fg-secondary)]">
         Leave your mark. Sign the guestbook and let me know you stopped by.
       </p>
 
-      <div className="animate-fade-up stagger-3">
+      <div>
         {isLoading ? (
           <div className="h-10 w-48 animate-pulse rounded-[var(--ds-radius)] bg-[var(--ds-gray-100)]" />
         ) : isAuthenticated ? (

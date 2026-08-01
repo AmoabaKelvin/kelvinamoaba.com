@@ -14,22 +14,23 @@ export const dynamic = 'force-dynamic';
 
 export default function GuestbookPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 md:px-10">
+    <div className="mx-auto max-w-2xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
       {/* Hero Section */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-20">
+      <section>
         <GuestbookHeader />
       </section>
 
       {/* Posts Section */}
-      <section className="pb-20">
-        <div className="animate-fade-up stagger-3 mb-8 flex items-center gap-4">
-          <span className="ds-label">Messages</span>
-          <span className="h-px flex-1 bg-[var(--border)]" />
-        </div>
+      <section className="mt-20 md:mt-24">
+        <h2 className="font-mono text-xs tracking-wide text-[var(--fg-faint)] uppercase">
+          Messages
+        </h2>
 
-        <Suspense fallback={<GuestbookSkeleton />}>
-          <GuestbookPosts />
-        </Suspense>
+        <div className="mt-8">
+          <Suspense fallback={<GuestbookSkeleton />}>
+            <GuestbookPosts />
+          </Suspense>
+        </div>
       </section>
     </div>
   );
@@ -56,16 +57,14 @@ async function GuestbookPosts() {
 
 function GuestbookSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-10">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="ds-card animate-pulse p-5">
-          <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-full bg-[var(--ds-gray-100)]" />
-            <div className="flex-1 space-y-3">
-              <div className="h-4 w-1/4 rounded bg-[var(--ds-gray-100)]" />
-              <div className="h-3 w-3/4 rounded bg-[var(--ds-gray-100)]" />
-              <div className="h-3 w-1/2 rounded bg-[var(--ds-gray-100)]" />
-            </div>
+        <div key={i} className="flex animate-pulse items-start gap-4">
+          <div className="size-8 rounded-full bg-[var(--ds-gray-100)]" />
+          <div className="flex-1 space-y-3">
+            <div className="h-4 w-1/4 rounded bg-[var(--ds-gray-100)]" />
+            <div className="h-3 w-3/4 rounded bg-[var(--ds-gray-100)]" />
+            <div className="h-3 w-1/2 rounded bg-[var(--ds-gray-100)]" />
           </div>
         </div>
       ))}

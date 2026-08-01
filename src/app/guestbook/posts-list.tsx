@@ -57,12 +57,12 @@ export function PostsList() {
 
   if (posts.length === 0) {
     return (
-      <div className="rounded-[var(--ds-radius-lg)] border border-dashed border-[var(--border-strong)] py-16 text-center">
-        <p className="ds-heading-3 mb-2 text-[var(--fg-secondary)]">
-          No messages yet
+      <div className="py-16">
+        <p className="font-medium text-[var(--fg-secondary)]">
+          No messages yet.
         </p>
-        <p className="text-[0.875rem] text-[var(--fg-muted)]">
-          Be the first to leave your mark
+        <p className="mt-1 text-base/7 text-[var(--fg-muted)] sm:text-sm/6">
+          Be the first to leave your mark.
         </p>
       </div>
     );
@@ -70,9 +70,9 @@ export function PostsList() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {posts.map((post, index) => (
-          <PostCard key={post.id} post={post} index={index} />
+      <div className="space-y-10">
+        {posts.map((post) => (
+          <PostCard key={post.id} post={post} />
         ))}
       </div>
 

@@ -20,33 +20,30 @@ export default function WritingIndex() {
   const years = groupByYear(getSortedPosts());
 
   return (
-    <div className="mx-auto max-w-4xl px-6 md:px-10">
-      <section className="pt-24 pb-12 md:pt-28 md:pb-16">
-        <h1 className="ds-heading-1 animate-fade-up stagger-1 mb-4 text-[var(--fg)]">
+    <div className="mx-auto max-w-2xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
+      <section>
+        <h1 className="text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
           Writing
         </h1>
-        <p className="ds-copy animate-fade-up stagger-2 max-w-xl text-lg">
+        <p className="mt-6 max-w-[56ch] text-base/7 text-pretty text-[var(--fg-secondary)]">
           Essays and deep dives on systems, Go, algorithms, and the craft of
           building software.
         </p>
       </section>
 
-      <section className="animate-fade-up stagger-3 pb-20">
+      <section className="mt-16 space-y-14 md:mt-20">
         {years.map(({ year, posts }) => (
-          <div
-            key={year}
-            className="border-b border-[var(--border)] py-6 last:border-0"
-          >
-            <div className="flex flex-col gap-1 md:flex-row md:gap-6">
-              <span className="ds-mono w-16 flex-shrink-0 pt-3 text-xs text-[var(--fg-faint)] tabular-nums">
-                {year}
-              </span>
-              <div className="min-w-0 flex-1">
-                {posts.map((post) => (
-                  <PostRow key={post.slug} post={post} showViews />
-                ))}
-              </div>
-            </div>
+          <div key={year}>
+            <h2 className="font-mono text-xs tracking-wide text-[var(--fg-faint)] uppercase">
+              {year}
+            </h2>
+            <ul role="list" className="mt-6 space-y-4">
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <PostRow post={post} showViews />
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
       </section>

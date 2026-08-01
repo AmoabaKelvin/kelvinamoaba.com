@@ -94,7 +94,9 @@ const BlogDetailPage = async (props: Props) => {
       />
       <TableOfContents headings={post.headings as TOCHeading[]} />
       <BackButton className="mt-10" />
-      <h1 className="ds-heading-1 mt-8 text-[var(--fg)]">{post.title}</h1>
+      <h1 className="mt-8 text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
+        {post.title}
+      </h1>
       <div className="ds-mono mt-3 text-sm text-[var(--fg-muted)]">
         Kelvin Amoaba ·{' '}
         {new Date(post.datePublished).toLocaleDateString('en-US', {
@@ -123,13 +125,16 @@ const BlogDetailPage = async (props: Props) => {
 
       {related.length >= 2 && (
         <section className="mt-14">
-          <div className="mb-8 flex items-center gap-4">
-            <span className="ds-label">Read next</span>
-            <span className="h-px flex-1 bg-[var(--border)]" />
-          </div>
-          {related.map((p) => (
-            <PostRow key={p.slug} post={p} />
-          ))}
+          <h2 className="font-mono text-xs tracking-wide text-[var(--fg-faint)] uppercase">
+            Read next
+          </h2>
+          <ul role="list" className="mt-6 space-y-4">
+            {related.map((p) => (
+              <li key={p.slug}>
+                <PostRow post={p} />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

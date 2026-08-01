@@ -1,5 +1,11 @@
 export const projects = [
   {
+    name: 'Telemetry',
+    link: 'https://telemetry.dev',
+    description:
+      'Observability for AI and LLM apps, built on OpenTelemetry. Captures every model call, tool step, and retrieval as a trace — with tokens, cost, latency, and errors attached — through drop-in TypeScript and Python SDKs or any OTLP exporter, with cost computed from live pricing for 4,700+ models.',
+  },
+  {
     name: 'Lookout',
     link: 'https://github.com/AmoabaKelvin/lookout',
     description:
@@ -18,10 +24,10 @@ export const projects = [
       'A URL shortening service with a built-in analytics dashboard. It tracks link clicks, geographic data, and user behavior in real-time. Currently has over 10,000 users and more than a million link clicks.',
   },
   {
-    name: 'Logdeck',
+    name: 'LogDeck',
     link: 'https://github.com/AmoabaKelvin/logdeck',
     description:
-      'An open-source Docker container monitoring platform with live log streaming, full-text search, multi-host support, and interactive terminal access via WebSockets.',
+      'A self-hosted control plane for Docker and Podman, shipped as a single Go binary. Tails every container into a local store so log history survives redeploys, and adds full-text search, container and Compose management, alerting, multi-host support, and a built-in MCP server that lets AI assistants read logs and act on containers.',
   },
   {
     name: 'is-temp.com',

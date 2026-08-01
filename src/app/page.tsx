@@ -1,15 +1,9 @@
 import { Metadata } from 'next';
 import { Link } from 'next-view-transitions';
-import { FaDev, FaGithub, FaLinkedin } from 'react-icons/fa';
-import { FaHashnode, FaXTwitter } from 'react-icons/fa6';
-import { IoMailOpen } from 'react-icons/io5';
-import { HiArrowRight, HiArrowUpRight } from 'react-icons/hi2';
 
-import { PostRow } from '@/components/post-row';
-import { cn } from '@/lib/utils';
-import { getSortedPosts } from '@/lib/posts';
-import { projects } from '@/projects';
+import { formatPostDate, getSortedPosts } from '@/lib/posts';
 import { papers } from '@/papers';
+import { projects } from '@/projects';
 import { videos } from '@/videos';
 
 const skills = [
@@ -21,20 +15,12 @@ const skills = [
 ];
 
 const socials = [
-  { href: 'https://github.com/AmoabaKelvin', label: 'GitHub', Icon: FaGithub },
-  { href: 'https://twitter.com/kelamoaba', label: 'Twitter', Icon: FaXTwitter },
-  {
-    href: 'https://linkedin.com/in/kelvin-amoaba',
-    label: 'LinkedIn',
-    Icon: FaLinkedin,
-  },
-  {
-    href: 'https://hashnode.com/@AmoabaKelvin',
-    label: 'Hashnode',
-    Icon: FaHashnode,
-  },
-  { href: 'https://dev.to/amoabakelvin', label: 'Dev.to', Icon: FaDev },
-  { href: 'mailto:kel.amoaba@gmail.com', label: 'Email', Icon: IoMailOpen },
+  { href: 'https://github.com/AmoabaKelvin', label: 'GitHub' },
+  { href: 'https://twitter.com/kelamoaba', label: 'Twitter' },
+  { href: 'https://linkedin.com/in/kelvin-amoaba', label: 'LinkedIn' },
+  { href: 'https://hashnode.com/@AmoabaKelvin', label: 'Hashnode' },
+  { href: 'https://dev.to/amoabakelvin', label: 'Dev.to' },
+  { href: 'mailto:kel.amoaba@gmail.com', label: 'Email' },
 ];
 
 export const metadata: Metadata = {
@@ -67,229 +53,176 @@ const websiteJsonLd = {
   author: { '@type': 'Person', name: 'Kelvin Amoaba' },
 };
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-4 mb-8">
-      <span className="ds-label">{children}</span>
-      <span className="h-px flex-1 bg-[var(--border)]" />
-    </div>
+    <h2 className="font-mono text-xs tracking-wide text-[var(--fg-faint)] uppercase">
+      {children}
+    </h2>
   );
 }
 
-export default async function Home() {
+function ExternalLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith('mailto:') ? undefined : '_blank'}
+      rel="noopener noreferrer"
+      className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+    >
+      {children}
+    </a>
+  );
+}
+
+export default function Home() {
   const posts = getSortedPosts().slice(0, 5);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 md:px-10">
+    <div className="mx-auto max-w-2xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([personJsonLd, websiteJsonLd]),
         }}
       />
-      {/* Hero */}
-      <section className="pt-24 pb-16 md:pt-28 md:pb-20">
-        <h1 className="ds-heading-hero animate-fade-up stagger-1 mb-6">
+      {/* Intro */}
+      <section>
+        <h1 className="text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
           Kelvin Amoaba
         </h1>
-
-        <p className="ds-copy animate-fade-up stagger-2 mb-8 max-w-xl text-lg">
+        <p className="mt-6 max-w-[56ch] text-base/7 text-pretty text-[var(--fg-secondary)]">
           Software engineer building scalable systems and exploring the depths
           of low-level architecture. Currently at{' '}
-          <a
-            href="https://vela.partners"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover-line font-medium"
-          >
+          <ExternalLink href="https://vela.partners">
             Vela Partners
-          </a>
+          </ExternalLink>
           .
         </p>
-
-        <div className="animate-fade-up stagger-3 mb-10 flex flex-wrap gap-2">
-          {skills.map((skill) => (
-            <span key={skill} className="ds-badge">
-              {skill}
-            </span>
+        <p className="mt-4 font-mono text-base/7 text-[var(--fg-faint)] sm:text-sm/6">
+          {skills.join(' · ')}
+        </p>
+        <ul role="list" className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
+          {socials.map(({ href, label }) => (
+            <li key={label} className="text-base/7 sm:text-sm/6">
+              <ExternalLink href={href}>{label}</ExternalLink>
+            </li>
           ))}
-        </div>
-
-        <div className="animate-fade-up stagger-4 flex items-center gap-5">
-          {socials.map(({ href, label, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('mailto:') ? undefined : '_blank'}
-              rel="noopener noreferrer"
-              className="social-icon"
-              aria-label={label}
-            >
-              <Icon size={18} />
-            </a>
-          ))}
-        </div>
+        </ul>
       </section>
 
       {/* Research */}
-      <section className="py-12 md:py-16">
-        <div className="animate-fade-up stagger-5">
-          <SectionLabel>Research</SectionLabel>
-        </div>
-
-        <div className="space-y-4">
-          {papers.map((paper, index) => (
-            <a
-              key={paper.arxivId}
-              href={paper.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                'ds-card p-6 animate-fade-up',
-                `stagger-${Math.min(index + 6, 10)}`
-              )}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="ds-heading-3 mb-2 text-[var(--fg)]">
-                    {paper.title}
-                  </h3>
-                  <p className="mb-4 line-clamp-2 text-[0.9375rem] leading-relaxed text-[var(--fg-secondary)]">
-                    {paper.abstract}
-                  </p>
-                  <div className="mb-3 flex flex-wrap items-center gap-2">
-                    {paper.tags.map((tag) => (
-                      <span key={tag} className="ds-badge">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="ds-mono text-xs text-[var(--fg-muted)]">
-                    {paper.venue} {paper.year}
-                  </p>
-                </div>
-                <HiArrowUpRight
-                  className="flex-shrink-0 mt-1 text-[var(--fg-faint)]"
-                  size={16}
-                />
-              </div>
-            </a>
+      <section className="mt-20 md:mt-24">
+        <SectionHeading>Research</SectionHeading>
+        <ul role="list" className="mt-8 space-y-10">
+          {papers.map((paper) => (
+            <li key={paper.arxivId}>
+              <h3 className="font-medium text-[var(--fg)]">
+                <a
+                  href={paper.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+                >
+                  {paper.title}
+                </a>
+              </h3>
+              <p className="mt-1.5 font-mono text-sm text-[var(--fg-faint)]">
+                {paper.venue} {paper.year}
+              </p>
+              <p className="mt-3 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
+                {paper.abstract}
+              </p>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {/* Teaching */}
-      <section className="py-12 md:py-16">
-        <div className="animate-fade-up stagger-5">
-          <SectionLabel>Teaching</SectionLabel>
-        </div>
-
-        <div className="space-y-4">
-          {videos.map((video, index) => (
-            <a
-              key={video.title}
-              href={video.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                'ds-card p-6 animate-fade-up',
-                `stagger-${Math.min(index + 6, 10)}`
-              )}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="ds-heading-3 mb-2 text-[var(--fg)]">
-                    {video.title}
-                  </h3>
-                  <p className="text-[0.9375rem] leading-relaxed text-[var(--fg-secondary)]">
-                    {video.description}
-                  </p>
-                </div>
-                <HiArrowUpRight
-                  className="flex-shrink-0 mt-1 text-[var(--fg-faint)]"
-                  size={16}
-                />
-              </div>
-            </a>
+      <section className="mt-20 md:mt-24">
+        <SectionHeading>Teaching</SectionHeading>
+        <ul role="list" className="mt-8 space-y-10">
+          {videos.map((video) => (
+            <li key={video.title}>
+              <h3 className="font-medium text-[var(--fg)]">
+                <a
+                  href={video.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+                >
+                  {video.title}
+                </a>
+              </h3>
+              <p className="mt-3 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
+                {video.description}
+              </p>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {/* Writing */}
-      <section className="py-12 md:py-16">
-        <div className="animate-fade-up stagger-5">
-          <SectionLabel>Writing</SectionLabel>
-        </div>
-
-        <div className="animate-fade-up stagger-6 space-y-0.5">
+      <section className="mt-20 md:mt-24">
+        <SectionHeading>Writing</SectionHeading>
+        <ul role="list" className="mt-8 space-y-4">
           {posts.map((post) => (
-            <PostRow key={post.slug} post={post} />
+            <li key={post.slug}>
+              <Link
+                href={`/blog/${post.slug}`}
+                className="group flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4"
+              >
+                <span className="w-28 shrink-0 font-mono text-sm text-[var(--fg-faint)] tabular-nums">
+                  {formatPostDate(post.datePublished)}
+                </span>
+                <span className="min-w-0 text-base/7 text-[var(--fg)] group-hover:underline group-hover:decoration-[var(--border-strong)] group-hover:underline-offset-4 sm:text-sm/6">
+                  {post.title}
+                </span>
+              </Link>
+            </li>
           ))}
-        </div>
-
-        <div className="animate-fade-up stagger-7 mt-6">
+        </ul>
+        <p className="mt-8 text-base/7 sm:text-sm/6">
           <Link
             href="/blog"
-            className="ds-mono inline-flex items-center gap-1.5 text-sm text-[var(--fg-muted)] transition-colors hover:text-[var(--fg)]"
+            className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
           >
             All writing
-            <HiArrowRight size={13} />
           </Link>
-        </div>
+        </p>
       </section>
 
       {/* Projects */}
-      <section className="py-12 md:py-16">
-        <div className="animate-fade-up stagger-5">
-          <SectionLabel>Projects</SectionLabel>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map((project, index) => {
-            const inner = (
-              <>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[0.9375rem] font-medium text-[var(--fg)]">
-                    {project.name}
-                  </span>
-                  {project.link && (
-                    <HiArrowUpRight
-                      className="text-[var(--fg-faint)] transition-colors group-hover:text-[var(--accent)]"
-                      size={14}
-                    />
-                  )}
-                </div>
-                <p className="text-[0.875rem] leading-relaxed text-[var(--fg-secondary)]">
-                  {project.description}
-                </p>
-              </>
-            );
-
-            return (
-              <div
-                key={project.name}
-                className={cn(
-                  'ds-card group p-5 animate-fade-up',
-                  project.link && 'ds-card-interactive',
-                  `stagger-${Math.min(index + 6, 10)}`
-                )}
-              >
+      <section className="mt-20 md:mt-24">
+        <SectionHeading>Projects</SectionHeading>
+        <ul role="list" className="mt-8 space-y-10">
+          {projects.map((project) => (
+            <li key={project.name}>
+              <h3 className="font-medium text-[var(--fg)]">
                 {project.link ? (
                   <a
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-full"
+                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
                   >
-                    {inner}
+                    {project.name}
                   </a>
                 ) : (
-                  <div className="h-full">{inner}</div>
+                  project.name
                 )}
-              </div>
-            );
-          })}
-        </div>
+              </h3>
+              <p className="mt-2 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
+                {project.description}
+              </p>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   );

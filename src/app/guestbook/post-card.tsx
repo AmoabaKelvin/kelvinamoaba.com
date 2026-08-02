@@ -59,7 +59,7 @@ export function PostCard({ post }: PostCardProps) {
           alt="Signature"
           width={96}
           height={48}
-          className="shrink-0 object-contain opacity-60"
+          className="shrink-0 object-contain opacity-60 brightness-0 dark:invert"
           unoptimized
         />
       )}

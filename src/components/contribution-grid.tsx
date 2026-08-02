@@ -51,13 +51,18 @@ export function ContributionGrid({ weeks }: { weeks: ContributionDay[][] }) {
         onMouseLeave={() => setTooltip(null)}
       >
         {weeks.map((week, i) => (
-          <div key={i} className="grid gap-0.5">
+          <div key={i} className="grid grid-rows-7 gap-0.5">
             {week.map((day) => (
               <div
                 key={day.date}
                 data-tip={`${day.count} contribution${day.count === 1 ? '' : 's'} · ${formatDay(day.date)}`}
                 className="aspect-square w-full rounded-xs"
-                style={{ backgroundColor: LEVEL_BG[day.level] }}
+                style={{
+                  backgroundColor: LEVEL_BG[day.level],
+                  // Pin partial first/last weeks to the real weekday so a
+                  // lone day cannot stretch across the whole column.
+                  gridRow: new Date(`${day.date}T00:00:00Z`).getUTCDay() + 1,
+                }}
               />
             ))}
           </div>

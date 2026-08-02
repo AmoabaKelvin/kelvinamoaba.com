@@ -121,16 +121,25 @@ export default function Home() {
         <SectionHeading>Research</SectionHeading>
         <ul role="list" className="mt-8 space-y-10">
           {papers.map((paper) => (
-            <li key={paper.arxivId}>
+            <li key={paper.title}>
               <h3 className="font-medium text-[var(--fg)]">
-                <a
-                  href={paper.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
-                >
-                  {paper.title}
-                </a>
+                {paper.slug ? (
+                  <Link
+                    href={paper.link}
+                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+                  >
+                    {paper.title}
+                  </Link>
+                ) : (
+                  <a
+                    href={paper.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+                  >
+                    {paper.title}
+                  </a>
+                )}
               </h3>
               <p className="mt-1.5 font-mono text-sm text-[var(--fg-faint)]">
                 {paper.venue} {paper.year}
@@ -141,6 +150,14 @@ export default function Home() {
             </li>
           ))}
         </ul>
+        <p className="mt-8 text-base/7 sm:text-sm/6">
+          <Link
+            href="/research"
+            className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+          >
+            All research
+          </Link>
+        </p>
       </section>
 
       {/* Teaching */}

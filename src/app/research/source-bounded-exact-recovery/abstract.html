@@ -1,0 +1,32 @@
+<p>Reliable container-log acquisition faces a specific problem: Docker
+can retain records that a log follower misses before attachment or
+during collector downtime. We study recovery over Docker’s supported
+Logs API and define <em>source-bounded exactness</em>: every retained,
+distinguishable source record eventually appears exactly once in durable
+collector output. Our method uses a generation-aware multiset oracle
+that separates source truncation from collector omission and exposes
+simultaneous loss and replay that count arithmetic hides. Applying the
+oracle to LogDeck uncovered a start-to-attachment race in which an
+initial backfill ended before a prefix was emitted and the live stream
+attached afterward. A one-record attachment overlap, finite Docker-API
+reconciliation, and exact insertion closed this tested boundary.</p>
+<p>We compare the fixed revision with unmodified Grafana Alloy 1.18.0,
+which uses the same supported Docker Logs API and persists read
+positions. Across 120 Linux/arm64 collector-runs (two collectors, six
+faults, ten trials, 5,000 records), LogDeck was exact in 60/60 and Alloy
+in 20/60. Alloy was exact for guarded startup and process pause, but
+missed rapid-exit containers and retained only the pre-fault prefix
+after collector restart, crash, and a restart reusing the same physical
+container identifier (ID); one same-ID trial also replayed 1,479 prefix
+records. Both collectors were exact in 20/20 additional collector-runs
+across an isolated live-restore Docker daemon restart. After verified
+source removal, both retained only the already-acquired prefix in 20/20
+runs, marking the recovery horizon. A stateful Fluent Bit file-tail
+control matched LogDeck across restart and crash but required Docker’s
+private storage. Exactness assumes distinct observable tuples of
+physical generation, timestamp, stream, and bytes; 200,000
+byte-identical records across the <code>json-file</code> and
+<code>local</code> drivers produced no observed collisions. These
+results show that lifecycle reacquisition, not a persisted position
+alone, determines exact recovery within the retained-source horizon; the
+collision experiment is evidence rather than a universal guarantee.</p>

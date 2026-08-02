@@ -1,4 +1,30 @@
-export const papers = [
+export type Paper = {
+  title: string;
+  authors: string[];
+  venue: string;
+  year: number;
+  link: string;
+  abstract: string;
+  tags: string[];
+  arxivId?: string;
+  /** Set for first-party papers hosted on this site. */
+  slug?: string;
+  pdf?: string;
+};
+
+export const papers: Paper[] = [
+  {
+    title: 'Source-Bounded Exact Recovery for Docker Log Followers',
+    authors: ['Kelvin Amoaba'],
+    venue: 'Preprint',
+    year: 2026,
+    slug: 'source-bounded-exact-recovery',
+    link: '/research/source-bounded-exact-recovery',
+    pdf: '/research/source-bounded-exact-recovery.pdf',
+    abstract:
+      'Defines source-bounded exactness — every retained, distinguishable Docker source record eventually appears exactly once in durable collector output — with a generation-aware multiset oracle that separates source truncation from collector omission. Across 120 Linux/arm64 collector-runs, a fixed LogDeck revision was exact in 60/60 trials while unmodified Grafana Alloy 1.18.0 was exact in 20/60, showing that lifecycle reacquisition, not a persisted read position alone, determines exact recovery within the retained-source horizon.',
+    tags: ['Systems', 'Docker', 'Observability', 'Fault Tolerance'],
+  },
   {
     title: 'CoFEE: Reasoning Control for LLM-Based Feature Discovery',
     authors: [

@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 import { TableOfContents } from '@/components/table-of-contents';
 import type { TOCHeading } from '@/lib/extract-headings';
 
-const title = 'Source-Bounded Exact Recovery for Docker Log Followers';
+const title = "Source-Bounded Exact Recovery over Docker's Logs API";
 const description =
   'Defines source-bounded exactness for Docker log collection. A fixed LogDeck revision was exact in 60/60 seeded trials, unmodified Grafana Alloy 1.18.0 in 20/60 — lifecycle reacquisition determines exact recovery.';
 

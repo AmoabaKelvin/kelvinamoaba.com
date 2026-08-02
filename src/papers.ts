@@ -14,7 +14,7 @@ export type Paper = {
 
 export const papers: Paper[] = [
   {
-    title: 'Source-Bounded Exact Recovery for Docker Log Followers',
+    title: "Source-Bounded Exact Recovery over Docker's Logs API",
     authors: ['Kelvin Amoaba'],
     venue: 'Preprint',
     year: 2026,

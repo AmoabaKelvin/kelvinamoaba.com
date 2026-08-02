@@ -1,32 +1,30 @@
-<p>Reliable container-log acquisition faces a specific problem: Docker
-can retain records that a log follower misses before attachment or
-during collector downtime. We study recovery over Docker’s supported
-Logs API and define <em>source-bounded exactness</em>: every retained,
-distinguishable source record eventually appears exactly once in durable
-collector output. Our method uses a generation-aware multiset oracle
-that separates source truncation from collector omission and exposes
-simultaneous loss and replay that count arithmetic hides. Applying the
-oracle to LogDeck uncovered a start-to-attachment race in which an
-initial backfill ended before a prefix was emitted and the live stream
-attached afterward. A one-record attachment overlap, finite Docker-API
-reconciliation, and exact insertion closed this tested boundary.</p>
+<p>Reliable container-log acquisition is difficult because Docker can
+retain records that a collector misses before attachment or during
+downtime. A persisted read position does not by itself ensure recovery
+after lifecycle changes. We study what exact recovery contract is
+achievable through Docker’s supported Logs API. We define
+<em>source-bounded exactness</em>: every retained, distinguishable
+source record eventually appears exactly once in durable collector
+output. Our method uses a generation-aware multiset oracle that
+separates source truncation from collector omission and exposes
+simultaneous loss and replay. Applied to LogDeck, it uncovered a
+start-to-attachment race; a one-record attachment overlap, finite
+Docker-API reconciliation, and exact insertion closed the tested
+boundary.</p>
 <p>We compare the fixed revision with unmodified Grafana Alloy 1.18.0,
-which uses the same supported Docker Logs API and persists read
-positions. Across 120 Linux/arm64 collector-runs (two collectors, six
-faults, ten trials, 5,000 records), LogDeck was exact in 60/60 and Alloy
-in 20/60. Alloy was exact for guarded startup and process pause, but
-missed rapid-exit containers and retained only the pre-fault prefix
-after collector restart, crash, and a restart reusing the same physical
-container identifier (ID); one same-ID trial also replayed 1,479 prefix
-records. Both collectors were exact in 20/20 additional collector-runs
-across an isolated live-restore Docker daemon restart. After verified
-source removal, both retained only the already-acquired prefix in 20/20
-runs, marking the recovery horizon. A stateful Fluent Bit file-tail
-control matched LogDeck across restart and crash but required Docker’s
-private storage. Exactness assumes distinct observable tuples of
-physical generation, timestamp, stream, and bytes; 200,000
-byte-identical records across the <code>json-file</code> and
-<code>local</code> drivers produced no observed collisions. These
-results show that lifecycle reacquisition, not a persisted position
-alone, determines exact recovery within the retained-source horizon; the
-collision experiment is evidence rather than a universal guarantee.</p>
+which uses the same API and persists read positions; across 120
+collector-runs, LogDeck was exact in 60/60 and Alloy in 20/60. Alloy
+succeeded at guarded startup and process pause but omitted retained
+history when recovery required discovering an exited or restarted
+source. In a causal control, a 5,000-record source exited before
+collection: stock discovery was exact in 0/20 trials and acquired
+nothing, while the same reader given the container ID recovered all
+records exactly in 20/20. This reproduced on OrbStack and independent
+Ubuntu hosts with Docker 29.4.0 and 24.0.9; both collectors recovered
+daemon restart, while neither recovered records after source removal.
+Exactness assumes distinct tuples of physical generation, timestamp,
+stream, and bytes; 200,000 byte-identical records across two drivers
+produced no observed collisions. Our results show that lifecycle
+reacquisition, not a persisted position alone, determines exact recovery
+within the retained-source horizon. This is a bounded interface claim,
+not a universal collector ranking or proof of collision freedom.</p>

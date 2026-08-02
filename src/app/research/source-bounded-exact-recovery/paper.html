@@ -22,7 +22,9 @@ A collector must first discover the physical container, attach to a
 stream, recognize lifecycle changes, and enumerate retained history
 after a fault. Those actions interact with a source whose contents and
 lifetime are controlled by Docker. A stopped container can still have
-readable history; a removed container does not.</p>
+readable history; a removed container does not. Our thesis is therefore
+precise: persisted read position and lifecycle reacquisition are
+separate recovery obligations.</p>
 <p>Measuring this boundary is also subtle. Suppose a collector misses
 one identity and repeats another. Its output count is unchanged.
 Similarly, reusing sequence numbers after a same-ID restart can make two
@@ -46,11 +48,13 @@ source lifetime make recovery impossible?</p></li>
 <p>The central result is not that one collector wins every condition.
 The Alloy control succeeds at guarded startup, process pause, and
 live-restore daemon restart. It fails when the tested schedule requires
-reacquisition after the collector process or container lifecycle
-changes. A private-file Fluent Bit control also recovers exactly across
-collector restart and crash. These contrasts place the contribution at
-the combination of supported interface, lifecycle reconciliation, and
-exact oracle.</p>
+rediscovering an exited or restarted source. A direct-target control
+then shows that the same Alloy reader can read all retained history,
+localizing rapid-exit omission to target construction rather than
+Docker’s read path. A private-file Fluent Bit control also recovers
+exactly across collector restart and crash. These contrasts place the
+contribution at the combination of supported interface, lifecycle
+reconciliation, and exact oracle.</p>
 <p>This paper makes four contributions:</p>
 <ol>
 <li><p>a source-bounded acquisition contract and a generation-aware
@@ -62,7 +66,8 @@ rotation, and container removal;</p></li>
 <li><p>a concrete account of a start-to-attachment race found by the
 harness, together with a finite API-reconciliation design and controlled
 ablations of reconciliation and exact insertion; and</p></li>
-<li><p>comparative evidence from a supported-API baseline, a
+<li><p>comparative evidence from a supported-API baseline, a causal
+target-construction control replicated on two Linux environments, a
 private-file baseline, and two Docker logging drivers that identifies
 both recoverable and unrecoverable boundaries.</p></li>
 </ol>
@@ -405,6 +410,33 @@ interval. Before guarded faults, the harness queries Alloy’s component
 debug endpoint and releases the producer only after the expected target
 reports a running reader. Thus startup and pre-fault failures cannot be
 attributed to releasing the workload before attachment.</p>
+<h4 id="alloy-target-construction-control.">Alloy target-construction
+control.</h4>
+<p>To separate discovery from reading, a source emits all 5,000 records
+and exits before either configuration starts. The stock configuration
+uses <code>discovery.docker</code>; the control gives the exited
+container ID directly to the same unmodified
+<code>loki.source.docker</code> component and image. The harness stops
+the direct-target control after its first complete historical transfer.
+This one-shot probe asks whether retained history is readable; it is not
+proposed as a deployable discovery configuration, and it avoids
+measuring subsequent retries of a permanently listed exited target.</p>
+<p>Alloy’s documented discovery arguments expose filters that limit
+discovered resources, but no option to include stopped containers  <span
+class="citation" data-cites="grafana2026alloydiscovery"><a
+href="#ref-grafana2026alloydiscovery"
+role="doc-biblioref">[7]</a></span>. Version 1.18.0 delegates to
+Prometheus Docker discovery <span class="citation"
+data-cites="grafana2026alloydockersource"><a
+href="#ref-grafana2026alloydockersource"
+role="doc-biblioref">[8]</a></span>; its pinned v0.312.0 container-list
+call supplies filters but does not set the API’s <code>All</code>
+option <span class="citation"
+data-cites="prometheus2026dockersdsource"><a
+href="#ref-prometheus2026dockersdsource"
+role="doc-biblioref">[9]</a></span>. Thus the direct-target condition is
+the configuration sweep available without modifying Alloy: it bypasses
+target construction while holding its Docker reader constant.</p>
 <h4 id="fluent-bit-private-file-control.">Fluent Bit private-file
 control.</h4>
 <p>Pinned Fluent Bit 5.0.9 tails Docker’s <code>json-file</code> records
@@ -413,7 +445,7 @@ real process stop or <code>SIGKILL</code>. This is a useful stateful
 comparison, but it reads the daemon’s private log storage. Docker
 explicitly warns that these files are designed for exclusive daemon
 access <span class="citation" data-cites="docker2026jsonfile"><a
-href="#ref-docker2026jsonfile" role="doc-biblioref">[7]</a></span>; the
+href="#ref-docker2026jsonfile" role="doc-biblioref">[10]</a></span>; the
 privilege and coupling difference is therefore part of the result.</p>
 <h3 id="faults">Faults</h3>
 <p>Table <a href="#tab:faults" data-reference-type="ref"
@@ -440,6 +472,11 @@ attachment; emit suffix.</td>
 <td style="text-align: left;">Rapid exit</td>
 <td style="text-align: left;">Start collector; producer emits all
 records and exits immediately.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Exited source</td>
+<td style="text-align: left;">Producer exits with all records retained;
+then start stock or direct-target reader.</td>
 </tr>
 <tr>
 <td style="text-align: left;">Restart</td>
@@ -479,7 +516,7 @@ supervisor restarts only the inner <code>dockerd</code>. Live restore is
 enabled and verified before each matrix; Docker documents that this mode
 keeps containers running while the daemon is unavailable  <span
 class="citation" data-cites="docker2026liverestore"><a
-href="#ref-docker2026liverestore" role="doc-biblioref">[8]</a></span>.
+href="#ref-docker2026liverestore" role="doc-biblioref">[11]</a></span>.
 The producer begins its suffix during the outage. It may block if
 Docker’s first-in, first-out (FIFO) logging buffer fills, an explicit
 limitation of live restore.</p>
@@ -495,13 +532,15 @@ OrbStack machine on Linux/arm64 with eight CPUs and Docker Engine
 shares the macOS host’s OrbStack kernel; it is not independent hardware.
 The daemon matrix uses the same kernel with an isolated Docker 29.7.0
 live-restore engine.</p>
-<p>Earlier fixed-revision work was replicated on an independent
-Ubuntu/arm64 cloud host with Linux 5.15 and an isolated Docker 24.0.9
-daemon. That replication and the independent Fluent Bit process control
-support the mechanism and private-file results, but the new Alloy
-comparison is reported only for the Docker 29.1.3 Ubuntu-machine
-environment. We keep this distinction explicit rather than treating
-containerized Linux as a second physical host.</p>
+<p>The target-construction control was run separately on (1) the
+OrbStack engine with Docker 29.4.0 and kernel 7.0.11 and (2) an
+independent Ubuntu 22.04/arm64 cloud host with Linux 5.15 and Docker
+24.0.9. The latter is a native daemon on independent hardware. Earlier
+fixed-revision work and the Fluent Bit process control also ran on that
+host. We keep the environments separate rather than treating
+containerized Linux as a second physical machine. The ablation matrix
+was rerun on August 1 in the OrbStack environment at the pinned revision
+and seed reported in the artifact.</p>
 <h2 id="sec:results">Results</h2>
 <h3 id="the-supported-api-comparison-localizes-lifecycle-recovery">The
 supported-API comparison localizes lifecycle recovery</h3>
@@ -557,7 +596,7 @@ collector-run. Each cell is exact collector-runs out of ten.</caption>
 <td style="text-align: left;">Same ID</td>
 <td style="text-align: right;">10/10</td>
 <td style="text-align: right;">0/10</td>
-<td style="text-align: left;">generation 1 only</td>
+<td style="text-align: left;">generation 2 omitted</td>
 </tr>
 <tr>
 <td style="text-align: left;">Total</td>
@@ -572,15 +611,73 @@ though the post-run Docker oracle retained all 5,000. In restart and
 crash, Alloy’s final unique count equaled the randomized pre-fault
 boundary in every run; the entire suffix was absent. The same was true
 after the same physical container ID restarted for generation 2. Since
-Alloy succeeds when the existing reader is paused and when a guarded
-startup target is known, this pattern is consistent with a lifecycle
-reacquisition or rediscovery boundary rather than a general inability to
-read historical records.</p>
+Alloy succeeds when the existing reader is paused, at guarded startup,
+and across daemon outage while the reader survives, the main matrix
+separates continuing-reader success from lifecycle reacquisition
+failure.</p>
+<h3
+id="target-construction-not-the-read-path-causes-rapid-exit-omission">Target
+construction, not the read path, causes rapid-exit omission</h3>
+<p>Table <a href="#tab:target_control" data-reference-type="ref"
+data-reference="tab:target_control">3</a> holds Alloy’s image, Docker
+reader, sink, and source history constant while changing how the reader
+receives its target. In every trial, Docker retained all 5,000 records
+before collection began. Stock discovery acquired zero records in all 20
+trials. Given the exited container ID directly, the same unmodified
+reader acquired all 5,000 records exactly once in all 20 trials. There
+were no operational errors.</p>
+<div class="overflow-x-auto"><table id="tab:target_control">
+<caption>Exited-source target-construction control. Each cell reports
+exact collector-runs out of ten; parentheses report collector/source
+records per run.</caption>
+<thead>
+<tr>
+<th style="text-align: left;">Environment</th>
+<th style="text-align: left;">Docker</th>
+<th style="text-align: right;">Stock discovery</th>
+<th style="text-align: right;">Direct target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">OrbStack</td>
+<td style="text-align: left;">29.4.0</td>
+<td style="text-align: right;">0/10 (0/5,000)</td>
+<td style="text-align: right;">10/10 (5,000/5,000)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ubuntu</td>
+<td style="text-align: left;">24.0.9</td>
+<td style="text-align: right;">0/10 (0/5,000)</td>
+<td style="text-align: right;">10/10 (5,000/5,000)</td>
+</tr>
+</tbody>
+</table></div>
+<p>The replication across a shared-kernel development engine and an
+independent native Ubuntu engine closes the main environmental
+asymmetry. More importantly, the control rejects the explanation that
+Alloy’s Docker reader cannot read exited-container history. The reader
+can; stock target discovery does not present that exited source to it.
+This localizes the rapid-exit result to target construction and supports
+the broader lifecycle-reacquisition thesis without claiming that every
+Alloy deployment shares the same target graph.</p>
+<h3 id="the-oracle-exposes-a-nondeterministic-replay">The oracle exposes
+a nondeterministic replay</h3>
 <p>The multiset oracle found more than omission. Same-ID trial 6
 retained 3,647 unique generation-1 identities, missed all 1,353
 generation-2 identities, and replayed <code>g1:1--1479</code>. Its final
 total was 5,126. A total-only method would report 126 extra records and
-conceal both the missing suffix and 1,479 replays.</p>
+conceal both the missing suffix and 1,479 replays. We repeated the same
+ten seeded boundaries on Docker 29.4.0 while preserving Alloy’s final
+component state and positions. All ten reruns omitted generation 2,
+including the same 3,647/1,353 split in trial 6, but none replayed
+generation 1. The final component had no active reader and the persisted
+positions map was empty in every rerun.</p>
+<p>The replay is therefore nondeterministic under the otherwise
+identical fault plan. We retain it because it demonstrates why
+multiplicity-aware measurement is necessary, but we do not use it as a
+stable behavioral claim. The reproduced same-ID finding is the complete
+omission of generation 2 after lifecycle reuse.</p>
 <h3 id="daemon-restart-is-a-shared-success">Daemon restart is a shared
 success</h3>
 <p>The isolated live-restore matrix contains 20 collector-runs: ten per
@@ -621,7 +718,7 @@ evaluated environments.</p>
 <h3 id="ablations-identify-two-necessary-mechanisms">Ablations identify
 two necessary mechanisms</h3>
 <p>Table <a href="#tab:ablations" data-reference-type="ref"
-data-reference="tab:ablations">3</a> holds the revision and attachment
+data-reference="tab:ablations">4</a> holds the revision and attachment
 overlap fixed while disabling one mechanism. There were 80
 collector-runs across the two paired matrices. Every complete-design
 control was exact; every disabled condition was inexact.</p>
@@ -670,7 +767,7 @@ private-file baseline changes the interface tradeoff</h3>
 both generated-set exact in all 40 collector-runs: ten graceful restarts
 and ten <code>SIGKILL</code> trials per collector (Table <a
 href="#tab:filetail" data-reference-type="ref"
-data-reference="tab:filetail">4</a>). A broader 100-run supplemental
+data-reference="tab:filetail">5</a>). A broader 100-run supplemental
 matrix also found both exact across startup, rapid exit, pause, same-ID
 restart, and source-horizon conditions.</p>
 <div class="overflow-x-auto"><table id="tab:filetail">
@@ -707,7 +804,7 @@ identity survives two tested drivers</h3>
 trial and writes an independent bind-mounted oracle before each
 emission. The harness reads Docker history with timestamps and counts
 collisions in the visible tuple. Table <a href="#tab:identity"
-data-reference-type="ref" data-reference="tab:identity">5</a> reports 20
+data-reference-type="ref" data-reference="tab:identity">6</a> reports 20
 trials and 200,000 records.</p>
 <div class="overflow-x-auto"><table id="tab:identity">
 <caption>Byte-identical identity stress, ten collector-runs per
@@ -786,10 +883,10 @@ attachment race, and exact oracle.</p>
 <h4 id="container-log-pipelines.">Container log pipelines.</h4>
 <p>Prior systems assemble cluster logging from containerized open-source
 components <span class="citation" data-cites="singh2016cluster"><a
-href="#ref-singh2016cluster" role="doc-biblioref">[9]</a></span> or
+href="#ref-singh2016cluster" role="doc-biblioref">[12]</a></span> or
 Docker pipelines around the Elasticsearch, Logstash, and Kibana
 stack <span class="citation" data-cites="liu2020docker"><a
-href="#ref-liu2020docker" role="doc-biblioref">[10]</a></span>. Current
+href="#ref-liu2020docker" role="doc-biblioref">[13]</a></span>. Current
 collector benchmarks include throughput, resources, rotation, discovery,
 and missing-log tests <span class="citation"
 data-cites="victoriametrics2026benchmark"><a
@@ -800,12 +897,12 @@ generation-aware multiplicity and controlled lifecycle boundaries.</p>
 resilience.</h4>
 <p>Fluent Bit persists file offsets and documents rotation behavior 
 <span class="citation" data-cites="fluentbit2026tail"><a
-href="#ref-fluentbit2026tail" role="doc-biblioref">[11]</a></span>.
+href="#ref-fluentbit2026tail" role="doc-biblioref">[14]</a></span>.
 OpenTelemetry Collector supports queues, retry, and a persistent
 write-ahead log for exporter resilience  <span class="citation"
 data-cites="opentelemetry2026resiliency"><a
 href="#ref-opentelemetry2026resiliency"
-role="doc-biblioref">[12]</a></span>. These mechanisms address file
+role="doc-biblioref">[15]</a></span>. These mechanisms address file
 replay or downstream delivery; neither by itself guarantees that a
 Docker API source discovered an ephemeral container. The Alloy result
 demonstrates the difference within a supported API collector that
@@ -814,14 +911,14 @@ already persists positions.</p>
 capture.</h4>
 <p>Flight Data Recorder studies always-on capture of persistent-state
 interactions <span class="citation" data-cites="verbowski2006flight"><a
-href="#ref-verbowski2006flight" role="doc-biblioref">[13]</a></span>,
+href="#ref-verbowski2006flight" role="doc-biblioref">[16]</a></span>,
 while Kellect targets efficient lossless Windows kernel-event
 collection <span class="citation" data-cites="chen2025kellect"><a
-href="#ref-chen2025kellect" role="doc-biblioref">[14]</a></span>. The
+href="#ref-chen2025kellect" role="doc-biblioref">[17]</a></span>. The
 compressed log processor (CLP) addresses lossless compression and search
 after collection  <span class="citation"
 data-cites="rodrigues2021clp"><a href="#ref-rodrigues2021clp"
-role="doc-biblioref">[15]</a></span>. This paper studies the upstream
+role="doc-biblioref">[18]</a></span>. This paper studies the upstream
 question of whether intended records reached durable collector storage
 at all.</p>
 <h2 id="scope-and-threats-to-validity">Scope and Threats to
@@ -835,13 +932,14 @@ fixed-revision ablations, and positive controls in which Alloy and
 Fluent Bit match LogDeck. The strongest claim is a boundary result, not
 a universal collector ranking.</p>
 <h4 id="external-validity.">External validity.</h4>
-<p>The new supported-API matrix covers one Docker 29.1.3 Linux/arm64
-environment. The daemon matrix uses an isolated Docker 29.7.0 engine on
-the same kernel. Earlier fixed-revision evidence covers independent
-Ubuntu/arm64 hardware and Docker 24.0.9, but not the new Alloy
-configuration. Results may differ across Docker versions, logging
-drivers, kernels, platforms, collector configurations, and large
-fleets.</p>
+<p>The full supported-API matrix covers one Docker 29.1.3 Linux/arm64
+environment, and the daemon matrix uses an isolated Docker 29.7.0 engine
+on the same kernel. The causal target-construction control repeats on
+independent Ubuntu/arm64 hardware and Docker 24.0.9 as well as OrbStack
+Docker 29.4.0. This replication supports localization of the rapid-exit
+result, not every cell of the larger matrix. Results may differ across
+Docker versions, logging drivers, kernels, platforms, collector
+configurations, and large fleets.</p>
 <h4 id="fault-and-workload-coverage.">Fault and workload coverage.</h4>
 <p>The suite covers attachment, rapid exit, collector
 restart/crash/pause, same-ID restart, daemon restart with live restore,
@@ -858,11 +956,15 @@ injectivity. A collision is a silent loss mode and remains an explicit
 contract exclusion.</p>
 <h4 id="comparator-configuration.">Comparator configuration.</h4>
 <p>Alloy 1.18.0 uses its documented Docker source, persistent data path,
-100 ms refresh, label-filtered discovery, and a local echo receiver.
-Other target construction or retention configurations may behave
-differently. The Fluent Bit control changes both source interface and
-privilege. The appendix’s Vector control is documented as best effort
-and is not evidence about Vector as a whole.</p>
+100 ms refresh, label-filtered discovery, and a local echo receiver. The
+documented discovery component has no option to enumerate stopped
+containers; its version-pinned implementation lists containers without
+the Docker API’s <code>All</code> option. The direct-target control
+therefore bypasses discovery rather than guessing at a nonexistent
+retention knob. Different target graphs or custom discovery components
+may behave differently. The Fluent Bit control changes both source
+interface and privilege. The appendix’s Vector control is documented as
+best effort and is not evidence about Vector as a whole.</p>
 <h2 id="artifact-and-reproducibility">Artifact and Reproducibility</h2>
 <p>The ancillary archive contains the standalone Go harness, exact
 collector configurations, the fixed-revision ablation patch and runner,
@@ -871,13 +973,14 @@ verification scripts, and cryptographic checksum manifests. The daemon
 runner creates a labeled, privileged Docker-in-Docker engine, verifies
 live restore, imports the frozen LogDeck image, restarts only the inner
 daemon, and removes the isolated engine afterward.</p>
-<p>The principal new reports contain 120 supported-API collector-runs,
-20 daemon collector-runs, 20 removal collector-runs, and 20
-observable-identity collector-runs. The archive’s verification script
-checks denominators, fault-boundary equality, exactness, missing ranges,
-and duplicate multiplicity. Large raw databases and logs are retained
-separately; compact reports, manifests, harness code, and provenance
-accompany the paper.</p>
+<p>The principal reports contain 120 supported-API collector-runs, 40
+exited-source target-construction collector-runs across two
+environments, 10 same-ID diagnostic reruns, 20 daemon collector-runs, 20
+removal collector-runs, and 20 observable-identity collector-runs. The
+archive’s verification script checks denominators, fault-boundary
+equality, exactness, missing ranges, and duplicate multiplicity. Large
+raw databases and logs are retained separately; compact reports,
+manifests, harness code, and provenance accompany the paper.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>Source-bounded exactness turns a vague losslessness claim into a
 falsifiable contract: every record still readable from Docker must
@@ -889,14 +992,17 @@ totals conceal.</p>
 collector-runs and Alloy in 20/60. Alloy’s successes under startup,
 pause, and daemon restart make the negative result specific: the tested
 weakness appears when lifecycle recovery requires reacquiring a source
-that has already exited or restarted. A private-file Fluent Bit control
-also recovered exactly, at the cost of coupling to Docker’s internal
-storage. When the source container was removed, neither collector
-recovered the suffix. Together these results identify the useful claim:
-finite API reconciliation plus exact insertion can recover retained,
-distinguishable Docker records across the tested lifecycle faults, but
-no collector can outlive the source or distinguish information Docker
-does not expose.</p>
+that has already exited or restarted. The direct-target control provides
+the causal distinction: Alloy’s unmodified reader recovered all retained
+rapid-exit history in 20/20 trials, while stock discovery presented none
+of it in 20/20 trials across two environments. A private-file Fluent Bit
+control also recovered exactly, at the cost of coupling to Docker’s
+internal storage. When the source container was removed, neither
+collector recovered the suffix. Together these results identify the
+useful claim: finite API reconciliation plus exact insertion can recover
+retained, distinguishable Docker records across the tested lifecycle
+faults, but no persisted position can replace reacquisition, outlive the
+source, or distinguish information Docker does not expose.</p>
 <h2 id="best-effort-api-control">Best-Effort API Control</h2>
 <p>An earlier independent-cloud matrix compared the fixed LogDeck
 revision with pinned Vector 0.55.0 across six scenarios and ten trials
@@ -906,7 +1012,7 @@ final-record duplication. Focused size curves and raw JavaScript Object
 Notation Lines (JSONL) localized those duplicates to repeated
 byte-equivalent events. Vector documents this source as best
 effort <span class="citation" data-cites="vector2026dockerlogs"><a
-href="#ref-vector2026dockerlogs" role="doc-biblioref">[16]</a></span>;
+href="#ref-vector2026dockerlogs" role="doc-biblioref">[19]</a></span>;
 consequently we treat it as a harness sensitivity control rather than
 the paper’s main comparator.</p>
 <h2 id="forward-transport-control">Forward Transport Control</h2>
@@ -922,9 +1028,9 @@ acquisition. Docker’s in-memory driver queue can bridge a collector
 restart for a continuing producer, but not producer/logger destruction
 before drain  <span class="citation"
 data-cites="docker2026fluentd fluentbit2026forward"><a
-href="#ref-docker2026fluentd" role="doc-biblioref">[17]</a>, <a
+href="#ref-docker2026fluentd" role="doc-biblioref">[20]</a>, <a
 href="#ref-fluentbit2026forward"
-role="doc-biblioref">[18]</a></span>.</p>
+role="doc-biblioref">[21]</a></span>.</p>
 <h2 id="references">References</h2>
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0"
 role="list">
@@ -975,8 +1081,34 @@ href="https://grafana.com/docs/alloy/latest/reference/components/loki/loki.sourc
 class="uri">https://grafana.com/docs/alloy/latest/reference/components/loki/loki.source.docker/</a>,
 2026.</div>
 </div>
-<div id="ref-docker2026jsonfile" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
+<div id="ref-grafana2026alloydiscovery" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
 <div class="csl-left-margin" style="flex-shrink:0">[7] </div><div
+class="csl-right-inline">Grafana Labs, <span>“<span
+class="nocase">discovery.docker</span>: Grafana alloy
+documentation.”</span> <a
+href="https://grafana.com/docs/alloy/latest/reference/components/discovery/discovery.docker/"
+class="uri">https://grafana.com/docs/alloy/latest/reference/components/discovery/discovery.docker/</a>,
+2026.</div>
+</div>
+<div id="ref-grafana2026alloydockersource" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
+<div class="csl-left-margin" style="flex-shrink:0">[8] </div><div
+class="csl-right-inline">Grafana Labs, <span>“<span
+class="nocase">discovery.docker</span> component source, version
+1.18.0.”</span> <a
+href="https://github.com/grafana/alloy/blob/v1.18.0/internal/component/discovery/docker/docker.go"
+class="uri">https://github.com/grafana/alloy/blob/v1.18.0/internal/component/discovery/docker/docker.go</a>,
+2026.</div>
+</div>
+<div id="ref-prometheus2026dockersdsource" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
+<div class="csl-left-margin" style="flex-shrink:0">[9] </div><div
+class="csl-right-inline">Prometheus Authors, <span>“Docker service
+discovery source, version 0.312.0.”</span> <a
+href="https://github.com/prometheus/prometheus/blob/v0.312.0/discovery/moby/docker.go"
+class="uri">https://github.com/prometheus/prometheus/blob/v0.312.0/discovery/moby/docker.go</a>,
+2026.</div>
+</div>
+<div id="ref-docker2026jsonfile" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
+<div class="csl-left-margin" style="flex-shrink:0">[10] </div><div
 class="csl-right-inline">Docker, Inc., <span>“<span>JSON File</span>
 logging driver.”</span> <a
 href="https://docs.docker.com/engine/logging/drivers/json-file/"
@@ -984,21 +1116,21 @@ class="uri">https://docs.docker.com/engine/logging/drivers/json-file/</a>,
 2026.</div>
 </div>
 <div id="ref-docker2026liverestore" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[8] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[11] </div><div
 class="csl-right-inline">Docker, Inc., <span>“Live restore.”</span> <a
 href="https://docs.docker.com/engine/daemon/live-restore/"
 class="uri">https://docs.docker.com/engine/daemon/live-restore/</a>,
 2026.</div>
 </div>
 <div id="ref-singh2016cluster" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[9] </div><div class="csl-right-inline">S.
+<div class="csl-left-margin" style="flex-shrink:0">[12] </div><div class="csl-right-inline">S.
 Singh, <span>“Cluster-level logging of containers with
 containers,”</span> <em>Queue</em>, vol. 14, no. 3, pp. 83–106, 2016,
 doi: <a
 href="https://doi.org/10.1145/2956641.2965647">10.1145/2956641.2965647</a>.</div>
 </div>
 <div id="ref-liu2020docker" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[10] </div><div class="csl-right-inline">J.
+<div class="csl-left-margin" style="flex-shrink:0">[13] </div><div class="csl-right-inline">J.
 Liu, L. Chen, M. Xian, and H. Wang, <span>“Docker container log
 collection and analysis system based on <span>ELK</span>,”</span> in
 <em>2020 international conference on computer information and big data
@@ -1006,7 +1138,7 @@ applications</em>, IEEE, 2020, pp. 317–320. doi: <a
 href="https://doi.org/10.1109/CIBDA50819.2020.00078">10.1109/CIBDA50819.2020.00078</a>.</div>
 </div>
 <div id="ref-fluentbit2026tail" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[11] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[14] </div><div
 class="csl-right-inline">Fluent Bit Project, <span>“Tail input
 plugin.”</span> <a
 href="https://docs.fluentbit.io/manual/pipeline/inputs/tail"
@@ -1014,7 +1146,7 @@ class="uri">https://docs.fluentbit.io/manual/pipeline/inputs/tail</a>,
 2026.</div>
 </div>
 <div id="ref-opentelemetry2026resiliency" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[12] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[15] </div><div
 class="csl-right-inline">OpenTelemetry Authors, <span>“Collector
 resiliency and data loss.”</span> <a
 href="https://opentelemetry.io/docs/collector/resiliency/"
@@ -1022,7 +1154,7 @@ class="uri">https://opentelemetry.io/docs/collector/resiliency/</a>,
 2026.</div>
 </div>
 <div id="ref-verbowski2006flight" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[13] </div><div class="csl-right-inline">C.
+<div class="csl-left-margin" style="flex-shrink:0">[16] </div><div class="csl-right-inline">C.
 Verbowski <em>et al.</em>, <span>“Flight data recorder: Monitoring
 <span>Persistent-State</span> interactions to improve systems
 management,”</span> in <em>7th USENIX symposium on operating systems
@@ -1031,7 +1163,7 @@ Association, Nov. 2006. Available: <a
 href="https://www.usenix.org/conference/osdi-06/flight-data-recorder-monitoring-persistent-state-interactions-improve-systems">https://www.usenix.org/conference/osdi-06/flight-data-recorder-monitoring-persistent-state-interactions-improve-systems</a></div>
 </div>
 <div id="ref-chen2025kellect" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[14] </div><div class="csl-right-inline">T.
+<div class="csl-left-margin" style="flex-shrink:0">[17] </div><div class="csl-right-inline">T.
 Chen, Q. Song, T. Zhu, X. Qiu, Z. Zhu, and M. Lv,
 <span>“<span>Kellect</span>: A kernel-based efficient and lossless event
 log collector for <span>Windows</span> security,”</span> <em>Computers
@@ -1039,7 +1171,7 @@ log collector for <span>Windows</span> security,”</span> <em>Computers
 href="https://doi.org/10.1016/j.cose.2024.104203">10.1016/j.cose.2024.104203</a>.</div>
 </div>
 <div id="ref-rodrigues2021clp" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[15] </div><div class="csl-right-inline">K.
+<div class="csl-left-margin" style="flex-shrink:0">[18] </div><div class="csl-right-inline">K.
 Rodrigues, Y. Luo, and D. Yuan, <span>“<span>CLP</span>: Efficient and
 scalable search on compressed text logs,”</span> in <em>15th USENIX
 symposium on operating systems design and implementation (OSDI 21)</em>,
@@ -1047,7 +1179,7 @@ USENIX Association, Jul. 2021, pp. 183–198. Available: <a
 href="https://www.usenix.org/conference/osdi21/presentation/rodrigues">https://www.usenix.org/conference/osdi21/presentation/rodrigues</a></div>
 </div>
 <div id="ref-vector2026dockerlogs" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[16] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[19] </div><div
 class="csl-right-inline">Vector Contributors, <span>“Docker logs
 source.”</span> <a
 href="https://vector.dev/docs/reference/configuration/sources/docker_logs/"
@@ -1055,7 +1187,7 @@ class="uri">https://vector.dev/docs/reference/configuration/sources/docker_logs/
 2026.</div>
 </div>
 <div id="ref-docker2026fluentd" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[17] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[20] </div><div
 class="csl-right-inline">Docker, Inc., <span>“<span>Fluentd</span>
 logging driver.”</span> <a
 href="https://docs.docker.com/engine/logging/drivers/fluentd/"
@@ -1063,7 +1195,7 @@ class="uri">https://docs.docker.com/engine/logging/drivers/fluentd/</a>,
 2026.</div>
 </div>
 <div id="ref-fluentbit2026forward" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[18] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[21] </div><div
 class="csl-right-inline">Fluent Bit Project, <span>“Forward input
 plugin.”</span> <a
 href="https://docs.fluentbit.io/manual/pipeline/inputs/forward"

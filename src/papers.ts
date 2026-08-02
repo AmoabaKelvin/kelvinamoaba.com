@@ -22,7 +22,7 @@ export const papers: Paper[] = [
     link: '/research/source-bounded-exact-recovery',
     pdf: '/research/source-bounded-exact-recovery.pdf',
     abstract:
-      'Defines source-bounded exactness — every retained, distinguishable Docker source record eventually appears exactly once in durable collector output — with a generation-aware multiset oracle that separates source truncation from collector omission. Across 120 Linux/arm64 collector-runs, a fixed LogDeck revision was exact in 60/60 trials while unmodified Grafana Alloy 1.18.0 was exact in 20/60, showing that lifecycle reacquisition, not a persisted read position alone, determines exact recovery within the retained-source horizon.',
+      'Defines source-bounded exactness — every retained, distinguishable Docker source record eventually appears exactly once in durable collector output — with a generation-aware multiset oracle that separates source truncation from collector omission. Across 120 collector-runs, a fixed LogDeck revision was exact in 60/60 trials while unmodified Grafana Alloy 1.18.0 was exact in 20/60, showing that lifecycle reacquisition, not a persisted read position alone, determines exact recovery within the retained-source horizon.',
     tags: ['Systems', 'Docker', 'Observability', 'Fault Tolerance'],
   },
   {

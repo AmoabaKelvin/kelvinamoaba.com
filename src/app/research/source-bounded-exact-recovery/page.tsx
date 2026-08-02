@@ -91,7 +91,7 @@ export default function Paper() {
         </a>
       </p>
       <article
-        className="prose mt-10 leading-7"
+        className="prose mt-10 leading-7 [&_.csl-right-inline]:min-w-0 [&_.csl-right-inline]:[overflow-wrap:anywhere]"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

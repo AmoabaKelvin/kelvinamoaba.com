@@ -535,12 +535,17 @@ live-restore engine.</p>
 <p>The target-construction control was run separately on (1) the
 OrbStack engine with Docker 29.4.0 and kernel 7.0.11 and (2) an
 independent Ubuntu 22.04/arm64 cloud host with Linux 5.15 and Docker
-24.0.9. The latter is a native daemon on independent hardware. Earlier
-fixed-revision work and the Fluent Bit process control also ran on that
-host. We keep the environments separate rather than treating
-containerized Linux as a second physical machine. The ablation matrix
-was rerun on August 1 in the OrbStack environment at the pinned revision
-and seed reported in the artifact.</p>
+24.0.9. The latter is a native daemon on independent hardware. The
+version spread reflects experimental sequencing and isolated-engine
+availability, not per-condition tuning: the main matrix ran first on
+29.1.3; focused target and same-ID controls ran later on the
+then-current 29.4.0 OrbStack engine; the independent host remained
+pinned at 24.0.9; and the daemon runner used a separately pinned 29.7.0
+image. Earlier fixed-revision work and the Fluent Bit process control
+also ran on that host. We keep the environments separate rather than
+treating containerized Linux as a second physical machine. The ablation
+matrix was rerun on August 1 in the OrbStack environment at the pinned
+revision and seed reported in the artifact.</p>
 <h2 id="sec:results">Results</h2>
 <h3 id="the-supported-api-comparison-localizes-lifecycle-recovery">The
 supported-API comparison localizes lifecycle recovery</h3>
@@ -660,7 +665,16 @@ Alloy’s Docker reader cannot read exited-container history. The reader
 can; stock target discovery does not present that exited source to it.
 This localizes the rapid-exit result to target construction and supports
 the broader lifecycle-reacquisition thesis without claiming that every
-Alloy deployment shares the same target graph.</p>
+Alloy deployment shares the same target graph. Architecturally, the
+tested boundary arises because Alloy reuses Prometheus Docker service
+discovery—whose native role is to feed scrape targets—to drive
+historical log acquisition <span class="citation"
+data-cites="prometheus2026configuration"><a
+href="#ref-prometheus2026configuration"
+role="doc-biblioref">[12]</a></span>. This suggests a broader design
+check, not a universal failure claim: log pipelines that inherit
+active-target discovery should verify whether retained history remains
+reachable after targets exit.</p>
 <h3 id="the-oracle-exposes-a-nondeterministic-replay">The oracle exposes
 a nondeterministic replay</h3>
 <p>The multiset oracle found more than omission. Same-ID trial 6
@@ -883,10 +897,10 @@ attachment race, and exact oracle.</p>
 <h4 id="container-log-pipelines.">Container log pipelines.</h4>
 <p>Prior systems assemble cluster logging from containerized open-source
 components <span class="citation" data-cites="singh2016cluster"><a
-href="#ref-singh2016cluster" role="doc-biblioref">[12]</a></span> or
+href="#ref-singh2016cluster" role="doc-biblioref">[13]</a></span> or
 Docker pipelines around the Elasticsearch, Logstash, and Kibana
 stack <span class="citation" data-cites="liu2020docker"><a
-href="#ref-liu2020docker" role="doc-biblioref">[13]</a></span>. Current
+href="#ref-liu2020docker" role="doc-biblioref">[14]</a></span>. Current
 collector benchmarks include throughput, resources, rotation, discovery,
 and missing-log tests <span class="citation"
 data-cites="victoriametrics2026benchmark"><a
@@ -897,12 +911,12 @@ generation-aware multiplicity and controlled lifecycle boundaries.</p>
 resilience.</h4>
 <p>Fluent Bit persists file offsets and documents rotation behavior 
 <span class="citation" data-cites="fluentbit2026tail"><a
-href="#ref-fluentbit2026tail" role="doc-biblioref">[14]</a></span>.
+href="#ref-fluentbit2026tail" role="doc-biblioref">[15]</a></span>.
 OpenTelemetry Collector supports queues, retry, and a persistent
 write-ahead log for exporter resilience  <span class="citation"
 data-cites="opentelemetry2026resiliency"><a
 href="#ref-opentelemetry2026resiliency"
-role="doc-biblioref">[15]</a></span>. These mechanisms address file
+role="doc-biblioref">[16]</a></span>. These mechanisms address file
 replay or downstream delivery; neither by itself guarantees that a
 Docker API source discovered an ephemeral container. The Alloy result
 demonstrates the difference within a supported API collector that
@@ -911,14 +925,14 @@ already persists positions.</p>
 capture.</h4>
 <p>Flight Data Recorder studies always-on capture of persistent-state
 interactions <span class="citation" data-cites="verbowski2006flight"><a
-href="#ref-verbowski2006flight" role="doc-biblioref">[16]</a></span>,
+href="#ref-verbowski2006flight" role="doc-biblioref">[17]</a></span>,
 while Kellect targets efficient lossless Windows kernel-event
 collection <span class="citation" data-cites="chen2025kellect"><a
-href="#ref-chen2025kellect" role="doc-biblioref">[17]</a></span>. The
+href="#ref-chen2025kellect" role="doc-biblioref">[18]</a></span>. The
 compressed log processor (CLP) addresses lossless compression and search
 after collection  <span class="citation"
 data-cites="rodrigues2021clp"><a href="#ref-rodrigues2021clp"
-role="doc-biblioref">[18]</a></span>. This paper studies the upstream
+role="doc-biblioref">[19]</a></span>. This paper studies the upstream
 question of whether intended records reached durable collector storage
 at all.</p>
 <h2 id="scope-and-threats-to-validity">Scope and Threats to
@@ -1012,7 +1026,7 @@ final-record duplication. Focused size curves and raw JavaScript Object
 Notation Lines (JSONL) localized those duplicates to repeated
 byte-equivalent events. Vector documents this source as best
 effort <span class="citation" data-cites="vector2026dockerlogs"><a
-href="#ref-vector2026dockerlogs" role="doc-biblioref">[19]</a></span>;
+href="#ref-vector2026dockerlogs" role="doc-biblioref">[20]</a></span>;
 consequently we treat it as a harness sensitivity control rather than
 the paper’s main comparator.</p>
 <h2 id="forward-transport-control">Forward Transport Control</h2>
@@ -1028,9 +1042,9 @@ acquisition. Docker’s in-memory driver queue can bridge a collector
 restart for a continuing producer, but not producer/logger destruction
 before drain  <span class="citation"
 data-cites="docker2026fluentd fluentbit2026forward"><a
-href="#ref-docker2026fluentd" role="doc-biblioref">[20]</a>, <a
+href="#ref-docker2026fluentd" role="doc-biblioref">[21]</a>, <a
 href="#ref-fluentbit2026forward"
-role="doc-biblioref">[21]</a></span>.</p>
+role="doc-biblioref">[22]</a></span>.</p>
 <h2 id="references">References</h2>
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0"
 role="list">
@@ -1122,15 +1136,23 @@ href="https://docs.docker.com/engine/daemon/live-restore/"
 class="uri">https://docs.docker.com/engine/daemon/live-restore/</a>,
 2026.</div>
 </div>
+<div id="ref-prometheus2026configuration" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
+<div class="csl-left-margin" style="flex-shrink:0">[12] </div><div
+class="csl-right-inline">Prometheus Authors, <span>“Prometheus
+configuration: Scrape configuration.”</span> <a
+href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/"
+class="uri">https://prometheus.io/docs/prometheus/latest/configuration/configuration/</a>,
+2026.</div>
+</div>
 <div id="ref-singh2016cluster" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[12] </div><div class="csl-right-inline">S.
+<div class="csl-left-margin" style="flex-shrink:0">[13] </div><div class="csl-right-inline">S.
 Singh, <span>“Cluster-level logging of containers with
 containers,”</span> <em>Queue</em>, vol. 14, no. 3, pp. 83–106, 2016,
 doi: <a
 href="https://doi.org/10.1145/2956641.2965647">10.1145/2956641.2965647</a>.</div>
 </div>
 <div id="ref-liu2020docker" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[13] </div><div class="csl-right-inline">J.
+<div class="csl-left-margin" style="flex-shrink:0">[14] </div><div class="csl-right-inline">J.
 Liu, L. Chen, M. Xian, and H. Wang, <span>“Docker container log
 collection and analysis system based on <span>ELK</span>,”</span> in
 <em>2020 international conference on computer information and big data
@@ -1138,7 +1160,7 @@ applications</em>, IEEE, 2020, pp. 317–320. doi: <a
 href="https://doi.org/10.1109/CIBDA50819.2020.00078">10.1109/CIBDA50819.2020.00078</a>.</div>
 </div>
 <div id="ref-fluentbit2026tail" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[14] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[15] </div><div
 class="csl-right-inline">Fluent Bit Project, <span>“Tail input
 plugin.”</span> <a
 href="https://docs.fluentbit.io/manual/pipeline/inputs/tail"
@@ -1146,7 +1168,7 @@ class="uri">https://docs.fluentbit.io/manual/pipeline/inputs/tail</a>,
 2026.</div>
 </div>
 <div id="ref-opentelemetry2026resiliency" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[15] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[16] </div><div
 class="csl-right-inline">OpenTelemetry Authors, <span>“Collector
 resiliency and data loss.”</span> <a
 href="https://opentelemetry.io/docs/collector/resiliency/"
@@ -1154,7 +1176,7 @@ class="uri">https://opentelemetry.io/docs/collector/resiliency/</a>,
 2026.</div>
 </div>
 <div id="ref-verbowski2006flight" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[16] </div><div class="csl-right-inline">C.
+<div class="csl-left-margin" style="flex-shrink:0">[17] </div><div class="csl-right-inline">C.
 Verbowski <em>et al.</em>, <span>“Flight data recorder: Monitoring
 <span>Persistent-State</span> interactions to improve systems
 management,”</span> in <em>7th USENIX symposium on operating systems
@@ -1163,7 +1185,7 @@ Association, Nov. 2006. Available: <a
 href="https://www.usenix.org/conference/osdi-06/flight-data-recorder-monitoring-persistent-state-interactions-improve-systems">https://www.usenix.org/conference/osdi-06/flight-data-recorder-monitoring-persistent-state-interactions-improve-systems</a></div>
 </div>
 <div id="ref-chen2025kellect" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[17] </div><div class="csl-right-inline">T.
+<div class="csl-left-margin" style="flex-shrink:0">[18] </div><div class="csl-right-inline">T.
 Chen, Q. Song, T. Zhu, X. Qiu, Z. Zhu, and M. Lv,
 <span>“<span>Kellect</span>: A kernel-based efficient and lossless event
 log collector for <span>Windows</span> security,”</span> <em>Computers
@@ -1171,7 +1193,7 @@ log collector for <span>Windows</span> security,”</span> <em>Computers
 href="https://doi.org/10.1016/j.cose.2024.104203">10.1016/j.cose.2024.104203</a>.</div>
 </div>
 <div id="ref-rodrigues2021clp" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[18] </div><div class="csl-right-inline">K.
+<div class="csl-left-margin" style="flex-shrink:0">[19] </div><div class="csl-right-inline">K.
 Rodrigues, Y. Luo, and D. Yuan, <span>“<span>CLP</span>: Efficient and
 scalable search on compressed text logs,”</span> in <em>15th USENIX
 symposium on operating systems design and implementation (OSDI 21)</em>,
@@ -1179,7 +1201,7 @@ USENIX Association, Jul. 2021, pp. 183–198. Available: <a
 href="https://www.usenix.org/conference/osdi21/presentation/rodrigues">https://www.usenix.org/conference/osdi21/presentation/rodrigues</a></div>
 </div>
 <div id="ref-vector2026dockerlogs" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[19] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[20] </div><div
 class="csl-right-inline">Vector Contributors, <span>“Docker logs
 source.”</span> <a
 href="https://vector.dev/docs/reference/configuration/sources/docker_logs/"
@@ -1187,7 +1209,7 @@ class="uri">https://vector.dev/docs/reference/configuration/sources/docker_logs/
 2026.</div>
 </div>
 <div id="ref-docker2026fluentd" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[20] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[21] </div><div
 class="csl-right-inline">Docker, Inc., <span>“<span>Fluentd</span>
 logging driver.”</span> <a
 href="https://docs.docker.com/engine/logging/drivers/fluentd/"
@@ -1195,7 +1217,7 @@ class="uri">https://docs.docker.com/engine/logging/drivers/fluentd/</a>,
 2026.</div>
 </div>
 <div id="ref-fluentbit2026forward" class="csl-entry" role="listitem" style="display:flex;gap:0.75em;margin-top:0.875em">
-<div class="csl-left-margin" style="flex-shrink:0">[21] </div><div
+<div class="csl-left-margin" style="flex-shrink:0">[22] </div><div
 class="csl-right-inline">Fluent Bit Project, <span>“Forward input
 plugin.”</span> <a
 href="https://docs.fluentbit.io/manual/pipeline/inputs/forward"

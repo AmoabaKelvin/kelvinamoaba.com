@@ -80,7 +80,7 @@ export default function ResearchIndex() {
                 )}
                 {paper.arxivId && (
                   <a
-                    href={paper.link}
+                    href={`https://arxiv.org/abs/${paper.arxivId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`text-[var(--fg-muted)] ${linkClass}`}

@@ -36,6 +36,7 @@ const jsonLd = {
   },
   datePublished: '2026-08-01',
   url: 'https://kelvinamoaba.com/research/source-bounded-exact-recovery',
+  sameAs: 'https://arxiv.org/abs/2608.01564',
 };
 
 function readHtml(file: string): string {
@@ -82,12 +83,20 @@ export default function Paper() {
       <p className="mt-3 font-mono text-sm text-[var(--fg-muted)]">
         Kelvin Amoaba · August 2026 · Preprint
       </p>
-      <p className="mt-4 text-base/7 sm:text-sm/6">
+      <p className="mt-4 flex gap-4 text-base/7 sm:text-sm/6">
         <a
           href="/research/source-bounded-exact-recovery.pdf"
           className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
         >
           Download PDF
+        </a>
+        <a
+          href="https://arxiv.org/abs/2608.01564"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+        >
+          arXiv:2608.01564
         </a>
       </p>
       <article

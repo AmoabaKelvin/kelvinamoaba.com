@@ -18,6 +18,7 @@ export const papers: Paper[] = [
     authors: ['Kelvin Amoaba'],
     venue: 'Preprint',
     year: 2026,
+    arxivId: '2608.01564',
     slug: 'source-bounded-exact-recovery',
     link: '/research/source-bounded-exact-recovery',
     pdf: '/research/source-bounded-exact-recovery.pdf',

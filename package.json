@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.0",
@@ -18,12 +21,12 @@
     "@lezer/highlight": "^1.2.3",
     "@libsql/client": "^0.17.0",
     "@mdx-js/mdx": "^3.1.1",
+    "@opennextjs/cloudflare": "^1.20.2",
     "@tailwindcss/postcss": "latest",
     "@tanstack/react-query": "^5.90.17",
     "@types/node": "20.2.6",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
-    "@vercel/analytics": "^1.1.1",
     "better-auth": "^1.4.13",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -59,7 +62,8 @@
     "@tailwindcss/typography": "^0.5.10",
     "@types/react-signature-canvas": "^1.0.7",
     "drizzle-kit": "^0.31.8",
-    "shiki": "^4.0.2"
+    "shiki": "^4.0.2",
+    "wrangler": "^4.123.0"
   },
   "overrides": {
     "@types/react": "19.0.10",

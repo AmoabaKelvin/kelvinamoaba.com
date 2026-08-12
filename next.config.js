@@ -5,7 +5,7 @@ const nextConfig = {
   // Satori fonts are read from disk at render time; make sure they are
   // traced into every serverless function that can render an OG image.
   outputFileTracingIncludes: {
-    '/**': ['./src/app/fonts/*.ttf'],
+    '/**': ['./src/app/fonts/*.ttf', './node_modules/@libsql/**/*'],
   },
   images: {
     remotePatterns: [
@@ -18,3 +18,6 @@ const nextConfig = {
 };
 
 module.exports = withContentCollections(nextConfig);
+
+const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
+initOpenNextCloudflareForDev();

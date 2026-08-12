@@ -7,19 +7,36 @@ import { ImageResponse } from 'next/og';
 // filesystem, because Next imports opengraph-image modules (which import
 // this) while resolving metadata for dynamically rendered pages, inside
 // serverless functions where the font files may not exist.
-// outputFileTracingIncludes in next.config.js bundles the fonts for the
-// routes that actually render images.
+// On Cloudflare Workers there is no on-disk font file at all, so we fall
+// back to fetching the copies in public/og-fonts through the ASSETS binding.
 let fontsCache:
   | { name: string; data: Buffer; weight: 400 | 500 | 600; style: 'normal' }[]
   | null = null;
 
-function getFonts() {
-  fontsCache ??= ([400, 500, 600] as const).map((w) => ({
-    name: 'Geist',
-    data: readFileSync(join(process.cwd(), `src/app/fonts/Geist-${w}.ttf`)),
-    weight: w,
-    style: 'normal' as const,
-  }));
+async function loadFont(w: 400 | 500 | 600): Promise<Buffer> {
+  try {
+    return readFileSync(join(process.cwd(), `src/app/fonts/Geist-${w}.ttf`));
+  } catch {
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+    const { env } = getCloudflareContext();
+    const assets = (env as { ASSETS: { fetch: typeof fetch } }).ASSETS;
+    const res = await assets.fetch(
+      `https://assets.local/og-fonts/Geist-${w}.ttf`
+    );
+    if (!res.ok) throw new Error(`font fetch failed: Geist-${w} (${res.status})`);
+    return Buffer.from(await res.arrayBuffer());
+  }
+}
+
+async function getFonts() {
+  fontsCache ??= await Promise.all(
+    ([400, 500, 600] as const).map(async (w) => ({
+      name: 'Geist',
+      data: await loadFont(w),
+      weight: w,
+      style: 'normal' as const,
+    }))
+  );
   return fontsCache;
 }
 
@@ -38,7 +55,7 @@ type OGProps = {
   footerRight?: string;
 };
 
-export function renderOG({
+export async function renderOG({
   section,
   kicker,
   title,
@@ -171,6 +188,6 @@ export function renderOG({
         </div>
       </div>
     ),
-    { ...ogSize, fonts: getFonts() }
+    { ...ogSize, fonts: await getFonts() }
   );
 }

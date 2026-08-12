@@ -1,6 +1,5 @@
 import './globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Metadata } from 'next';
@@ -72,7 +71,6 @@ export default function RootLayout({
 
           <main className="h-full min-h-screen pt-16">
             <QueryProvider>{children}</QueryProvider>
-            <Analytics />
           </main>
 
           {/* Footer */}

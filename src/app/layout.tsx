@@ -64,6 +64,14 @@ export default function RootLayout({
                 <Link href="/guestbook" className="nav-link">
                   Guestbook
                 </Link>
+                <a
+                  href="https://drive.google.com/file/d/1reATFXya40KMCe0Gg-pJ7EvgWbjDngI7/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-link"
+                >
+                  Resume
+                </a>
                 <ThemeToggle />
               </nav>
             </div>

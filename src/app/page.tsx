@@ -121,7 +121,7 @@ export default function Home() {
       <section className="mt-20 md:mt-24">
         <SectionHeading>Research</SectionHeading>
         <ul role="list" className="mt-8 space-y-10">
-          {papers.map((paper) => (
+          {papers.slice(0, 2).map((paper) => (
             <li key={paper.title}>
               <h3 className="font-medium text-[var(--fg)]">
                 {paper.slug ? (

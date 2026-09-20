@@ -6,16 +6,10 @@ export const projects = [
       'Observability for AI and LLM apps, built on OpenTelemetry. Captures every model call, tool step, and retrieval as a trace — with tokens, cost, latency, and errors attached — through drop-in TypeScript and Python SDKs or any OTLP exporter, with cost computed from live pricing for 4,700+ models.',
   },
   {
-    name: 'Lookout',
-    link: 'https://github.com/AmoabaKelvin/lookout',
+    name: 'LogDeck',
+    link: 'https://github.com/AmoabaKelvin/logdeck',
     description:
-      'A zero-dependency monitoring agent for Linux servers, written in Go. Reads metrics directly from /proc and evaluates alert rules in-process — with hysteresis thresholds, disk-fill prediction, and a dead-man\'s switch — shipping as a single static binary under systemd instead of a full Prometheus stack.',
-  },
-  {
-    name: 'RiftCheck',
-    link: 'https://riftcheck.dev',
-    description:
-      'AI-powered API contract change detection for GitHub repositories. Monitors every commit and PR for breaking changes across REST, GraphQL, and gRPC, and notifies the right teams instantly.',
+      'A self-hosted control plane for Docker and Podman, shipped as a single Go binary. Tails every container into a local store so log history survives redeploys, and adds full-text search, container and Compose management, alerting, multi-host support, and a built-in MCP server that lets AI assistants read logs and act on containers.',
   },
   {
     name: 'iShortn',
@@ -24,22 +18,34 @@ export const projects = [
       'A URL shortening service with a built-in analytics dashboard. It tracks link clicks, geographic data, and user behavior in real-time. Currently has over 10,000 users and more than a million link clicks.',
   },
   {
-    name: 'LogDeck',
-    link: 'https://github.com/AmoabaKelvin/logdeck',
+    name: 'Lookout',
+    link: 'https://github.com/AmoabaKelvin/lookout',
     description:
-      'A self-hosted control plane for Docker and Podman, shipped as a single Go binary. Tails every container into a local store so log history survives redeploys, and adds full-text search, container and Compose management, alerting, multi-host support, and a built-in MCP server that lets AI assistants read logs and act on containers.',
-  },
-  {
-    name: 'is-temp.com',
-    link: 'https://is-temp.com',
-    description:
-      'A temporary email service powered by a custom SMTP server built in Golang. It provides disposable email addresses and supports attachments and custom domains.',
+      'A zero-dependency monitoring agent for Linux servers, written in Go. Reads metrics directly from /proc and evaluates alert rules in-process — with hysteresis thresholds, disk-fill prediction, and a dead-man\'s switch — shipping as a single static binary under systemd instead of a full Prometheus stack.',
   },
   {
     name: 'formbase.dev',
     link: 'https://formbase.dev',
     description:
       'A backend service for HTML forms. It lets users collect form submissions and file uploads just by pointing their HTML form to the service endpoint, no backend code required.',
+  },
+  {
+    name: 'OpenStatus',
+    link: 'https://openstatus.dev',
+    description:
+      'Active contributor to OpenStatus. 🏓 The open-source monitoring platform with incident management 🏓',
+  },
+  {
+    name: 'RiftCheck',
+    link: 'https://riftcheck.dev',
+    description:
+      'AI-powered API contract change detection for GitHub repositories. Monitors every commit and PR for breaking changes across REST, GraphQL, and gRPC, and notifies the right teams instantly.',
+  },
+  {
+    name: 'is-temp.com',
+    link: 'https://is-temp.com',
+    description:
+      'A temporary email service powered by a custom SMTP server built in Golang. It provides disposable email addresses and supports attachments and custom domains.',
   },
   {
     name: 'directt.to',
@@ -70,12 +76,6 @@ export const projects = [
     link: 'https://meta.kelvinamoaba.com',
     description:
       'A simple API that extracts website metadata—including Open Graph images, descriptions, and titles—for quick content previews and link enrichment. ',
-  },
-  {
-    name: 'OpenStatus',
-    link: 'https://openstatus.dev',
-    description:
-      'Active contributor to OpenStatus. 🏓 The open-source monitoring platform with incident management 🏓',
   },
   // {
   //   name: 'Scrapy BigQuery Pipeline',

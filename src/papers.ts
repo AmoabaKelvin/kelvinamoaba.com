@@ -61,10 +61,10 @@ export const papers: Paper[] = [
       'Fuat Alican',
       'Yigit Ihlamur',
     ],
-    venue: 'arXiv',
-    year: 2025,
+    venue: 'Computing Conference, Springer LNNS',
+    year: 2026,
     arxivId: '2509.14448',
-    link: 'https://arxiv.org/abs/2509.14448',
+    link: 'https://link.springer.com/chapter/10.1007/978-3-032-24804-6_10',
     abstract:
       'The first benchmark for predicting founder success in venture capital, providing 9,000 anonymized founder profiles. State-of-the-art LLMs like DeepSeek-V3 deliver over 6x baseline precision, with most models surpassing human benchmarks.',
     tags: ['Artificial Intelligence', 'LLM', 'Benchmark', 'Venture Capital'],
@@ -86,7 +86,7 @@ export const papers: Paper[] = [
     arxivId: '2509.08140',
     link: 'https://arxiv.org/abs/2509.08140',
     abstract:
-      'A framework for predicting rare, high-impact outcomes by integrating large language models with a multi-model machine learning architecture for venture capital decision-making.',
+      'A framework for predicting rare, high-impact outcomes from limited, noisy early-stage data. LLMs turn unstructured founder profiles into 63 trainable features (skill relevance, domain expertise, education level, text embeddings); a layered ensemble of XGBoost, Random Forest, and a Linear Regression meta-model predicts total funding, which a thresholded logistic regression maps to a binary success call. On 10,825 founders with an 8.5% success rate, the pipeline reaches 9.8x-11.1x the random-baseline precision across three held-out subsets at 36% recall, with funding MAPE under 4%. Ablations show LLM-derived features matter most: removing them drops precision from 10.4x to 4.6x. Feature sensitivity puts the startup category list (15.6%) and number of founders as the strongest drivers.',
     tags: ['Machine Learning', 'LLM', 'Venture Capital', 'Feature Engineering'],
   },
 ];

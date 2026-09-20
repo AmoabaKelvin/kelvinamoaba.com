@@ -21,6 +21,7 @@ const socials = [
   { href: 'https://twitter.com/kelamoaba', label: 'Twitter' },
   { href: 'https://linkedin.com/in/kelvin-amoaba', label: 'LinkedIn' },
   { href: 'mailto:kel.amoaba@gmail.com', label: 'Email' },
+  { href: 'https://cal.com/amoabakelvin', label: 'Book a call' },
 ];
 
 export const metadata: Metadata = {

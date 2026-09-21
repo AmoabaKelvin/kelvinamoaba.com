@@ -44,11 +44,17 @@ export async function getContributions(): Promise<Contributions | null> {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        // GitHub rejects requests without one (403), and Workers' fetch
+        // does not add a default the way Node does.
+        'User-Agent': 'kelvinamoaba.com',
       },
       body: JSON.stringify({ query: QUERY }),
       next: { revalidate: 86400 },
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn(`GitHub contributions: HTTP ${res.status}`);
+      return null;
+    }
 
     const json = await res.json();
     const calendar =
@@ -72,7 +78,8 @@ export async function getContributions(): Promise<Contributions | null> {
           }))
       ),
     };
-  } catch {
+  } catch (error) {
+    console.warn('GitHub contributions: request failed', error);
     return null;
   }
 }

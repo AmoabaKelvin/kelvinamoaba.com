@@ -1,28 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
-function getInitialTheme(): 'light' | 'dark' {
-  if (typeof document === 'undefined') return 'light';
-  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-}
+// Both icons stay mounted and cross-fade off the `.dark` class, so there is
+// no theme state to hydrate.
+const iconClass =
+  'size-[0.95rem] transition-[scale,opacity,filter] duration-300 ease-[cubic-bezier(0.2,0,0,1)]';
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setTheme(getInitialTheme());
-    setMounted(true);
-  }, []);
-
   const toggle = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.classList.toggle('dark', next === 'dark');
+    const dark = document.documentElement.classList.toggle('dark');
     try {
-      localStorage.setItem('theme', next);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
     } catch {}
   };
 
@@ -31,15 +20,16 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle theme"
-      className="logo-mark"
-      style={{ width: '2rem', height: '2rem' }}
+      className="logo-mark relative"
     >
-      {/* Render a stable icon until mounted to avoid hydration mismatch */}
-      {mounted && theme === 'dark' ? (
-        <Sun className="h-[0.95rem] w-[0.95rem]" />
-      ) : (
-        <Moon className="h-[0.95rem] w-[0.95rem]" />
-      )}
+      <Moon
+        aria-hidden="true"
+        className={`${iconClass} dark:scale-25 dark:opacity-0 dark:blur-xs`}
+      />
+      <Sun
+        aria-hidden="true"
+        className={`${iconClass} absolute not-dark:scale-25 not-dark:opacity-0 not-dark:blur-xs`}
+      />
     </button>
   );
 }

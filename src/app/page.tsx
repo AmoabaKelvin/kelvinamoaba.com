@@ -1,13 +1,22 @@
 import { Metadata } from 'next';
 import { Link } from 'next-view-transitions';
+import {
+  FaCalendarDays,
+  FaEnvelope,
+  FaGithub,
+  FaLinkedinIn,
+  FaXTwitter,
+  FaYoutube,
+} from 'react-icons/fa6';
 
 import { ContributionGraph } from '@/components/contribution-graph';
-import { PostRow } from '@/components/post-row';
-import { getSortedPosts } from '@/lib/posts';
+import { Disclosure } from '@/components/disclosure';
+import { WritingList } from '@/components/writing-list';
+import { getWriting } from '@/lib/posts';
 import { papers } from '@/papers';
 import { projects } from '@/projects';
-import { videos } from '@/videos';
 
+// Not rendered; feeds the Person schema's knowsAbout.
 const skills = [
   'System Design',
   'Cloud Infrastructure',
@@ -17,12 +26,71 @@ const skills = [
 ];
 
 const socials = [
-  { href: 'https://github.com/AmoabaKelvin', label: 'GitHub' },
-  { href: 'https://twitter.com/kelamoaba', label: 'Twitter' },
-  { href: 'https://linkedin.com/in/kelvin-amoaba', label: 'LinkedIn' },
-  { href: 'mailto:kel.amoaba@gmail.com', label: 'Email' },
-  { href: 'https://cal.com/amoabakelvin', label: 'Book a call' },
+  { href: 'https://github.com/AmoabaKelvin', label: 'GitHub', icon: FaGithub },
+  { href: 'https://twitter.com/kelamoaba', label: 'Twitter', icon: FaXTwitter },
+  {
+    href: 'https://linkedin.com/in/kelvin-amoaba',
+    label: 'LinkedIn',
+    icon: FaLinkedinIn,
+  },
+  {
+    href: 'https://www.youtube.com/@TechDecompiled',
+    label: 'YouTube',
+    icon: FaYoutube,
+  },
+  { href: 'mailto:kel.amoaba@gmail.com', label: 'Email', icon: FaEnvelope },
+  {
+    href: 'https://cal.com/amoabakelvin',
+    label: 'Book a call',
+    icon: FaCalendarDays,
+  },
 ];
+
+const VISIBLE_PROJECTS = 3;
+
+const linkClass =
+  'underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]';
+
+// ponytail: first sentence is the always-visible tagline, the rest opens on
+// click. Add an explicit `tagline` field if a description ever starts badly.
+function splitDescription(description: string): [string, string] {
+  const match = description.trim().match(/^(.+?[.!?])\s+(.+)$/s);
+  return match ? [match[1], match[2]] : [description.trim(), ''];
+}
+
+function ProjectItem({ project }: { project: (typeof projects)[number] }) {
+  const [tagline, rest] = splitDescription(project.description);
+  const textClass =
+    'max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6';
+
+  return (
+    <li>
+      <h3 className="font-medium text-[var(--fg)]">
+        {project.link ? (
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            {project.name}
+          </a>
+        ) : (
+          project.name
+        )}
+      </h3>
+      <div className="mt-1.5">
+        {rest ? (
+          <Disclosure summary={tagline} className={textClass}>
+            <p className={`mt-2 ${textClass}`}>{rest}</p>
+          </Disclosure>
+        ) : (
+          <p className={textClass}>{tagline}</p>
+        )}
+      </div>
+    </li>
+  );
+}
 
 export const metadata: Metadata = {
   alternates: { canonical: '/', types: { 'application/rss+xml': '/rss.xml' } },
@@ -33,7 +101,7 @@ const personJsonLd = {
   '@type': 'Person',
   name: 'Kelvin Amoaba',
   url: 'https://kelvinamoaba.com',
-  jobTitle: 'Software Engineer',
+  jobTitle: 'Backend and Infrastructure Engineer',
   email: 'mailto:kel.amoaba@gmail.com',
   address: {
     '@type': 'PostalAddress',
@@ -74,7 +142,7 @@ function ExternalLink({
       href={href}
       target={href.startsWith('mailto:') ? undefined : '_blank'}
       rel="noopener noreferrer"
-      className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+      className={linkClass}
     >
       {children}
     </a>
@@ -82,10 +150,11 @@ function ExternalLink({
 }
 
 export default function Home() {
-  const posts = getSortedPosts().slice(0, 5);
+  const posts = getWriting().slice(0, 5);
+  const moreProjects = projects.length - VISIBLE_PROJECTS;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
+    <div className="mx-auto max-w-2xl px-6 pt-16 pb-24 md:pt-24 md:pb-32">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -94,41 +163,48 @@ export default function Home() {
       />
       {/* Intro */}
       <section>
-        <h1 className="text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
+        <h1 className="rise text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
           Kelvin Amoaba
         </h1>
-        <p className="mt-6 max-w-[56ch] text-base/7 text-pretty text-[var(--fg-secondary)]">
-          Software engineer building scalable systems and exploring the depths
-          of low-level architecture. Currently at{' '}
+        <p className="rise mt-6 max-w-[56ch] text-base/7 text-pretty text-[var(--fg-secondary)] [--i:1]">
+          Backend and infrastructure engineer building scalable systems and
+          exploring the depths of low-level architecture. Currently at{' '}
           <ExternalLink href="https://vela.partners">
             Vela Partners
           </ExternalLink>
           .
         </p>
-        <p className="mt-4 font-mono text-base/7 text-[var(--fg-faint)] sm:text-sm/6">
-          {skills.join(' · ')}
-        </p>
-        <ul role="list" className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
-          {socials.map(({ href, label }) => (
-            <li key={label} className="text-base/7 sm:text-sm/6">
-              <ExternalLink href={href}>{label}</ExternalLink>
+        <ul role="list" className="rise mt-6 flex flex-wrap gap-5 [--i:2]">
+          {socials.map(({ href, label, icon: Icon }) => (
+            <li key={label}>
+              <a
+                href={href}
+                target={href.startsWith('mailto:') ? undefined : '_blank'}
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="social-icon relative block"
+              >
+                <Icon aria-hidden="true" className="size-5 shrink-0" />
+                <span
+                  aria-hidden="true"
+                  className="absolute top-1/2 left-1/2 size-[max(100%,3rem)] -translate-1/2 pointer-fine:hidden"
+                />
+              </a>
             </li>
           ))}
         </ul>
       </section>
 
       {/* Research */}
-      <section className="mt-20 md:mt-24">
+      <section className="rise mt-14 [--i:4] md:mt-16">
         <SectionHeading>Research</SectionHeading>
-        <ul role="list" className="mt-8 space-y-10">
+        <ul role="list" className="mt-6 space-y-5">
           {papers.slice(0, 2).map((paper) => (
             <li key={paper.title}>
               <h3 className="font-medium text-[var(--fg)]">
                 {paper.slug ? (
-                  <Link
-                    href={paper.link}
-                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
-                  >
+                  <Link href={paper.link} className={linkClass}>
                     {paper.title}
                   </Link>
                 ) : (
@@ -136,69 +212,45 @@ export default function Home() {
                     href={paper.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+                    className={linkClass}
                   >
                     {paper.title}
                   </a>
                 )}
               </h3>
-              <p className="mt-1.5 font-mono text-sm text-[var(--fg-faint)]">
-                {paper.venue} {paper.year}
-              </p>
-              <p className="mt-3 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
-                {paper.abstract}
-              </p>
+              <div className="mt-1.5">
+                <Disclosure
+                  summary={`${paper.venue} ${paper.year} · Abstract`}
+                  className="font-mono text-sm text-[var(--fg-faint)]"
+                >
+                  <p className="mt-2 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
+                    {paper.abstract}
+                  </p>
+                </Disclosure>
+              </div>
             </li>
           ))}
         </ul>
-        <p className="mt-8 text-base/7 sm:text-sm/6">
+        <p className="mt-6 text-base/7 sm:text-sm/6">
           <Link
             href="/research"
-            className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+            className={`text-[var(--fg-muted)] ${linkClass}`}
           >
             All research
           </Link>
         </p>
       </section>
 
-      {/* Teaching */}
-      <section className="mt-20 md:mt-24">
-        <SectionHeading>Teaching</SectionHeading>
-        <ul role="list" className="mt-8 space-y-10">
-          {videos.map((video) => (
-            <li key={video.title}>
-              <h3 className="font-medium text-[var(--fg)]">
-                <a
-                  href={video.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
-                >
-                  {video.title}
-                </a>
-              </h3>
-              <p className="mt-3 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
-                {video.description}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       {/* Writing */}
-      <section className="mt-20 md:mt-24">
+      <section className="rise mt-14 [--i:5] md:mt-16">
         <SectionHeading>Writing</SectionHeading>
-        <ul role="list" className="mt-8 space-y-4">
-          {posts.map((post) => (
-            <li key={post.slug}>
-              <PostRow post={post} />
-            </li>
-          ))}
-        </ul>
-        <p className="mt-8 text-base/7 sm:text-sm/6">
+        <div className="mt-4">
+          <WritingList posts={posts} />
+        </div>
+        <p className="mt-4 text-base/7 sm:text-sm/6">
           <Link
             href="/blog"
-            className="text-[var(--fg-muted)] underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
+            className={`text-[var(--fg-muted)] ${linkClass}`}
           >
             All writing
           </Link>
@@ -206,31 +258,27 @@ export default function Home() {
       </section>
 
       {/* Projects */}
-      <section className="mt-20 md:mt-24">
+      <section className="rise mt-14 [--i:6] md:mt-16">
         <SectionHeading>Projects</SectionHeading>
-        <ul role="list" className="mt-8 space-y-10">
-          {projects.map((project) => (
-            <li key={project.name}>
-              <h3 className="font-medium text-[var(--fg)]">
-                {project.link ? (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--fg)]"
-                  >
-                    {project.name}
-                  </a>
-                ) : (
-                  project.name
-                )}
-              </h3>
-              <p className="mt-2 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
-                {project.description}
-              </p>
-            </li>
+        <ul role="list" className="mt-6 space-y-5">
+          {projects.slice(0, VISIBLE_PROJECTS).map((project) => (
+            <ProjectItem key={project.name} project={project} />
           ))}
         </ul>
+        {moreProjects > 0 && (
+          <details className="disclosure group/more mt-6 open:mt-5">
+            <summary
+              className={`w-fit cursor-pointer list-none text-base/7 text-[var(--fg-muted)] group-open/more:hidden sm:text-sm/6 [&::-webkit-details-marker]:hidden ${linkClass}`}
+            >
+              Show {moreProjects} more projects
+            </summary>
+            <ul role="list" className="space-y-5">
+              {projects.slice(VISIBLE_PROJECTS).map((project) => (
+                <ProjectItem key={project.name} project={project} />
+              ))}
+            </ul>
+          </details>
+        )}
       </section>
 
       <ContributionGraph />

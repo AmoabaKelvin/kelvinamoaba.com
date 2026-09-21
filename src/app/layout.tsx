@@ -6,8 +6,11 @@ import { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
 import { Link } from 'next-view-transitions';
 
+import { HoverSound } from '@/components/hover-sound';
+import { Signature } from '@/components/signature';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { QueryProvider } from '@/lib/providers/query-provider';
+import { signature } from '@/signature-data';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kelvinamoaba.com'),
@@ -54,6 +57,7 @@ export default function RootLayout({
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </head>
         <body>
+          <HoverSound />
           {/* Header */}
           <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-10 header-glass">
             <div className="mx-auto max-w-4xl flex justify-between items-center">
@@ -89,7 +93,11 @@ export default function RootLayout({
                 <p className="footer-text" suppressHydrationWarning>
                   © {new Date().getFullYear()} Kelvin Amoaba
                 </p>
-                <p className="footer-text">Accra, Ghana</p>
+                {signature.strokes.length > 0 ? (
+                  <Signature height={44} className="text-[var(--fg-muted)]" />
+                ) : (
+                  <p className="footer-text">Accra, Ghana</p>
+                )}
               </div>
             </div>
           </footer>

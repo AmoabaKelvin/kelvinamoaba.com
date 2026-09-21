@@ -7,10 +7,10 @@ import { PostBody } from '@/components/blog/post-body';
 import { PostEngagement } from '@/components/blog/post-engagement';
 import { PostViews } from '@/components/blog/post-views';
 import { mdxComponents } from '@/components/mdx/mdx-components';
-import { PostRow } from '@/components/post-row';
+import { WritingList } from '@/components/writing-list';
 import { TableOfContents } from '@/components/table-of-contents';
 import type { TOCHeading } from '@/lib/extract-headings';
-import { getRelatedPosts } from '@/lib/posts';
+import { getRelatedPosts, toWritingEntry } from '@/lib/posts';
 
 import BackButton from './back-button';
 
@@ -128,13 +128,9 @@ const BlogDetailPage = async (props: Props) => {
           <h2 className="font-mono text-xs tracking-wide text-[var(--fg-faint)] uppercase">
             Read next
           </h2>
-          <ul role="list" className="mt-6 space-y-4">
-            {related.map((p) => (
-              <li key={p.slug}>
-                <PostRow post={p} />
-              </li>
-            ))}
-          </ul>
+          <div className="mt-4">
+            <WritingList posts={related.map(toWritingEntry)} />
+          </div>
         </section>
       )}
 

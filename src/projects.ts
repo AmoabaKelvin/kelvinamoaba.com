@@ -33,7 +33,7 @@ export const projects = [
     name: 'OpenStatus',
     link: 'https://openstatus.dev',
     description:
-      'Active contributor to OpenStatus. 🏓 The open-source monitoring platform with incident management 🏓',
+      'Active contributor to OpenStatus, the open-source monitoring platform with incident management.',
   },
   {
     name: 'RiftCheck',

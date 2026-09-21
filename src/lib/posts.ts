@@ -8,16 +8,41 @@ export function getSortedPosts(): Post[] {
     .sort((a, b) => b.datePublished.getTime() - a.datePublished.getTime());
 }
 
-export function groupByYear(posts: Post[]): { year: number; posts: Post[] }[] {
-  const map = new Map<number, Post[]>();
-  for (const p of posts) {
-    const year = p.datePublished.getFullYear();
-    if (!map.has(year)) map.set(year, []);
-    map.get(year)!.push(p);
-  }
-  return Array.from(map.entries())
-    .sort((a, b) => b[0] - a[0])
-    .map(([year, posts]) => ({ year, posts }));
+/** A row in a writing list. First-party posts carry a slug; posts hosted elsewhere don't. */
+export type WritingEntry = {
+  title: string;
+  datePublished: Date;
+  href: string;
+  kicker?: string;
+  description?: string;
+  slug?: string;
+};
+
+// Posts published on other sites, listed alongside the local ones.
+const externalPosts: WritingEntry[] = [
+  {
+    title: 'Storing 10× more container logs in the same SQLite file',
+    datePublished: new Date('2026-09-13'),
+    href: 'https://logdeck.dev/blog/log-store',
+    description:
+      'One SQLite row per log line came out 28% bigger than the raw text. Sealing 1,000 lines into one zstd row holds about 10× more.',
+  },
+];
+
+export function toWritingEntry(post: Post): WritingEntry {
+  return {
+    title: post.title,
+    datePublished: post.datePublished,
+    href: `/blog/${post.slug}`,
+    kicker: post.kicker,
+    slug: post.slug,
+  };
+}
+
+export function getWriting(): WritingEntry[] {
+  return [...getSortedPosts().map(toWritingEntry), ...externalPosts].sort(
+    (a, b) => b.datePublished.getTime() - a.datePublished.getTime()
+  );
 }
 
 export function getRelatedPosts(post: Post, limit = 3): Post[] {
@@ -30,12 +55,4 @@ export function getRelatedPosts(post: Post, limit = 3): Post[] {
     .filter((p) => p.slug !== post.slug)
     .sort((a, b) => score(b) - score(a))
     .slice(0, limit);
-}
-
-export function formatPostDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }

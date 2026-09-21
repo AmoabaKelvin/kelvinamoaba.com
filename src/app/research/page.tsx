@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { Link } from 'next-view-transitions';
 
+import { Disclosure } from '@/components/disclosure';
 import { papers } from '@/papers';
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ const linkClass =
 export default function ResearchIndex() {
   return (
     <div className="mx-auto max-w-2xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
-      <section>
+      <section className="rise">
         <h1 className="text-2xl font-medium tracking-tight text-balance text-[var(--fg)]">
           Research
         </h1>
@@ -32,8 +33,8 @@ export default function ResearchIndex() {
         </p>
       </section>
 
-      <section className="mt-16 md:mt-20">
-        <ul role="list" className="space-y-14">
+      <section className="rise mt-16 [--i:1] md:mt-20">
+        <ul role="list" className="space-y-10">
           {papers.map((paper) => (
             <li key={paper.title}>
               <h2 className="font-medium text-[var(--fg)]">
@@ -58,9 +59,16 @@ export default function ResearchIndex() {
               <p className="mt-1 font-mono text-sm text-[var(--fg-faint)]">
                 {paper.venue} {paper.year}
               </p>
-              <p className="mt-3 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
-                {paper.abstract}
-              </p>
+              <div className="mt-3">
+                <Disclosure
+                  summary="Abstract"
+                  className="text-base/7 text-[var(--fg-muted)] sm:text-sm/6"
+                >
+                  <p className="mt-2 max-w-[64ch] text-base/7 text-pretty text-[var(--fg-muted)] sm:text-sm/6">
+                    {paper.abstract}
+                  </p>
+                </Disclosure>
+              </div>
               <p className="mt-3 flex gap-4 text-base/7 sm:text-sm/6">
                 {paper.slug && (
                   <Link

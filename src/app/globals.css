@@ -324,7 +324,7 @@ a:hover > .ds-badge,
 }
 
 /* Focus ring — two-layer (offset gap + accent ring) */
-:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus-ring);
   border-radius: var(--ds-radius);
@@ -362,7 +362,12 @@ a:hover > .ds-badge,
 /* Social icon */
 .social-icon {
   color: var(--fg-muted);
-  transition: color 0.15s var(--ds-ease), transform 0.15s var(--ds-ease);
+  transition: color 0.15s var(--ds-ease), transform 0.15s var(--ds-ease),
+    scale 0.15s var(--ds-ease);
+}
+
+.social-icon:active {
+  scale: 0.96;
 }
 
 .social-icon:hover {
@@ -405,7 +410,11 @@ a:hover > .ds-badge,
   border: 1px solid var(--border-strong);
   border-radius: var(--ds-radius);
   transition: background-color 0.15s var(--ds-ease),
-    color 0.15s var(--ds-ease);
+    color 0.15s var(--ds-ease), scale 0.15s var(--ds-ease);
+}
+
+.logo-mark:active {
+  scale: 0.96;
 }
 
 .logo-mark:hover {
@@ -636,4 +645,83 @@ a:hover > .ds-badge,
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--fg-faint);
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ * ------------------------------------------------------------------ */
+
+/* Staggered entrance: each chunk fades up, delayed by its --i index.
+   Fill is backwards only: a forwards fill keeps the transform animation
+   alive, which turns the element into a containing block and traps
+   position: fixed descendants (the activity tooltip). */
+@utility rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0, 0, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+
+  @variant motion-reduce {
+    animation: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+}
+
+/* Animated <details>. Height animates where interpolate-size is supported;
+   elsewhere the content just fades, or opens instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .disclosure {
+    interpolate-size: allow-keywords;
+  }
+
+  .disclosure::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    opacity: 0;
+    transition: block-size 0.3s cubic-bezier(0.2, 0, 0, 1),
+      opacity 0.3s cubic-bezier(0.2, 0, 0, 1),
+      content-visibility 0.3s allow-discrete;
+  }
+
+  .disclosure[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* Signature: strokes stay hidden until their turn, then draw start to end.
+   Hidden rather than just offset, so round caps cannot leave a dot behind. */
+.signature-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  visibility: hidden;
+}
+
+.signature-stroke-draw {
+  animation: signature-draw var(--draw-duration)
+    cubic-bezier(0.45, 0, 0.55, 1) var(--draw-delay) forwards;
+}
+
+@keyframes signature-draw {
+  from {
+    visibility: visible;
+    stroke-dashoffset: 1;
+  }
+  to {
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature-stroke {
+    stroke-dashoffset: 0;
+    visibility: visible;
+    animation: none;
+  }
 }

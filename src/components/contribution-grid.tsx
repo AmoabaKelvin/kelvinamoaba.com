@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useInView } from 'react-intersection-observer';
 
-import type { ContributionDay } from '@/lib/github';
+import type { ContributionDay } from '@/lib/github-types';
 
 /* Sequential ramp on the contrast-ordered gray scale: reads light-to-dark
    in light mode and dark-to-light in dark mode without extra tokens.

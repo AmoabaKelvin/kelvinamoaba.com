@@ -1,20 +1,18 @@
+// Build fails if a client component ever imports this file; the token must
+// stay on the server. Types live in github-types.ts so the client grid can
+// import them without touching this module.
+import 'server-only';
+
+import type { Contributions } from '@/lib/github-types';
+
+export type { ContributionDay, Contributions } from '@/lib/github-types';
+
 const LEVELS: Record<string, 0 | 1 | 2 | 3 | 4> = {
   NONE: 0,
   FIRST_QUARTILE: 1,
   SECOND_QUARTILE: 2,
   THIRD_QUARTILE: 3,
   FOURTH_QUARTILE: 4,
-};
-
-export type ContributionDay = {
-  date: string;
-  count: number;
-  level: 0 | 1 | 2 | 3 | 4;
-};
-
-export type Contributions = {
-  total: number;
-  weeks: ContributionDay[][];
 };
 
 const QUERY = `query {

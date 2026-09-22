@@ -15,7 +15,7 @@ export const projects = [
     name: 'iShortn',
     link: 'https://ishortn.ink',
     description:
-      'A URL shortening service with a built-in analytics dashboard. It tracks link clicks, geographic data, and user behavior in real-time. Currently has over 10,000 users and more than a million link clicks.',
+      'A URL shortener used by over 11,000 people, with more than 3 million clicks tracked. Every link reports clicks, location, and referrers as they happen.',
   },
   {
     name: 'Lookout',
